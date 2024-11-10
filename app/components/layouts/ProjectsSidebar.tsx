@@ -1,6 +1,12 @@
 import { useState, useRef } from 'react';
+import { faCircle, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const ProjectsSidebar = () => {
+interface ProjectSidebarProps {
+    startingNewProject: boolean;
+}
+
+const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject }) => {
 
     const [projectsBarWidth, setProjectsBarWidth] = useState(300);
     const isDragging = useRef(false); // Keeps its value between renders
@@ -26,16 +32,31 @@ const ProjectsSidebar = () => {
     return (
         <>
             <aside className='projects-sidebar' style = {{ width: projectsBarWidth }}>
-                <h2>Projects</h2>
-                <ul>
-                <li>Item 1</li>
-                <li>Item 2</li>
-                </ul>
+                
+                {/* For creating a new project */}
+                {startingNewProject && (
+                    <div className='new-project-area'>
+                        <input 
+                            className='new-project-input'
+                            type="text"
+                            placeholder="New project title"
+                        />
+                        <button 
+                            className='new-project-button'
+                            type='submit'
+                        >
+                            <FontAwesomeIcon icon={faCircleCheck} />
+                        </button>
+                    </div>
+                )}
+
             </aside>
+
             {/* For resizing the sidebar */}
             <div className='divider' onMouseDown={handleChangeWidth}>
 
             </div>
+
         </>
     );
 };
