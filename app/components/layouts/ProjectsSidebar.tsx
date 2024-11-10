@@ -3,12 +3,18 @@ import { faCircleCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
 
+type ProjectTitle = {
+    id: number;
+    project_name: string;
+};
+
 interface ProjectSidebarProps {
     startingNewProject: boolean;
     handleStartingNewProject: (state:boolean) => void;
-}
+    projectTitles: ProjectTitle[];
+};
 
-const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, handleStartingNewProject }) => {
+const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, handleStartingNewProject, projectTitles }) => {
 
     /**
      * Functionality to handle changing width of sidebar by dragging
@@ -98,6 +104,11 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, ha
                         </button>
                     </div>
                 )}
+                {projectTitles.map(projectTitle => (
+                    <div key={projectTitle.id}>
+                        <p>{projectTitle.project_name}</p>
+                    </div>
+                ))}
 
             </aside>
 

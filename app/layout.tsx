@@ -2,11 +2,16 @@
 import "./globals.css";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import OperationsSidebar from "./components/layouts/OperationsSidebar";
 import ProjectsSidebar from "./components/layouts/ProjectsSidebar";
+import { loadAllProjectTitles } from "./ipcRenderer/newProjects";
 
+type ProjectTitle = {
+  id: number;
+  project_name: string;
+};
 
 export default function RootLayout({
   children,
@@ -15,6 +20,16 @@ export default function RootLayout({
 }>) {
 
   const [isStartingNewProject, setIsStartingNewProject] = useState<boolean>(false);
+  const [projectTitles, setProjectTitles] = useState<ProjectTitle[]>([]);
+  // Get all the project titles on load
+  useEffect(() => {
+    const handleLoadAllProjectTitles = async () => {
+      const dbProjectTitles = await loadAllProjectTitles();
+      setProjectTitles(dbProjectTitles);
+    }
+    handleLoadAllProjectTitles();
+  }, [loadAllProjectTitles, setProjectTitles]);
+  
 
   return (
     <html lang="en">
@@ -35,6 +50,7 @@ export default function RootLayout({
           <ProjectsSidebar 
             startingNewProject={isStartingNewProject}
             handleStartingNewProject={setIsStartingNewProject}
+            projectTitles={projectTitles}
           />
 
           <main className='main-area'>

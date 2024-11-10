@@ -2,7 +2,7 @@ const { app, ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./database/index');
 const CreateDatabase = require('./database/createDatabase');
-const { addNewProject } = require('./ipc/projectHandling');
+const { addNewProject, loadAllProjectTitles } = require('./ipc/projectHandling');
 
 let mainWindow;
 
@@ -38,6 +38,7 @@ const createDatabase = () => {
 
 const newProjectHandling = () => {
     addNewProject();
+    loadAllProjectTitles();
 }
 
 app.on('ready', () => {

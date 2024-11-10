@@ -6,6 +6,19 @@
 
 import { toast } from 'react-toastify';
 
+export const loadAllProjectTitles = async () => {
+    try {
+        const response = await window.electron.ipcRenderer.invoke('load-all-project-titles');
+        if(response.success) {
+            return response.results;
+        } else {
+            toast.error(response.message);
+        }
+    } catch (error) {
+        toast.error('Failed to load all your projects: ' + error);
+    }
+}
+
 export const saveProjectTitleToDatabase = async (title:string) => {
     try {
         const response = await window.electron.ipcRenderer.invoke('send-new-project-title', title);
