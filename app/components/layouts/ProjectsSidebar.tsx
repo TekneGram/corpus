@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
 
@@ -59,6 +59,11 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, ha
         }
     }
 
+    const handleStopAddingNewProject= () => {
+        setNewProjectTitle('');
+        handleStartingNewProject(false);
+    }
+
     /**
      * End of functionality to handle adding a new project
      */
@@ -83,6 +88,13 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, ha
                             onClick={handleStartNewProject}
                         >
                             <FontAwesomeIcon icon={faCircleCheck} />
+                        </button>
+                        <button 
+                            className='new-project-button'
+                            type='submit'
+                            onClick={handleStopAddingNewProject}
+                        >
+                            <FontAwesomeIcon icon={faX} />
                         </button>
                     </div>
                 )}
