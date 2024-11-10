@@ -1,7 +1,7 @@
 const { app, ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./database/index');
-//const CreateDatabase = require('./database/createDatabase');
+const CreateDatabase = require('./database/createDatabase');
 
 let mainWindow;
 
@@ -12,6 +12,7 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
+            devTools: true
         },
     })
 
@@ -33,7 +34,7 @@ const createDatabase = () => {
 }
 
 app.on('ready', () => {
-    //createDatabase();
+    createDatabase();
     createWindow();
 });
 
