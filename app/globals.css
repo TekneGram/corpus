@@ -34,11 +34,11 @@ body {
 }
 
 .operations-sidebar {
-  @apply w-[65px] bg-slate-200 p-4;
+  @apply w-[65px] bg-slate-200 p-4
 }
 
 .projects-sidebar {
-  @apply bg-slate-600 text-white p-4 transition-[width] duration-0 ease-linear;
+  @apply bg-slate-600 text-white p-4 transition-[width] duration-0 ease-linear
 }
 
 .divider {
