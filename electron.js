@@ -2,6 +2,7 @@ const { app, ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./database/index');
 const CreateDatabase = require('./database/createDatabase');
+const { addNewProject } = require('./ipc/projectHandling');
 
 let mainWindow;
 
@@ -11,6 +12,7 @@ const createWindow = () => {
         height: 768,
         title: 'TekneGram',
         webPreferences: {
+            preload: path.join(__dirname, 'electronPreload.js'),
             nodeIntegration: false,
             contextIsolation: true,
             devTools: true
@@ -34,9 +36,14 @@ const createDatabase = () => {
     CreateDatabase.createFourBunsTable();
 }
 
+const newProjectHandling = () => {
+    addNewProject();
+}
+
 app.on('ready', () => {
     createDatabase();
     createWindow();
+    newProjectHandling();
 });
 
 app.on('window-all-closed', () => {

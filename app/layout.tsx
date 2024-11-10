@@ -1,6 +1,7 @@
 "use client"
 import "./globals.css";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 
 import OperationsSidebar from "./components/layouts/OperationsSidebar";
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body
         className={`screen`}
       >
+        <ToastContainer />
         <header className='page-header'>
             <h1>Header</h1>
         </header>
@@ -29,9 +31,10 @@ export default function RootLayout({
           <OperationsSidebar 
             handleStartingNewProject={setIsStartingNewProject} 
           />
-          
+
           <ProjectsSidebar 
             startingNewProject={isStartingNewProject}
+            handleStartingNewProject={setIsStartingNewProject}
           />
 
           <main className='main-area'>

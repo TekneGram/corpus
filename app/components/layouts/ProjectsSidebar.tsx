@@ -1,13 +1,18 @@
 import { useState, useRef } from 'react';
-import { faCircle, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
 
 interface ProjectSidebarProps {
     startingNewProject: boolean;
+    handleStartingNewProject: (state:boolean) => void;
 }
 
-const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject }) => {
+const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, handleStartingNewProject }) => {
 
+    /**
+     * Functionality to handle changing width of sidebar by dragging
+     */
     const [projectsBarWidth, setProjectsBarWidth] = useState(300);
     const isDragging = useRef(false); // Keeps its value between renders
 
@@ -19,7 +24,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject }) 
 
     const handleMouseMove = (e: MouseEvent) => {
         if (isDragging.current) {
-        setProjectsBarWidth((prevWidth) => Math.max(prevWidth + e.movementX, 150));
+            setProjectsBarWidth((prevWidth) => Math.max(prevWidth + e.movementX, 150));
         }
     };
 
@@ -28,6 +33,35 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject }) 
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseup", handleMouseUp);
     }
+    /**
+     * End of dragging side bar
+     */
+
+    /**
+     * Functionality to handle adding a new project
+     */
+    const [newProjectTitle, setNewProjectTitle] = useState<string>('');
+    const handleNewProjectTitleChange = (value: string) => {
+        setNewProjectTitle(value);
+    }
+    const handleStartNewProject = () => {
+        const title = newProjectTitle.trim();
+        if(title.length > 3) {
+            alert("Your project title is: " + newProjectTitle);
+            // Create a database entry to start a new project
+            saveProjectTitleToDatabase(title);
+            // Update the Projects Sidebar view to show a clickable project title
+            setNewProjectTitle('');
+            handleStartingNewProject(false);
+
+        } else {
+            alert("Your title needs to be at least 4 letters long");
+        }
+    }
+
+    /**
+     * End of functionality to handle adding a new project
+     */
 
     return (
         <>
@@ -40,10 +74,13 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject }) 
                             className='new-project-input'
                             type="text"
                             placeholder="New project title"
+                            value={newProjectTitle}
+                            onChange={(e) => handleNewProjectTitleChange(e.target.value)} 
                         />
                         <button 
                             className='new-project-button'
                             type='submit'
+                            onClick={handleStartNewProject}
                         >
                             <FontAwesomeIcon icon={faCircleCheck} />
                         </button>
