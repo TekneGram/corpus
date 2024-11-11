@@ -45,10 +45,6 @@ body {
   @apply w-1 cursor-col-resize hover:bg-orange-400
 }
 
-.main-area {
-  @apply flex-grow p-4;
-}
-
 
 /* Operations Bar Elements */
 .add-project-button {
@@ -88,4 +84,25 @@ body {
 
 .project-title {
   @apply pl-3;
+}
+
+/* TAB BARS */
+.main-area {
+  @apply h-screen;
+}
+
+.tabs-container {
+  @apply flex w-full;
+}
+
+.tab-container {
+  @apply flex flex-row bg-slate-100;
+}
+
+.main-page-tab {
+  @apply px-6 py-2 text-sm font-medium;
+}
+
+.tab-active {
+  @apply bg-white border-blue-500 text-blue-500
 }

@@ -2,14 +2,22 @@ import { useState } from 'react';
 import Tab from './Tab';
 
 const TabsContainer = () => {
-    const [activeTab, setActiveTab] = useState<number>(0);
-    const [tabTally, setTabTally] = useState<number[]>([1, 2, 3, 4]); // start with 4 tabs displayed
+    const [activeTab, setActiveTab] = useState<number>(1);
+    const [tabTally, setTabTally] = useState<number[]>([1, 2, 3]); // start with 3 tabs displayed
+
+    const handleSetActiveTab = (tabNum: number) => {
+        setActiveTab(tabNum);
+    }
 
     return (
-        <div className='flex flex-col h-screen'>
+        <div className='tabs-container'>
             {
                 tabTally.map((tally) => (
-                    <Tab />
+                    <div 
+                        className='tab-container'
+                        key={tally}>
+                            <Tab tabNum={tally} handleSetActiveTab={handleSetActiveTab} activeTab={activeTab} />
+                    </div>
                 ))
             }
         </div>

@@ -1,8 +1,12 @@
+"use client"
 
+import TabsContainer from "./components/tabs/TabsContainer";
 const Home = () => {
 
   return (
-    <div></div>
+    <div className='w-full'>
+      <TabsContainer />
+    </div>
   )
 }
 
