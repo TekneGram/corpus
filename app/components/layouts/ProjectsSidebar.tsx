@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { faCircleCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef, useReducer, useEffect } from 'react';
+import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase, loadAllProjectTitles } from "../../ipcRenderer/newProjects";
 
@@ -15,7 +15,56 @@ interface ProjectSidebarProps {
     refreshProjectTitles: (state: ProjectTitle[]) => void;
 };
 
-const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, handleStartingNewProject, projectTitles, refreshProjectTitles }) => {
+type ProjectTitlesAction = {
+    type: "sort" | "set";
+    payload: "asc" | "desc" | ProjectTitle[];
+}
+
+function projectTitlesReducer(projectTitles:ProjectTitle[], action: ProjectTitlesAction): ProjectTitle[] {
+    switch (action.type) {
+        case 'sort':
+            return [...projectTitles].sort((a, b) => {
+                if (action.payload === "asc") {
+                    return a.project_name.localeCompare(b.project_name);
+                } else {
+                    return b.project_name.localeCompare(a.project_name);
+                }
+            });
+        case 'set':
+            return projectTitles;
+        default:
+            return projectTitles;
+    }
+}
+
+const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ 
+    startingNewProject, 
+    handleStartingNewProject, 
+    projectTitles, 
+    refreshProjectTitles 
+}) => {
+
+    /**
+     * Functionality to handle sorting the project titles
+     */
+    const [projectTitlesState, dispatch] = useReducer<React.Reducer<ProjectTitle[], ProjectTitlesAction>>(projectTitlesReducer, projectTitles);
+    const handleSortAscending = () => {
+        dispatch({
+            type: "sort",
+            payload: "asc"
+        });
+    }
+
+    const handleSortDescending = () => {
+        dispatch({
+            type: "sort",
+            payload: "desc"
+        })
+    }
+
+    useEffect(() => {
+        dispatch({ type: "set", payload: projectTitles });
+    }, [projectTitles])
 
     /**
      * Functionality to handle changing width of sidebar by dragging
@@ -91,7 +140,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, ha
                 
                 {/* For creating a new project */}
                 {startingNewProject && (
-                    <div className='new-project-area'>
+                    <div className={`new-project-area`}>
                         <input 
                             className='new-project-input'
                             type="text"
@@ -115,7 +164,21 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ startingNewProject, ha
                         </button>
                     </div>
                 )}
-                {projectTitles.map(projectTitle => (
+                <div className='project-titles-bar'>
+                    <button
+                        className="sort-project-titles-button"
+                        onClick={handleSortAscending}
+                    >
+                        <FontAwesomeIcon icon={faArrowUpAZ} />
+                    </button>
+                    <button
+                        className="sort-project-titles-button"
+                        onClick={handleSortDescending}
+                    >
+                        <FontAwesomeIcon icon={faArrowDownZA} />
+                    </button>
+                </div>
+                {projectTitlesState.map(projectTitle => (
                     <div key={projectTitle.id}>
                         <p>{projectTitle.project_name}</p>
                     </div>

@@ -69,3 +69,11 @@ body {
 .new-project-button {
   @apply ml-5 text-lg hover:text-sky-300
 }
+
+/* .project-titles-bar {
+  @apply flex flex-row
+}
+
+.sort-project-titles-button {
+  
+} */
