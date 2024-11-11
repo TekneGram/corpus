@@ -106,3 +106,7 @@ body {
 .tab-active {
   @apply bg-white border-blue-500 text-blue-500
 }
+
+.tab-page-container {
+  @apply mt-2
+}

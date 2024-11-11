@@ -10,17 +10,26 @@ const TabsContainer = () => {
     }
 
     return (
-        <div className='tabs-container'>
-            {
-                tabTally.map((tally) => (
-                    <div 
-                        className='tab-container'
-                        key={tally}>
-                            <Tab tabNum={tally} handleSetActiveTab={handleSetActiveTab} activeTab={activeTab} />
-                    </div>
-                ))
-            }
+        <div>
+            <div className='tabs-container'>
+                {
+                    tabTally.map((tally) => (
+                        <div 
+                            className='tab-container'
+                            key={tally}
+                        >
+                                <Tab tabNum={tally} handleSetActiveTab={handleSetActiveTab} activeTab={activeTab} />
+                        </div>
+                    ))
+                }
+            </div>
+            <div className='tab-page-container'>
+                {activeTab === 1 && <div>This is the first tab page space</div>}
+                {activeTab === 2 && <div>This is the second tab page space</div>}
+                {activeTab === 3 && <div>This is the third tab page space</div>}
+            </div>
         </div>
+        
     );
 };
 
