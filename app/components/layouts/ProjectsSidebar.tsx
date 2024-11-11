@@ -78,7 +78,6 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
 
     // I have to do useEffect because projectTitles is sent down as a prop, and is a state in the parent component
     // which will not update the useReducer state.
-    // We can also
     useEffect(() => {
         dispatch({ type: "set", payload: projectTitles });
     }, [projectTitles])

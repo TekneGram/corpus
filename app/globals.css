@@ -38,11 +38,11 @@ body {
 }
 
 .projects-sidebar {
-  @apply bg-slate-600 text-white p-4 transition-[width] duration-0 ease-linear
+  @apply bg-slate-600 text-white transition-[width] duration-0 ease-linear
 }
 
 .divider {
-  @apply w-1 cursor-col-resize bg-slate-600 hover:bg-orange-400
+  @apply w-1 cursor-col-resize hover:bg-orange-400
 }
 
 .main-area {
@@ -62,12 +62,12 @@ body {
 }
 
 .new-project-input {
-  @apply h-8 p-1 w-full text-white border-b-white border-b-2 bg-slate-600 focus:outline-none
+  @apply h-8 p-1 ml-2 mt-2 w-full text-white border-b-white border-b-2 bg-slate-600 focus:outline-none
   text-center font-extralight font-sans
 }
 
 .new-project-button {
-  @apply ml-5 text-lg hover:text-sky-300
+  @apply ml-2 mr-3 text-lg hover:text-sky-300
 }
 
 .project-titles-bar {
@@ -75,13 +75,17 @@ body {
 }
 
 .sort-project-titles-button {
-  
+  @apply mt-2 mb-2
 }
 
 .project-title-entry {
-  @apply p-1;
+  @apply w-[100%]
 }
 
 .project-selected {
-  @apply bg-orange-300;
+  @apply bg-stone-200 text-black
+}
+
+.project-title {
+  @apply pl-3;
 }
