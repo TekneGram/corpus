@@ -51,6 +51,7 @@ export default function RootLayout({
             startingNewProject={isStartingNewProject}
             handleStartingNewProject={setIsStartingNewProject}
             projectTitles={projectTitles}
+            refreshProjectTitles={setProjectTitles}
           />
 
           <main className='main-area'>
