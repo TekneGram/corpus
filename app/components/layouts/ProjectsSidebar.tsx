@@ -1,5 +1,5 @@
 import { useState, useRef, useReducer, useEffect } from 'react';
-import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase, loadAllProjectTitles } from "../../ipcRenderer/newProjects";
 
@@ -7,6 +7,8 @@ type ProjectTitle = {
     id: number;
     project_name: string;
 };
+
+type SelectableProjectTitle = ProjectTitle & { isSelected: boolean };
 
 interface ProjectSidebarProps {
     startingNewProject: boolean;
@@ -16,11 +18,15 @@ interface ProjectSidebarProps {
 };
 
 type ProjectTitlesAction = {
-    type: "sort" | "set";
-    payload: "asc" | "desc" | ProjectTitle[];
+    type: "sort" | "set" | "toggleSelected";
+    payload: "asc" | "desc" | ProjectTitle[] | number;
 }
 
-function projectTitlesReducer(projectTitles:ProjectTitle[], action: ProjectTitlesAction): ProjectTitle[] {
+// Used as part of useReducer to sort the project titles.
+// the 'set' action type is necessary because the projectTitles
+// won't set the useReducer state. This is because it is a useState state from the parent component
+// The set action is called in the useEffect to set projectTitlesState properly.
+function projectTitlesReducer(projectTitles: SelectableProjectTitle[], action: ProjectTitlesAction): SelectableProjectTitle[] {
     switch (action.type) {
         case 'sort':
             return [...projectTitles].sort((a, b) => {
@@ -31,7 +37,12 @@ function projectTitlesReducer(projectTitles:ProjectTitle[], action: ProjectTitle
                 }
             });
         case 'set':
-            return projectTitles;
+            return Array.isArray(action.payload) ? action.payload.map(item => ({ ...item, isSelected: false})) : projectTitles;
+        case 'toggleSelected':
+            return projectTitles.map(projectTitle => {
+                return projectTitle.id === action.payload ?
+                {...projectTitle, isSelected: true} : {...projectTitle, isSelected: false}
+            });
         default:
             return projectTitles;
     }
@@ -43,11 +54,14 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     projectTitles, 
     refreshProjectTitles 
 }) => {
-
     /**
      * Functionality to handle sorting the project titles
      */
-    const [projectTitlesState, dispatch] = useReducer<React.Reducer<ProjectTitle[], ProjectTitlesAction>>(projectTitlesReducer, projectTitles);
+    const [projectTitlesState, dispatch] = useReducer<React.Reducer<SelectableProjectTitle[], ProjectTitlesAction>>(
+        projectTitlesReducer, 
+        projectTitles.map(project => ({ ...project, isSelected: false}))
+    );
+
     const handleSortAscending = () => {
         dispatch({
             type: "sort",
@@ -62,9 +76,19 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
         })
     }
 
+    // I have to do useEffect because projectTitles is sent down as a prop, and is a state in the parent component
+    // which will not update the useReducer state.
+    // We can also
     useEffect(() => {
         dispatch({ type: "set", payload: projectTitles });
     }, [projectTitles])
+
+    /**
+     * Functionality to handle the toggle of selected states on project titles
+     */
+    const toggleSelected = (id: number) => {
+        dispatch({ type: "toggleSelected", payload: id })
+    }
 
     /**
      * Functionality to handle changing width of sidebar by dragging
@@ -132,6 +156,9 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
      * End of functionality to handle adding a new project
      */
 
+    /**
+     * Functionality for selecting title
+     */
 
     return (
         <>
@@ -179,8 +206,14 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                     </button>
                 </div>
                 {projectTitlesState.map(projectTitle => (
-                    <div key={projectTitle.id}>
-                        <p>{projectTitle.project_name}</p>
+                    <div 
+                        key={projectTitle.id}
+                        className='project-title-entry'
+                    >
+                        <div className={`project-title-bar ${projectTitle.isSelected ? 'project-selected' : ''}`} onClick={() => toggleSelected(projectTitle.id)}>
+                            <span className='project-title'>{projectTitle.project_name}</span>
+                        </div>
+                        
                     </div>
                 ))}
 

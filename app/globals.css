@@ -70,10 +70,18 @@ body {
   @apply ml-5 text-lg hover:text-sky-300
 }
 
-/* .project-titles-bar {
-  @apply flex flex-row
+.project-titles-bar {
+  @apply flex flex-row justify-around font-extralight text-xl
 }
 
 .sort-project-titles-button {
   
-} */
+}
+
+.project-title-entry {
+  @apply p-1;
+}
+
+.project-selected {
+  @apply bg-orange-300;
+}
