@@ -3,6 +3,8 @@ import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faEye } from "@fortawes
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase, loadAllProjectTitles } from "../../ipcRenderer/newProjects";
 
+import { useProjectTitles, useProjectTitlesDispatch } from '../../context/ProjectsContext';
+
 type ProjectTitle = {
     id: number;
     project_name: string;
@@ -13,80 +15,79 @@ type SelectableProjectTitle = ProjectTitle & { isSelected: boolean };
 interface ProjectSidebarProps {
     startingNewProject: boolean;
     handleStartingNewProject: (state:boolean) => void;
-    projectTitles: ProjectTitle[];
-    refreshProjectTitles: (state: ProjectTitle[]) => void;
 };
 
-type ProjectTitlesAction = {
-    type: "sort" | "set" | "toggleSelected";
-    payload: "asc" | "desc" | ProjectTitle[] | number;
-}
+// type ProjectTitlesAction = {
+//     type: "sort" | "set" | "toggleSelected";
+//     payload: "asc" | "desc" | ProjectTitle[] | number;
+// }
 
-// Used as part of useReducer to sort the project titles.
-// the 'set' action type is necessary because the projectTitles
-// won't set the useReducer state. This is because it is a useState state from the parent component
-// The set action is called in the useEffect to set projectTitlesState properly.
-function projectTitlesReducer(projectTitles: SelectableProjectTitle[], action: ProjectTitlesAction): SelectableProjectTitle[] {
-    switch (action.type) {
-        case 'sort':
-            return [...projectTitles].sort((a, b) => {
-                if (action.payload === "asc") {
-                    return a.project_name.localeCompare(b.project_name);
-                } else {
-                    return b.project_name.localeCompare(a.project_name);
-                }
-            });
-        case 'set':
-            return Array.isArray(action.payload) ? action.payload.map(item => ({ ...item, isSelected: false})) : projectTitles;
-        case 'toggleSelected':
-            return projectTitles.map(projectTitle => {
-                return projectTitle.id === action.payload ?
-                {...projectTitle, isSelected: true} : {...projectTitle, isSelected: false}
-            });
-        default:
-            return projectTitles;
-    }
-}
+// // Used as part of useReducer to sort the project titles.
+// // the 'set' action type is necessary because the projectTitles
+// // won't set the useReducer state. This is because it is a useState state from the parent component
+// // The set action is called in the useEffect to set projectTitlesState properly.
+// function projectTitlesReducer(projectTitles: SelectableProjectTitle[], action: ProjectTitlesAction): SelectableProjectTitle[] {
+//     switch (action.type) {
+//         case 'sort':
+//             return [...projectTitles].sort((a, b) => {
+//                 if (action.payload === "asc") {
+//                     return a.project_name.localeCompare(b.project_name);
+//                 } else {
+//                     return b.project_name.localeCompare(a.project_name);
+//                 }
+//             });
+//         case 'set':
+//             return Array.isArray(action.payload) ? action.payload.map(item => ({ ...item, isSelected: false})) : projectTitles;
+//         case 'toggleSelected':
+//             return projectTitles.map(projectTitle => {
+//                 return projectTitle.id === action.payload ?
+//                 {...projectTitle, isSelected: true} : {...projectTitle, isSelected: false}
+//             });
+//         default:
+//             return projectTitles;
+//     }
+// }
 
 const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ 
     startingNewProject, 
-    handleStartingNewProject, 
-    projectTitles, 
-    refreshProjectTitles 
+    handleStartingNewProject
 }) => {
     /**
      * Functionality to handle sorting the project titles
      */
-    const [projectTitlesState, dispatch] = useReducer<React.Reducer<SelectableProjectTitle[], ProjectTitlesAction>>(
-        projectTitlesReducer, 
-        projectTitles.map(project => ({ ...project, isSelected: false}))
-    );
+    // const [projectTitlesState, dispatch] = useReducer<React.Reducer<SelectableProjectTitle[], ProjectTitlesAction>>(
+    //     projectTitlesReducer, 
+    //     projectTitles.map(project => ({ ...project, isSelected: false}))
+    // );
+
+    const dispatch = useProjectTitlesDispatch();
+    const projectTitles = useProjectTitles();
 
     const handleSortAscending = () => {
         dispatch({
-            type: "sort",
-            payload: "asc"
+            type: "sorted",
+            sortType: "asc",
         });
     }
 
     const handleSortDescending = () => {
         dispatch({
-            type: "sort",
-            payload: "desc"
+            type: "sorted",
+            sortType: "desc"
         })
     }
 
-    // I have to do useEffect because projectTitles is sent down as a prop, and is a state in the parent component
-    // which will not update the useReducer state.
-    useEffect(() => {
-        dispatch({ type: "set", payload: projectTitles });
-    }, [projectTitles])
+    // // I have to do useEffect because projectTitles is sent down as a prop, and is a state in the parent component
+    // // which will not update the useReducer state.
+    // useEffect(() => {
+    //     dispatch({ type: "set", payload: projectTitles });
+    // }, [projectTitles])
 
     /**
      * Functionality to handle the toggle of selected states on project titles
      */
     const toggleSelected = (id: number) => {
-        dispatch({ type: "toggleSelected", payload: id })
+        dispatch({ type: "setSelected", id: id })
     }
 
     /**
@@ -124,10 +125,13 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
         setNewProjectTitle(value);
     }
 
-    const reloadAllTopics = async () => {
-        const allTopics = await loadAllProjectTitles();
-        refreshProjectTitles(allTopics);
-    }
+    const refreshAllProjectTitles = async () => {
+        const allProjects: ProjectTitle[] = await loadAllProjectTitles();
+        const allProjectsSelected = allProjects.map((project) => {
+            return { ...project, isSelected: false};
+        });
+        dispatch({ type: 'refreshed', 'projectTitles': allProjectsSelected });
+    };
 
     const handleStartNewProject = () => {
         const title = newProjectTitle.trim();
@@ -139,7 +143,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
             setNewProjectTitle('');
             handleStartingNewProject(false);
             // Refresh the project titles
-            reloadAllTopics();
+            refreshAllProjectTitles();
 
         } else {
             alert("Your title needs to be at least 4 letters long");
@@ -204,7 +208,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                         <FontAwesomeIcon icon={faArrowDownZA} />
                     </button>
                 </div>
-                {projectTitlesState.map(projectTitle => (
+                {projectTitles.map(projectTitle => (
                     <div 
                         key={projectTitle.id}
                         className='project-title-entry'

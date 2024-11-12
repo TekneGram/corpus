@@ -11,6 +11,7 @@ const TabsContainer = () => {
 
     return (
         <div>
+            {/* Tab bar */}
             <div className='tabs-container'>
                 {
                     tabTally.map((tally) => (
@@ -23,6 +24,7 @@ const TabsContainer = () => {
                     ))
                 }
             </div>
+            {/* Tab Page Space */}
             <div className='tab-page-container'>
                 {activeTab === 1 && <div>This is the first tab page space</div>}
                 {activeTab === 2 && <div>This is the second tab page space</div>}

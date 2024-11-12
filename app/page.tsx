@@ -4,7 +4,7 @@ import TabsContainer from "./components/tabs/TabsContainer";
 const Home = () => {
 
   return (
-    <div className='w-full'>
+    <div>
       <TabsContainer />
     </div>
   )

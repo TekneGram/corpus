@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 export const loadAllProjectTitles = async () => {
     try {
         const response = await window.electron.ipcRenderer.invoke('load-all-project-titles');
-        if(response.success) {
+        if (response.success) {
             return response.results;
         } else {
             toast.error(response.message);

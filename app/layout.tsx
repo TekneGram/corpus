@@ -8,6 +8,8 @@ import OperationsSidebar from "./components/layouts/OperationsSidebar";
 import ProjectsSidebar from "./components/layouts/ProjectsSidebar";
 import { loadAllProjectTitles } from "./ipcRenderer/newProjects";
 
+import { ProjectTitlesProvider } from './context/ProjectsContext';
+
 type ProjectTitle = {
   id: number;
   project_name: string;
@@ -32,36 +34,36 @@ export default function RootLayout({
   
 
   return (
-    <html lang="en">
-      <body
-        className={`screen`}
-      >
-        <ToastContainer />
-        <header className='page-header'>
-            <h1>Header</h1>
-        </header>
+    <ProjectTitlesProvider>
+      <html lang="en">
+        <body
+          className={`screen`}
+        >
+          <ToastContainer />
+          <header className='page-header'>
+              <h1>Header</h1>
+          </header>
 
-        <div className='screen-body'>
+          <div className='screen-body'>
 
-          <OperationsSidebar 
-            handleStartingNewProject={setIsStartingNewProject} 
-          />
+            <OperationsSidebar 
+              handleStartingNewProject={setIsStartingNewProject} 
+            />
 
-          <ProjectsSidebar 
-            startingNewProject={isStartingNewProject}
-            handleStartingNewProject={setIsStartingNewProject}
-            projectTitles={projectTitles}
-            refreshProjectTitles={setProjectTitles}
-          />
+            <ProjectsSidebar 
+              startingNewProject={isStartingNewProject}
+              handleStartingNewProject={setIsStartingNewProject}
+            />
 
-          <main className='main-area'>
-            {children}
-          </main>
+            <main className='main-area'>
+              {children}
+            </main>
 
-        </div>
+          </div>
 
-        
-      </body>
-    </html>
+          
+        </body>
+      </html>
+    </ProjectTitlesProvider>
   );
 }
