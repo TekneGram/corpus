@@ -52,17 +52,13 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     startingNewProject, 
     handleStartingNewProject
 }) => {
-    /**
-     * Functionality to handle sorting the project titles
-     */
-    // const [projectTitlesState, dispatch] = useReducer<React.Reducer<SelectableProjectTitle[], ProjectTitlesAction>>(
-    //     projectTitlesReducer, 
-    //     projectTitles.map(project => ({ ...project, isSelected: false}))
-    // );
-
+    // Use the context for state:
     const dispatch = useProjectTitlesDispatch();
     const projectTitles = useProjectTitles();
 
+    /**
+     * Functionality to handle sorting the project titles
+     */
     const handleSortAscending = () => {
         dispatch({
             type: "sorted",
@@ -76,12 +72,6 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
             sortType: "desc"
         })
     }
-
-    // // I have to do useEffect because projectTitles is sent down as a prop, and is a state in the parent component
-    // // which will not update the useReducer state.
-    // useEffect(() => {
-    //     dispatch({ type: "set", payload: projectTitles });
-    // }, [projectTitles])
 
     /**
      * Functionality to handle the toggle of selected states on project titles
@@ -113,9 +103,6 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseup", handleMouseUp);
     }
-    /**
-     * End of dragging side bar
-     */
 
     /**
      * Functionality to handle adding a new project

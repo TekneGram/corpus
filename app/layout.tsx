@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 
 import OperationsSidebar from "./components/layouts/OperationsSidebar";
 import ProjectsSidebar from "./components/layouts/ProjectsSidebar";
+import Header from "./components/layouts/Header";
 import { loadAllProjectTitles } from "./ipcRenderer/newProjects";
 
 import { ProjectTitlesProvider } from './context/ProjectsContext';
@@ -22,15 +23,15 @@ export default function RootLayout({
 }>) {
 
   const [isStartingNewProject, setIsStartingNewProject] = useState<boolean>(false);
-  const [projectTitles, setProjectTitles] = useState<ProjectTitle[]>([]);
-  // Get all the project titles on load
-  useEffect(() => {
-    const handleLoadAllProjectTitles = async () => {
-      const dbProjectTitles = await loadAllProjectTitles();
-      setProjectTitles(dbProjectTitles);
-    }
-    handleLoadAllProjectTitles();
-  }, [loadAllProjectTitles, setProjectTitles]);
+  // const [projectTitles, setProjectTitles] = useState<ProjectTitle[]>([]);
+  // // Get all the project titles on load
+  // useEffect(() => {
+  //   const handleLoadAllProjectTitles = async () => {
+  //     const dbProjectTitles = await loadAllProjectTitles();
+  //     setProjectTitles(dbProjectTitles);
+  //   }
+  //   handleLoadAllProjectTitles();
+  // }, [loadAllProjectTitles, setProjectTitles]);
   
 
   return (
@@ -40,9 +41,8 @@ export default function RootLayout({
           className={`screen`}
         >
           <ToastContainer />
-          <header className='page-header'>
-              <h1>Header</h1>
-          </header>
+          
+          <Header />
 
           <div className='screen-body'>
 

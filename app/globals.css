@@ -26,7 +26,7 @@ body {
 }
 
 .screen {
-  @apply flex min-h-screen;
+  @apply  min-h-screen;
 }
 
 .screen-body {
@@ -54,7 +54,7 @@ body {
 
 /* Projects Bar Elements */
 .new-project-area {
-  @apply flex flex-row flex-grow;
+  @apply flex flex-row;
 }
 
 .new-project-input {
@@ -88,11 +88,11 @@ body {
 
 /* TAB BARS */
 .main-area {
-  @apply h-screen;
+  @apply h-screen w-full;
 }
 
 .tabs-container {
-  @apply flex w-full;
+  @apply flex
 }
 
 .tab-container {
@@ -109,4 +109,8 @@ body {
 
 .tab-page-container {
   @apply mt-2
+}
+
+.main-page-tab {
+  
 }

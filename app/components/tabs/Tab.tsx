@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import '../../globals.css';
 
 interface TabProps {
     tabNum: number;
