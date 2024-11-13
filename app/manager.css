@@ -6,10 +6,20 @@
     @apply grid gap-4 grid-cols-4
 }
 
-.add-group-button {
-    @apply border-blue-400 border-2 rounded-lg p-1
-    font-extralight text-sm hover:text-white hover:bg-blue-400
-    w-[90%]
+.corpus-edit-area {
+    @apply w-full flex flex-col h-32 bg-slate-200 rounded-2xl 
+}
+
+.corpus-title-area {
+    @apply text-center mt-3 mb-3
+}
+
+.corpus-name-input {
+    @apply font-extralight w-4/6 mr-3 text-2xl p-1 rounded drop-shadow-md text-center focus:outline-none;
+}
+
+.corpus-title {
+    @apply font-extralight text-2xl
 }
 
 .group-input-area {
@@ -17,7 +27,13 @@
 }
 
 .add-group-area {
-    @apply bg-slate-200 rounded-2xl items-center justify-center h-16
+    @apply text-center;
+}
+
+.add-group-button {
+    @apply border-blue-400 border-2 rounded-lg p-1
+    font-extralight text-sm hover:text-white hover:bg-blue-400
+    w-[90%]
 }
 
 .group-name-input {

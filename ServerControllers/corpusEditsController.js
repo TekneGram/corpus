@@ -1,31 +1,50 @@
 const { spawn } = require('node:child_process');
 const path = require('path');
 
-// const { exec } = require('child_process');
-// exec('which RScript', (err, stdout, stderr) => {
-//     if (err) {
-//         console.error('Error locating RScript:', stderr);
-//     } else {
-//         console.log('RScript located at:', stdout);
-//     }
-// });
-
-// // console.log('PATH:', process.env.PATH);
-
-// function R(path) {
-//     this.d = {};
-//     this.path = path;
-//     this.options = {
-//         env: {
-//             ...process.env,
-//             PATH: process.env.PATH + '/usr/local/bin/RScript'
-//         }
-//     }
-//     this.idCounter = 0;
-//     this.args = ["--vanilla", __dirname + "/R/launch.R"];
-// }
-
 const rScriptPath = path.resolve(__dirname, '../R/pos_tag_single_file.R');
+
+const updateCorpusName = (req, res, next) => {
+    console.log(req.body);
+    // stringify the data
+    const jsonData = JSON.stringify(req.body);
+
+    // spawn cpp process
+    const executablePath = path.resolve(__dirname, '../CPP/executables/patchCorpusName');
+    const cppProcess = spawn(executablePath);
+    cppProcess.stdin.write(jsonData + ('\n'));
+    cppProcess.stdin.end();
+
+    // For checks
+    let cppOutput = '';
+    let cppErrorOutput = '';
+    cppProcess.stdout.on('data', (data) => {
+        cppOutput += data.toString();
+        console.log('C++ stdout:', data.toString());
+    });
+    cppProcess.stderr.on('data', (data) => {
+        cppErrorOutput += data.toString();
+        console.error('C++ stderr:', data.toString());
+    });
+
+    cppProcess.on('close', (code) => {
+        if (code === 0) {
+            console.log("C++ process completed successfully");
+            console.log("C++ output:", cppOutput);
+            res.status(200).json(cppOutput);
+        } else {
+            console.log("C++ process failed with code", code);
+            console.log("Error output", cppErrorOutput);
+            res.status(500).send("Could not process file!");
+        }
+    });
+
+    cppProcess.on('error', (err) => {
+        console.error("Failed to start C++ executable", err);
+        res.status(500).send("Internal server error");
+    })
+
+    res.status(200);
+}
 
 const processFileContent = (req, res, next) => {
     const dataToSend = {
@@ -107,5 +126,6 @@ const processFileContent = (req, res, next) => {
 }
 
 module.exports = {
-    processFileContent
+    processFileContent,
+    updateCorpusName
 }

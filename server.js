@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
-processFilesRoutes = require('./ServerRouter/fileUploads.js');
+processFilesRoutes = require('./ServerRouter/corpusEdits.js');
 
 const app = express();
 
@@ -15,7 +15,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 
-app.use("/api/for-processing", processFilesRoutes);
+app.use("/api/corpus-edits", processFilesRoutes);
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello from the home page" });
