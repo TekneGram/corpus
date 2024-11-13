@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron');
-const NewProject = require('../database/newProjects');
+const NewProject = require('../models/newProjects');
 
 // Get projects from database when app is loaded
 const loadAllProjectTitles = () => {

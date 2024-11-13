@@ -3,7 +3,7 @@
 }
 
 .manage-group-area {
-    @apply grid gap-4
+    @apply grid gap-4 grid-cols-4
 }
 
 .add-group-button {

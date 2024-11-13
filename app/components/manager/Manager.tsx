@@ -1,5 +1,6 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FileUpload from "./FileUpload";
 import '../../manager.css';
 
 
@@ -8,7 +9,7 @@ const Manager = () => {
     return (
         <div className = 'manager-container'>
             
-            <div className = {`manage-group-area ${`lg:grid-cols-${4}`}`}>
+            <div className = {`manage-group-area ${``}`}>
                 
                 <div className = 'group-input-area add-group-area'>
                     <button
@@ -20,106 +21,10 @@ const Manager = () => {
                     </button>
 
                 </div>
-                <div className='group-input-area'>
-                    <input
-                        className='group-name-input'
-                        type='text' 
-                    />
-                    <input
-                        type='file'
-                        id='file-upload'
-                        name='files'
-                        multiple
-                        accept='.txt'
-                        className='file-chooser-button'
-                    />
-                    <button
-                        className='file-uploader-button'
-                        type='button'
-                    >
-                        Add files
-                    </button>
-                </div>
-                <div className='group-input-area'>
-                    <input
-                        className='group-name-input'
-                        type='text' 
-                    />
-                    <input
-                        type='file'
-                        id='file-upload'
-                        name='files'
-                        multiple
-                        accept='.txt'
-                        className='file-chooser-button'
-                    />
-                    <button
-                        className='file-uploader-button'
-                        type='button'
-                    >
-                        Add files
-                    </button>
-                </div>
-                <div className='group-input-area'>
-                    <input
-                        className='group-name-input'
-                        type='text' 
-                    />
-                    <input
-                        type='file'
-                        id='file-upload'
-                        name='files'
-                        multiple
-                        accept='.txt'
-                        className='file-chooser-button'
-                    />
-                    <button
-                        className='file-uploader-button'
-                        type='button'
-                    >
-                        Add files
-                    </button>
-                </div>
-                <div className='group-input-area'>
-                    <input
-                        className='group-name-input'
-                        type='text' 
-                    />
-                    <input
-                        type='file'
-                        id='file-upload'
-                        name='files'
-                        multiple
-                        accept='.txt'
-                        className='file-chooser-button'
-                    />
-                    <button
-                        className='file-uploader-button'
-                        type='button'
-                    >
-                        Add files
-                    </button>
-                </div>
-                <div className='group-input-area'>
-                    <input
-                        className='group-name-input'
-                        type='text' 
-                    />
-                    <input
-                        type='file'
-                        id='file-upload'
-                        name='files'
-                        multiple
-                        accept='.txt'
-                        className='file-chooser-button'
-                    />
-                    <button
-                        className='file-uploader-button'
-                        type='button'
-                    >
-                        Add files
-                    </button>
-                </div>
+                <FileUpload />
+                <FileUpload />
+                <FileUpload />
+                <FileUpload />
                 
             </div>
 

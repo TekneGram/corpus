@@ -1,7 +1,7 @@
 const { app, ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./database/index');
-const CreateDatabase = require('./database/createDatabase');
+const CreateDatabase = require('./models/createDatabase');
 const { addNewProject, loadAllProjectTitles } = require('./ipc/projectHandling');
 
 let mainWindow;
