@@ -60,23 +60,6 @@ void parser (
     }
 }
 
-void db ()
-{
-    sqlite3* db; // pointer to sqlite connection
-    sqlite3_stmt* statement; // pointer to a prepared statement
-    int exit_code;
-
-    // Open a conection to the database
-    exit_code = sqlite3_open("./database/corpus.sqlite", &db);
-    if (exit_code) {
-        std::cerr << "Error opening database: " << sqlite3_errmsg(db) << std::endl;
-        //return exit_code; // return type must match function type
-    }
-    std::cout << "Database opened successfully!\n";
-
-    const char* insert_sql = "INSERT INTO ";
-}
-
 
 int main ()
 {
