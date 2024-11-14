@@ -20,44 +20,6 @@ const updateCorpusName = (req, res, next) => {
         }
         
     });
-
-
-    // // spawn cpp process
-    // const executablePath = path.resolve(__dirname, '../CPP/executables/patchCorpusName');
-    // const cppProcess = spawn(executablePath);
-    // cppProcess.stdin.write(jsonData + ('\n'));
-    // cppProcess.stdin.end();
-
-    // // For checks
-    // let cppOutput = '';
-    // let cppErrorOutput = '';
-    // cppProcess.stdout.on('data', (data) => {
-    //     cppOutput += data.toString();
-    //     console.log('C++ stdout:', data.toString());
-    // });
-    // cppProcess.stderr.on('data', (data) => {
-    //     cppErrorOutput += data.toString();
-    //     console.error('C++ stderr:', data.toString());
-    // });
-
-    // cppProcess.on('close', (code) => {
-    //     if (code === 0) {
-    //         console.log("C++ process completed successfully");
-    //         console.log("C++ output:", cppOutput);
-    //         res.status(200).json(cppOutput);
-    //     } else {
-    //         console.log("C++ process failed with code", code);
-    //         console.log("Error output", cppErrorOutput);
-    //         res.status(500).send("Could not process file!");
-    //     }
-    // });
-
-    // cppProcess.on('error', (err) => {
-    //     console.error("Failed to start C++ executable", err);
-    //     res.status(500).send("Internal server error");
-    // })
-
-    res.status(200);
 }
 
 const processFileContent = (req, res, next) => {

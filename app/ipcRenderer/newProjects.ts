@@ -36,7 +36,7 @@ export const saveProjectTitleToDatabase = async (title:string) => {
 export const loadProjectMetadata = async (projectId: number) => {
     console.log(projectId);
     try {
-        const response = await fetch(`http://localhost:4000/api/corpus-data/metadata/:${projectId}`, {
+        const response = await fetch(`http://localhost:4000/api/corpus-data/metadata/${projectId}`, {
             method: "GET",
             headers: {
                 'Content-Type' : 'application-json'

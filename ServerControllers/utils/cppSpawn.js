@@ -14,7 +14,7 @@ class CPPProcess {
         this.cppErrorOutput = '';
         this.cppProcess.on('error', (err) => {
             console.error("Failed to start C++ executable", err);
-            this.#sendErrorInExecutable()
+            this.#sendErrorInExecutable();
         })
     }
 
