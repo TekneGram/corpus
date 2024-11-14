@@ -10,6 +10,7 @@ import Header from "./components/layouts/Header";
 import { loadAllProjectTitles } from "./ipcRenderer/newProjects";
 
 import { ProjectTitlesProvider } from './context/ProjectsContext';
+import { CorpusProvider } from './context/CorpusContext';
 
 type ProjectTitle = {
   id: number;
@@ -35,35 +36,38 @@ export default function RootLayout({
   
 
   return (
-    <ProjectTitlesProvider>
-      <html lang="en">
-        <body
-          className={`screen`}
-        >
-          <ToastContainer />
-          
-          <Header />
+    <CorpusProvider>
+      <ProjectTitlesProvider>
+        <html lang="en">
+          <body
+            className={`screen`}
+          >
+            <ToastContainer />
+            
+            <Header />
 
-          <div className='screen-body'>
+            <div className='screen-body'>
 
-            <OperationsSidebar 
-              handleStartingNewProject={setIsStartingNewProject} 
-            />
+              <OperationsSidebar 
+                handleStartingNewProject={setIsStartingNewProject} 
+              />
 
-            <ProjectsSidebar 
-              startingNewProject={isStartingNewProject}
-              handleStartingNewProject={setIsStartingNewProject}
-            />
+              <ProjectsSidebar 
+                startingNewProject={isStartingNewProject}
+                handleStartingNewProject={setIsStartingNewProject}
+              />
 
-            <main className='main-area'>
-              {children}
-            </main>
+              <main className='main-area'>
+                {children}
+              </main>
 
-          </div>
+            </div>
 
-          
-        </body>
-      </html>
-    </ProjectTitlesProvider>
+            
+          </body>
+        </html>
+      </ProjectTitlesProvider>
+    </CorpusProvider>
+    
   );
 }

@@ -1,5 +1,6 @@
 const { spawn } = require('node:child_process');
 const path = require('path');
+const CPPProcess = require('./utils/cppSpawn');
 
 const rScriptPath = path.resolve(__dirname, '../R/pos_tag_single_file.R');
 
@@ -8,40 +9,53 @@ const updateCorpusName = (req, res, next) => {
     // stringify the data
     const jsonData = JSON.stringify(req.body);
 
-    // spawn cpp process
-    const executablePath = path.resolve(__dirname, '../CPP/executables/patchCorpusName');
-    const cppProcess = spawn(executablePath);
-    cppProcess.stdin.write(jsonData + ('\n'));
-    cppProcess.stdin.end();
-
-    // For checks
-    let cppOutput = '';
-    let cppErrorOutput = '';
-    cppProcess.stdout.on('data', (data) => {
-        cppOutput += data.toString();
-        console.log('C++ stdout:', data.toString());
-    });
-    cppProcess.stderr.on('data', (data) => {
-        cppErrorOutput += data.toString();
-        console.error('C++ stderr:', data.toString());
-    });
-
-    cppProcess.on('close', (code) => {
-        if (code === 0) {
-            console.log("C++ process completed successfully");
-            console.log("C++ output:", cppOutput);
-            res.status(200).json(cppOutput);
+    const cppProcess = new CPPProcess('patchCorpusName');
+    cppProcess.runProcess(jsonData, (error, output) => {
+        if (error) {
+            console.error("Error:", error.message);
+            res.status(500).json({ status: "fail", message: "Server error in cpp process" });
         } else {
-            console.log("C++ process failed with code", code);
-            console.log("Error output", cppErrorOutput);
-            res.status(500).send("Could not process file!");
+            console.log("Output from cpp process:", output);
+            res.status(200);
         }
+        
     });
 
-    cppProcess.on('error', (err) => {
-        console.error("Failed to start C++ executable", err);
-        res.status(500).send("Internal server error");
-    })
+
+    // // spawn cpp process
+    // const executablePath = path.resolve(__dirname, '../CPP/executables/patchCorpusName');
+    // const cppProcess = spawn(executablePath);
+    // cppProcess.stdin.write(jsonData + ('\n'));
+    // cppProcess.stdin.end();
+
+    // // For checks
+    // let cppOutput = '';
+    // let cppErrorOutput = '';
+    // cppProcess.stdout.on('data', (data) => {
+    //     cppOutput += data.toString();
+    //     console.log('C++ stdout:', data.toString());
+    // });
+    // cppProcess.stderr.on('data', (data) => {
+    //     cppErrorOutput += data.toString();
+    //     console.error('C++ stderr:', data.toString());
+    // });
+
+    // cppProcess.on('close', (code) => {
+    //     if (code === 0) {
+    //         console.log("C++ process completed successfully");
+    //         console.log("C++ output:", cppOutput);
+    //         res.status(200).json(cppOutput);
+    //     } else {
+    //         console.log("C++ process failed with code", code);
+    //         console.log("Error output", cppErrorOutput);
+    //         res.status(500).send("Could not process file!");
+    //     }
+    // });
+
+    // cppProcess.on('error', (err) => {
+    //     console.error("Failed to start C++ executable", err);
+    //     res.status(500).send("Internal server error");
+    // })
 
     res.status(200);
 }

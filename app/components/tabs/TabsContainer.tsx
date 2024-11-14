@@ -21,7 +21,11 @@ const TabsContainer = () => {
                             className='tab-container'
                             key={tally}
                         >
-                                <Tab tabNum={tally} handleSetActiveTab={handleSetActiveTab} activeTab={activeTab} />
+                                <Tab 
+                                    tabNum={tally} 
+                                    handleSetActiveTab={handleSetActiveTab} 
+                                    activeTab={activeTab} 
+                                />
                         </div>
                     ))
                 }

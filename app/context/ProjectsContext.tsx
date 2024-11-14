@@ -49,7 +49,7 @@ export const ProjectTitlesProvider: React.FC<ProjectTitlesProviderProps> = ({ ch
     )
 }
 
-export const useProjectTitles = () =>{
+export const useProjectTitles = () => {
     return useContext(ProjectTitlesContext);
 }
 

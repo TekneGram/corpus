@@ -32,3 +32,22 @@ export const saveProjectTitleToDatabase = async (title:string) => {
         toast.error('Failed to add project: ' + error);
     }
 }
+
+export const loadProjectMetadata = async (projectId: number) => {
+    console.log(projectId);
+    try {
+        const response = await fetch(`http://localhost:4000/api/corpus-data/metadata/:${projectId}`, {
+            method: "GET",
+            headers: {
+                'Content-Type' : 'application-json'
+            },
+            credentials: 'include'
+        })
+        const result = await response.json();
+        console.log(result);
+        return result;
+    } catch (error) {
+        console.error('Error getting corpus metadata for your project');
+        toast.error("Error getting corpus metadata for you project: " + error);
+    }
+}

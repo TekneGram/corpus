@@ -1,7 +1,7 @@
 import { useState, useRef, useReducer, useEffect } from 'react';
 import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { saveProjectTitleToDatabase, loadAllProjectTitles } from "../../ipcRenderer/newProjects";
+import { saveProjectTitleToDatabase, loadAllProjectTitles, loadProjectMetadata } from "../../ipcRenderer/newProjects";
 
 import { useProjectTitles, useProjectTitlesDispatch } from '../../context/ProjectsContext';
 
@@ -16,37 +16,6 @@ interface ProjectSidebarProps {
     startingNewProject: boolean;
     handleStartingNewProject: (state:boolean) => void;
 };
-
-// type ProjectTitlesAction = {
-//     type: "sort" | "set" | "toggleSelected";
-//     payload: "asc" | "desc" | ProjectTitle[] | number;
-// }
-
-// // Used as part of useReducer to sort the project titles.
-// // the 'set' action type is necessary because the projectTitles
-// // won't set the useReducer state. This is because it is a useState state from the parent component
-// // The set action is called in the useEffect to set projectTitlesState properly.
-// function projectTitlesReducer(projectTitles: SelectableProjectTitle[], action: ProjectTitlesAction): SelectableProjectTitle[] {
-//     switch (action.type) {
-//         case 'sort':
-//             return [...projectTitles].sort((a, b) => {
-//                 if (action.payload === "asc") {
-//                     return a.project_name.localeCompare(b.project_name);
-//                 } else {
-//                     return b.project_name.localeCompare(a.project_name);
-//                 }
-//             });
-//         case 'set':
-//             return Array.isArray(action.payload) ? action.payload.map(item => ({ ...item, isSelected: false})) : projectTitles;
-//         case 'toggleSelected':
-//             return projectTitles.map(projectTitle => {
-//                 return projectTitle.id === action.payload ?
-//                 {...projectTitle, isSelected: true} : {...projectTitle, isSelected: false}
-//             });
-//         default:
-//             return projectTitles;
-//     }
-// }
 
 const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({ 
     startingNewProject, 
@@ -77,7 +46,9 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
      * Functionality to handle the toggle of selected states on project titles
      */
     const toggleSelected = (id: number) => {
-        dispatch({ type: "setSelected", id: id })
+        dispatch({ type: "setSelected", id: id });
+        const metadata = loadProjectMetadata(id);
+        console.log("In ProjectsSidebar.tsx, the metadata is: ", metadata);
     }
 
     /**
@@ -154,7 +125,6 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
         <>
             <aside className='projects-sidebar' style = {{ width: projectsBarWidth }}>
             
-                
                 {/* For creating a new project */}
                 {startingNewProject && (
                     <div className={`new-project-area`}>
