@@ -1,10 +1,13 @@
-import { useState } from 'react';
+"use client"
+
+import { useState, useEffect } from 'react';
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FileUpload from "./FileUpload";
 import '../../manager.css';
-import { postCorpusName } from '@/app/ipcRenderer/corpusEdits';
+import { postCorpusName, patchCorpusName } from '@/app/ipcRenderer/corpusEdits';
 import { useProjectTitles } from '@/app/context/ProjectsContext';
+import { useCorpusMetaData } from '@/app/context/CorpusContext';
 
 interface SelectableProjectTitle {
     id: number;
@@ -16,9 +19,18 @@ interface SelectableProjectTitle {
 const Manager = () => {
 
     const projectTitles: SelectableProjectTitle[] = useProjectTitles();
+    let corpusMetadata = useCorpusMetaData();
+    console.log("Hi there:", corpusMetadata);
+
+    if(!corpusMetadata) {
+        return <div>Loading corpus metadata...</div>;
+    }
 
     const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false);
     const [corpusName, setCorpusName] = useState<string>('Click to name');
+
+    const [corpusAllData, setCorpusAllData] = useState(corpusMetadata);
+
     const handleEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
     }
@@ -37,10 +49,22 @@ const Manager = () => {
         const corpusDetails = {
             corpusName: corpusName,
             projectId: projectId
+        };
+        console.log("Blahdyblah:", corpusMetadata);
+        // If this is the first time to change the name, it will have no name
+
+        console.log("Blahdyblah 2:", corpusMetadata);
+
+
+        console.log("Blahdyblah 3:", corpusMetadata.corpus);
+        if (corpusMetadata.corpus.corpus_name === '') {
+            console.log("I'm here", corpusMetadata.corpus.corpus_name);
+            //postCorpusName(corpusDetails);
+        } else {
+            // This time we just want to patch the name
+            patchCorpusName(corpusDetails);
         }
         
-        // If the corpus name has already been gotten from the database, then we should call patchCorpusName
-        postCorpusName(corpusDetails);
     }
 
     return (
@@ -65,7 +89,7 @@ const Manager = () => {
                                     type='button'
                                     onClick={() => {
                                         handleEditCorpusName();
-                                        updateCorpusName()
+                                        updateCorpusName();
                                     }}
                                 ><FontAwesomeIcon icon={faPlus} /></button>
                             </div>

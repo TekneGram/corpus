@@ -17,7 +17,7 @@ const getProjectMetadata = (req, res) => {
             console.log("Output from cpp process: ", output);
             // parse output to be json
             // make sure it looks a certain type
-            return res.status(200);
+            return res.status(200).json(output);
         }
     });
 }

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { saveProjectTitleToDatabase, loadAllProjectTitles, loadProjectMetadata } from "../../ipcRenderer/newProjects";
 
 import { useProjectTitles, useProjectTitlesDispatch } from '../../context/ProjectsContext';
+import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 type ProjectTitle = {
     id: number;
@@ -24,6 +25,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     // Use the context for state:
     const dispatch = useProjectTitlesDispatch();
     const projectTitles = useProjectTitles();
+    const dispatchCorpusMetaData = useCorpusDispatch();
 
     /**
      * Functionality to handle sorting the project titles
@@ -45,10 +47,17 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     /**
      * Functionality to handle the toggle of selected states on project titles
      */
-    const toggleSelected = (id: number) => {
+    const toggleSelected = async(id: number) => {
         dispatch({ type: "setSelected", id: id });
-        const metadata = loadProjectMetadata(id);
+        const metadata = await loadProjectMetadata(id);
         console.log("In ProjectsSidebar.tsx, the metadata is: ", metadata);
+        if(metadata !== undefined && dispatchCorpusMetaData) {
+            dispatchCorpusMetaData({ // this is a non-null assertion
+                type: 'initialize',
+                corpusMetadata: metadata
+            });
+        }
+        
     }
 
     /**

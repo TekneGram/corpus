@@ -40,7 +40,7 @@ type CorpusMetaData = {
 };
 
 type CorpusMetaDataActions = 
-| { type: 'update' };
+| { type: 'initialize'; corpusMetadata: CorpusMetaData };
 
 interface CorpusProviderProps {
     children: ReactNode;
@@ -87,10 +87,10 @@ export const useCorpusDispatch = () => {
 
 const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: CorpusMetaDataActions): CorpusMetaData => {
     switch (action.type) {
-        case 'update' :{
-            return corpusMetaData;
+        case 'initialize': {
+            return action.corpusMetadata;
         }
-        default : {
+        default: {
             return corpusMetaData;
         }
     }

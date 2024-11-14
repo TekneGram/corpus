@@ -44,8 +44,7 @@ export const loadProjectMetadata = async (projectId: number) => {
             credentials: 'include'
         })
         const result = await response.json();
-        console.log(result);
-        return result;
+        return JSON.parse(result);
     } catch (error) {
         console.error('Error getting corpus metadata for your project');
         toast.error("Error getting corpus metadata for you project: " + error);
