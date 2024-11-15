@@ -9,6 +9,36 @@ DatabaseHandler::DatabaseHandler(sqlite3* db)
     dbConn = db;
 }
 
+nlohmann::json DatabaseHandler::getProjectTitles()
+{
+    std::vector<CorpusMetadata::ProjectTitle> projectTitles;
+    sqlite3_stmt* statement;
+    const char* sql = "SELECT project.id, project.project_name "
+                        "FROM project;";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing statement " << sqlite3_errmsg(dbConn) << std::endl;
+        // Convert empty array of titles to JSON to return
+        nlohmann::json projectTitlesJSON = projectTitles;
+        return projectTitlesJSON;
+    }
+
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        CorpusMetadata::ProjectTitle aProjectTitle {
+            sqlite3_column_int(statement, 0),
+            reinterpret_cast<const char*>(sqlite3_column_text(statement, 1))
+        };
+        projectTitles.push_back(aProjectTitle);
+    }
+
+    if (sqlite3_finalize(statement) != SQLITE_OK) {
+        std::cerr << "Error finalizing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+
+    // Convert to json for return
+    nlohmann::json projectTitlesJSON = projectTitles;
+    return projectTitles;
+}
+
 void DatabaseHandler::createCorpusName(const int& project_id, const std::string& corpus_name)
 {
     sqlite3_stmt* statement; // Pointer to a prepared statement
