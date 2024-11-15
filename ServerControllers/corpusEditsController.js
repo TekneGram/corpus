@@ -4,12 +4,12 @@ const CPPProcess = require('./utils/cppSpawn');
 
 const rScriptPath = path.resolve(__dirname, '../R/pos_tag_single_file.R');
 
-const updateCorpusName = (req, res, next) => {
+const createCorpusName = (req, res, next) => {
     console.log(req.body);
     // stringify the data
     const jsonData = JSON.stringify(req.body);
 
-    const cppProcess = new CPPProcess('patchCorpusName');
+    const cppProcess = new CPPProcess('postCorpusName');
     cppProcess.runProcess(jsonData, (error, output) => {
         if (error) {
             console.error("Error:", error.message);
@@ -103,5 +103,5 @@ const processFileContent = (req, res, next) => {
 
 module.exports = {
     processFileContent,
-    updateCorpusName
+    createCorpusName
 }

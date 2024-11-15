@@ -1,11 +1,11 @@
 const express = require('express');
-const { updateCorpusName, processFileContent } = require('../ServerControllers/corpusEditsController');
+const { createCorpusName, processFileContent } = require('../ServerControllers/corpusEditsController');
 
 const router = express.Router();
 router.use(express.json());
 
 router.post('/corpus-name',
-    updateCorpusName
+    createCorpusName
 )
 
 router.post('/single-file', 

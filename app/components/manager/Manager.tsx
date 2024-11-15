@@ -23,13 +23,18 @@ const Manager = () => {
     let corpusDispatch = useCorpusDispatch();
 
     // The purpose of this useEffect is to populate the state of the corpusName from context
-    let initialCorpusName = 'Click to name'; // initial state on creating a project
-    useEffect(() => {
-        initialCorpusName = corpusMetadata.corpus.corpus_name;
-    })
-
     const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false);
-    const [corpusName, setCorpusName] = useState<string>(initialCorpusName);
+    const [corpusName, setCorpusName] = useState<string>('');
+    useEffect(() => {
+        setCorpusName((prevName) => {
+            return corpusMetadata.corpus.corpus_name.length > 0 
+            ? corpusMetadata.corpus.corpus_name// initial state on creating a project
+            : 'Click to name';
+        });
+    }, [setCorpusName, corpusMetadata]); 
+
+    
+    console.log("The corpusName is:", corpusName);
 
     const handleEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
