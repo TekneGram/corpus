@@ -9,7 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProjectTitle } from "@/app/types/types";
 
 // APIs
-import { saveProjectTitleToDatabase, loadAllProjectTitles, loadProjectMetadata } from "../../ipcRenderer/newProjects";
+import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
+import { loadProjectMetadata, loadAllProjectTitles } from "@/app/api/manageCorpus";
 
 // Context and state management
 import { useState, useRef, useReducer, useEffect } from 'react';
@@ -54,20 +55,33 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     /**
      * Functionality to handle the toggle of selected states on project titles
      */
+
+    const selectedProject = projectTitles.find((project) => project.isSelected);
+
+    useEffect(() => {
+        if (!selectedProject) return;
+        const fetchMetadata = async () => {
+            // set a loading icon
+            try {
+                const metadata = await loadProjectMetadata(selectedProject.id);
+                if (metadata) {
+                    dispatchCorpusMetaData({
+                        type: 'initialize',
+                        corpusMetadata: metadata,
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching metadata", error);
+                toast.error("Error fetching the project info.");
+            } finally {
+                // remove the loading icon
+            }
+        };
+        fetchMetadata();
+    }, [selectedProject, dispatchCorpusMetaData]);
+
     const toggleSelected = async(id: number) => {
         dispatch({ type: "setSelected", id: id });
-        try {
-            const metadata = await loadProjectMetadata(id);
-            if(metadata !== undefined && dispatchCorpusMetaData) {
-                dispatchCorpusMetaData({ // this is a non-null assertion
-                    type: 'initialize',
-                    corpusMetadata: metadata
-                });
-            }
-        } catch (error) {
-            console.error('Error getting corpus metadata for your project');
-            toast.error("Error getting corpus metadata for your project: " + error);
-        }
     }
 
     /**
@@ -98,32 +112,26 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
      * Functionality to handle adding a new project
      */
     const [newProjectTitle, setNewProjectTitle] = useState<string>('');
+    const [newProjectSaved, setNewProjectSaved] = useState<boolean>(false);
     const handleNewProjectTitleChange = (value: string) => {
         setNewProjectTitle(value);
     }
 
-    const refreshAllProjectTitles = async () => {
-        const allProjects: ProjectTitle[] = await loadAllProjectTitles();
-        const allProjectsSelected = allProjects.map((project) => {
-            return { ...project, isSelected: false};
-        });
-        dispatch({ type: 'refreshed', 'projectTitles': allProjectsSelected });
-    };
-
-    const handleStartNewProject = () => {
+    const handleStartNewProject = async () => {
         const title = newProjectTitle.trim();
         if(title.length > 3) {
-            alert("Your project title is: " + newProjectTitle);
-            // Create a database entry to start a new project
-            saveProjectTitleToDatabase(title);
-            // Update the Projects Sidebar view to show a clickable project title
-            setNewProjectTitle('');
-            handleStartingNewProject(false);
-            // Refresh the project titles
-            refreshAllProjectTitles();
-
+            try {
+                await saveProjectTitleToDatabase(title);
+                toast.success("Project created: " + title);
+                setNewProjectTitle("");
+                handleStartingNewProject(false);
+                setNewProjectSaved(true);
+            } catch (error) {
+                console.error("Error creating a project:", error);
+                toast.error("Failed to create project.");
+            }
         } else {
-            alert("Your title needs to be at least 4 letters long");
+            toast("Your title needs to be at least 4 letters long");
         }
     }
 
@@ -131,6 +139,29 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
         setNewProjectTitle('');
         handleStartingNewProject(false);
     }
+
+    useEffect(() => {
+        if (!newProjectSaved) return;
+        const fetchProjects = async () => {
+            try {
+                const allProjects: ProjectTitle[] = await loadAllProjectTitles();
+                const allProjectsSelected = allProjects.map((project) => ({
+                    ...project,
+                    isSelected: false,
+                }));
+                dispatch({
+                    type: "refreshed",
+                    projectTitles: allProjectsSelected
+                });
+            } catch (error) {
+                console.error("Error fetching projects: ", error);
+                toast.error("Failed to load project titles!");
+            } finally {
+                setNewProjectSaved(false);
+            }
+        };
+        fetchProjects();
+    }, [newProjectSaved, dispatch]);
 
     /**
      * End of functionality to handle adding a new project

@@ -45,11 +45,6 @@ export const CorpusProvider: React.FC<CorpusProviderProps> = ({ children }) => {
             },
             files: []
         } // initial state
-
-        // Probably won't need a use Effect to update the meta data on app load
-        // useEffect(() => {
-
-        // })
     )
 
     return (

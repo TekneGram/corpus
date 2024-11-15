@@ -1,3 +1,4 @@
+// Types
 import { CorpusMetaData } from "@/app/types/types";
 import { CorpusMetaDataActions } from "../contextTypes/contextTypes";
 
