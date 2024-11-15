@@ -30,6 +30,15 @@ const createCorpusName = (req, res) => {
 };
 
 const patchCorpusName = (req, res) => {
+    console.log(req.body);
+    // also need to get the corpusId from the req.params
+    const corpusNameString = JSON.stringify(req.body);
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = cm.addCorpusGroup(corpusNameString);
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Server error in cpp process" });
+    }
 
 };
 

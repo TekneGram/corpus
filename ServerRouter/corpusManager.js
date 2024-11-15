@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 router.use(express.json());
 
-router.get('/project/:projectId/corpus/metadata', getProjectMetadata); // done!
+router.get('/project/:projectId/corpus/metadata', getProjectMetadata); // get the metadata for the corpus associated with a project with id projectId!
 router.post('/corpus', createCorpusName); // corpus name is in the body
 router.patch('/corpus/:corpusId', patchCorpusName); // new corpus name is in the body
 router.post('/corpus/:corpusId/group', createCorpusGroup); // create a group associated with a particular corpus id. Group name is in the body

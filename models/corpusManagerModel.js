@@ -31,11 +31,19 @@ class CorpusManager {
                 return output;
             }
         });
-
     }
 
-    patchCorpusName() {
-
+    patchCorpusName(corpusNameString) {
+        const cppProcess = new CPPProcess('patchCorpusName');
+        cppProcess.runProcess(corpusNameString, (error, output) => {
+            if (error) {
+                console.error("Error:", error.message);
+                throw new Error("There was an error running the c++ process patching the corpus name: ", error);
+            } else {
+                console.log("Output from the cpp process: ", output);
+                return output;
+            }
+        });
     }
 
     addCorpusGroup() {
