@@ -1,4 +1,5 @@
 "use client"
+// CSS
 import './globals.css';
 
 import TabsContainer from "./components/tabs/TabsContainer";

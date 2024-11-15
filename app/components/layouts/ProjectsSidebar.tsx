@@ -1,18 +1,24 @@
-import { useState, useRef, useReducer, useEffect } from 'react';
+"use client"
+// Fonts
 import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// CSS
+
+// Types
+import { ProjectTitle } from "@/app/types/types";
+
+// APIs
 import { saveProjectTitleToDatabase, loadAllProjectTitles, loadProjectMetadata } from "../../ipcRenderer/newProjects";
 
+// Context and state management
+import { useState, useRef, useReducer, useEffect } from 'react';
 import { useProjectTitles, useProjectTitlesDispatch } from '../../context/ProjectsContext';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
+
+// Child components
 import { toast } from 'react-toastify';
 
-type ProjectTitle = {
-    id: number;
-    project_name: string;
-};
-
-type SelectableProjectTitle = ProjectTitle & { isSelected: boolean };
 
 interface ProjectSidebarProps {
     startingNewProject: boolean;

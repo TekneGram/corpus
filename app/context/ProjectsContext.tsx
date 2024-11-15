@@ -1,24 +1,11 @@
 import { createContext, useContext, useEffect, useReducer, ReactNode, Dispatch } from 'react';
-
+import { ProjectTitle, SelectableProjectTitle } from '@/app/types/types';
+import { ProjectTitlesActions } from './contextTypes/contextTypes';
 import { loadAllProjectTitles } from "../ipcRenderer/newProjects";
+import { projectTitlesReducer } from './reducers/projectTitlesReducer';
 
 const ProjectTitlesContext = createContext<SelectableProjectTitle[]>([]);
 const ProjectTitlesDispatchContext = createContext<Dispatch<ProjectTitlesActions>|undefined>(undefined);
-
-type ProjectTitle = {
-    id: number;
-    project_name: string;
-};
-
-interface SelectableProjectTitle extends ProjectTitle {
-    isSelected: boolean 
-};
-
-type ProjectTitlesActions = 
-    | { type: "initialize"; projectTitles: SelectableProjectTitle[] }
-    | { type: "sorted"; sortType: "asc" | "desc" }
-    | { type: "setSelected"; id: number }
-    | { type: "refreshed"; projectTitles: SelectableProjectTitle[]}
 
 interface ProjectTitlesProviderProps {
     children: ReactNode;
@@ -47,11 +34,11 @@ export const ProjectTitlesProvider: React.FC<ProjectTitlesProviderProps> = ({ ch
             </ProjectTitlesDispatchContext.Provider>
         </ProjectTitlesContext.Provider>
     )
-}
+};
 
 export const useProjectTitles = () => {
     return useContext(ProjectTitlesContext);
-}
+};
 
 export const useProjectTitlesDispatch = () => {
     const context = useContext(ProjectTitlesDispatchContext);
@@ -60,33 +47,4 @@ export const useProjectTitlesDispatch = () => {
         throw new Error("useProjectTitlesDispatch must be used within a ProjectTitleProvider");
     }
     return context;
-}
-
-const projectTitlesReducer = (projectTitles: SelectableProjectTitle[], action: ProjectTitlesActions): SelectableProjectTitle[] => {
-    switch (action.type) {
-        case 'initialize': {
-            return action.projectTitles;
-        }
-        case 'sorted': {
-            const sortedTitles = [...projectTitles].sort((a,b) => {
-                if (action.sortType === "asc") {
-                    return a.project_name.localeCompare(b.project_name);
-                } else {
-                    return b.project_name.localeCompare(a.project_name);
-                }
-            });
-            return sortedTitles;
-        }
-        case 'setSelected': {
-            return projectTitles.map((projectTitle) => {
-                return projectTitle.id === action.id ? {...projectTitle, isSelected: true} : {...projectTitle, isSelected: false};
-            });
-        }
-        case 'refreshed': {
-            return action.projectTitles;
-        }
-        default: {
-            return projectTitles;
-        }
-    }
-}
+};

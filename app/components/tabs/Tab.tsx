@@ -1,7 +1,11 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+// CSS
 import '../../globals.css';
+
+// Context and state management
+import { useState, useEffect } from 'react';
+
 
 interface TabProps {
     tabNum: number;

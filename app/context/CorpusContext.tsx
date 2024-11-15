@@ -1,4 +1,7 @@
-import { createContext, useContext, useEffect, useReducer, ReactNode, Dispatch } from 'react';
+import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
+import { CorpusMetaData } from '@/app/types/types';
+import { CorpusMetaDataActions } from './contextTypes/contextTypes';
+import { corpusMetaDataReducer } from './reducers/corpusMetadataReducer';
 
 /**
  * TO DO
@@ -22,41 +25,6 @@ const noop = () => {
 
 const CorpusContext = createContext<CorpusMetaData>(initialCorpusMetaData);
 const CorpusDispatchContext = createContext<Dispatch<CorpusMetaDataActions>>(noop);
-
-type ProjectTitle = {
-    id: number;
-    project_name: string;
-};
-
-type Corpus = {
-    id: number;
-    corpus_name: string;
-};
-
-type SubCorpus = {
-    id: number;
-    group_name: string;
-};
-
-type CorpusFile = {
-    id: number;
-    file_name: string;
-};
-
-type CorpusFilesPerSubCorpus = {
-    corpusFiles: CorpusFile[];
-    subCorpus: SubCorpus;
-};
-
-type CorpusMetaData = {
-    projectTitle: ProjectTitle;
-    corpus: Corpus;
-    files: CorpusFilesPerSubCorpus[];
-};
-
-type CorpusMetaDataActions = 
-| { type: 'initialize'; corpusMetadata: CorpusMetaData }
-| { type: 'update-corpus-name'; corpusName: string };
 
 interface CorpusProviderProps {
     children: ReactNode;
@@ -99,19 +67,4 @@ export const useCorpusMetaData = () => {
 
 export const useCorpusDispatch = () => {
     return useContext(CorpusDispatchContext);
-}
-
-const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: CorpusMetaDataActions): CorpusMetaData => {
-    switch (action.type) {
-        case 'initialize': {
-            return action.corpusMetadata;
-        }
-        case 'update-corpus-name': {
-            corpusMetaData.corpus.corpus_name = action.corpusName;
-            return corpusMetaData;
-        }
-        default: {
-            return corpusMetaData;
-        }
-    }
 }

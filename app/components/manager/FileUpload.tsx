@@ -1,6 +1,11 @@
-import { useEffect, useState} from 'react';
-import { tekneGramText } from '@/app/ipcRenderer/corpusEdits';
+// CSS
 import '../../manager.css';
+
+// APIs
+import { tekneGramText } from '@/app/ipcRenderer/corpusEdits';
+
+// Context and state management
+import { useEffect, useState} from 'react';
 
 interface FileUploadProps {
 

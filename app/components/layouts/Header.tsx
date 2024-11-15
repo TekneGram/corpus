@@ -1,10 +1,10 @@
+"use client"
+// Context and state management
 import { useProjectTitles } from "@/app/context/ProjectsContext";
 
-interface SelectableProjectTitle {
-    id: number;
-    project_name: string;
-    isSelected: boolean;
-}
+// Types
+import { SelectableProjectTitle } from "@/app/types/types";
+
 
 const Header = () => {
 

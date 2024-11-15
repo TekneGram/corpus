@@ -1,19 +1,25 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+// Fonts
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import FileUpload from "./FileUpload";
+
+// CSS
 import '../../manager.css';
+
+// import types
+import { SelectableProjectTitle } from '../../types/types';
+
+// APIs to server
 import { postCorpusName, patchCorpusName } from '@/app/ipcRenderer/corpusEdits';
+
+// import useContext aliases and state management
 import { useProjectTitles } from '@/app/context/ProjectsContext';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
+import { useState, useEffect } from 'react';
 
-interface SelectableProjectTitle {
-    id: number;
-    project_name: string;
-    isSelected: boolean;
-}
+// Child Components
+import FileUpload from "./FileUpload";
 
 
 const Manager = () => {

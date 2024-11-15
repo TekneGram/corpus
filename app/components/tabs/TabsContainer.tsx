@@ -1,8 +1,15 @@
 "use client"
+
+// CSS
+import '../../globals.css';
+
+// Context and state management
 import { useState } from 'react';
+
+// Child components
 import Tab from './Tab';
 import Manager from '../manager/Manager';
-import '../../globals.css';
+
 
 const TabsContainer = () => {
     const [activeTab, setActiveTab] = useState<number>(1);

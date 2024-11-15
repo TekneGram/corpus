@@ -1,5 +1,5 @@
-
-
+"use client"
+// Fonts
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
