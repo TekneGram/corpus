@@ -4,9 +4,24 @@ import { createContext, useContext, useEffect, useReducer, ReactNode, Dispatch }
  * TO DO
  */
 //import { loadCorpusMetaData } from "../ipcRenderer/corpusEdits";
+const initialCorpusMetaData: CorpusMetaData = {
+    projectTitle: {
+        id: 0,
+        project_name: '',
+    },
+    corpus: {
+        id: 0,
+        corpus_name: '',
+    },
+    files: [],
+};
 
-const CorpusContext = createContext<CorpusMetaData | undefined>(undefined);
-const CorpusDispatchContext = createContext<Dispatch<CorpusMetaDataActions> | undefined>(undefined);
+const noop = () => {
+    throw new Error ("Dispatch function must be used within a corpus provider")
+}
+
+const CorpusContext = createContext<CorpusMetaData>(initialCorpusMetaData);
+const CorpusDispatchContext = createContext<Dispatch<CorpusMetaDataActions>>(noop);
 
 type ProjectTitle = {
     id: number;
@@ -40,7 +55,8 @@ type CorpusMetaData = {
 };
 
 type CorpusMetaDataActions = 
-| { type: 'initialize'; corpusMetadata: CorpusMetaData };
+| { type: 'initialize'; corpusMetadata: CorpusMetaData }
+| { type: 'update-corpus-name'; corpusName: string };
 
 interface CorpusProviderProps {
     children: ReactNode;
@@ -89,6 +105,10 @@ const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: CorpusMet
     switch (action.type) {
         case 'initialize': {
             return action.corpusMetadata;
+        }
+        case 'update-corpus-name': {
+            corpusMetaData.corpus.corpus_name = action.corpusName;
+            return corpusMetaData;
         }
         default: {
             return corpusMetaData;

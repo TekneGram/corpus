@@ -7,7 +7,7 @@ import FileUpload from "./FileUpload";
 import '../../manager.css';
 import { postCorpusName, patchCorpusName } from '@/app/ipcRenderer/corpusEdits';
 import { useProjectTitles } from '@/app/context/ProjectsContext';
-import { useCorpusMetaData } from '@/app/context/CorpusContext';
+import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 interface SelectableProjectTitle {
     id: number;
@@ -20,16 +20,16 @@ const Manager = () => {
 
     const projectTitles: SelectableProjectTitle[] = useProjectTitles();
     let corpusMetadata = useCorpusMetaData();
-    console.log("Hi there:", corpusMetadata);
+    let corpusDispatch = useCorpusDispatch();
 
-    if(!corpusMetadata) {
-        return <div>Loading corpus metadata...</div>;
-    }
+    // The purpose of this useEffect is to populate the state of the corpusName from context
+    let initialCorpusName = 'Click to name'; // initial state on creating a project
+    useEffect(() => {
+        initialCorpusName = corpusMetadata.corpus.corpus_name;
+    })
 
     const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false);
-    const [corpusName, setCorpusName] = useState<string>('Click to name');
-
-    const [corpusAllData, setCorpusAllData] = useState(corpusMetadata);
+    const [corpusName, setCorpusName] = useState<string>(initialCorpusName);
 
     const handleEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
@@ -39,6 +39,9 @@ const Manager = () => {
         if (corpusName.length > 23) {
             setCorpusName((prevName) => prevName.substring(0, 22));
         }
+        /**
+         * UPDATE THIS - it should not surprise the user!
+         */
         if(corpusName.length === 0) {
             setCorpusName((prevName) => "Write something!");
         }
@@ -50,21 +53,27 @@ const Manager = () => {
             corpusName: corpusName,
             projectId: projectId
         };
-        console.log("Blahdyblah:", corpusMetadata);
-        // If this is the first time to change the name, it will have no name
 
-        console.log("Blahdyblah 2:", corpusMetadata);
-
-
-        console.log("Blahdyblah 3:", corpusMetadata.corpus);
+        // Set the corpus name for this project
         if (corpusMetadata.corpus.corpus_name === '') {
-            console.log("I'm here", corpusMetadata.corpus.corpus_name);
-            //postCorpusName(corpusDetails);
+            if(corpusDispatch) {
+                corpusDispatch({
+                    type: "update-corpus-name", 
+                    corpusName: corpusName
+                });
+                postCorpusName(corpusDetails);
+            }
+            
         } else {
             // This time we just want to patch the name
-            patchCorpusName(corpusDetails);
+            if(corpusDispatch) {
+                corpusDispatch({
+                    type: "update-corpus-name", 
+                    corpusName: corpusName
+                });
+                patchCorpusName(corpusDetails);
+            }
         }
-        
     }
 
     return (

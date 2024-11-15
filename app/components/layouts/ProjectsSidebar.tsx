@@ -5,6 +5,7 @@ import { saveProjectTitleToDatabase, loadAllProjectTitles, loadProjectMetadata }
 
 import { useProjectTitles, useProjectTitlesDispatch } from '../../context/ProjectsContext';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
+import { toast } from 'react-toastify';
 
 type ProjectTitle = {
     id: number;
@@ -49,15 +50,18 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
      */
     const toggleSelected = async(id: number) => {
         dispatch({ type: "setSelected", id: id });
-        const metadata = await loadProjectMetadata(id);
-        console.log("In ProjectsSidebar.tsx, the metadata is: ", metadata);
-        if(metadata !== undefined && dispatchCorpusMetaData) {
-            dispatchCorpusMetaData({ // this is a non-null assertion
-                type: 'initialize',
-                corpusMetadata: metadata
-            });
+        try {
+            const metadata = await loadProjectMetadata(id);
+            if(metadata !== undefined && dispatchCorpusMetaData) {
+                dispatchCorpusMetaData({ // this is a non-null assertion
+                    type: 'initialize',
+                    corpusMetadata: metadata
+                });
+            }
+        } catch (error) {
+            console.error('Error getting corpus metadata for your project');
+            toast.error("Error getting corpus metadata for your project: " + error);
         }
-        
     }
 
     /**

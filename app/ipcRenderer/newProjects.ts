@@ -6,6 +6,37 @@
 
 import { toast } from 'react-toastify';
 
+type ProjectTitle = {
+    id: number;
+    project_name: string;
+};
+
+type Corpus = {
+    id: number;
+    corpus_name: string;
+};
+
+type SubCorpus = {
+    id: number;
+    group_name: string;
+};
+
+type CorpusFile = {
+    id: number;
+    file_name: string;
+};
+
+type CorpusFilesPerSubCorpus = {
+    corpusFiles: CorpusFile[];
+    subCorpus: SubCorpus;
+};
+
+type CorpusMetaData = {
+    projectTitle: ProjectTitle;
+    corpus: Corpus;
+    files: CorpusFilesPerSubCorpus[];
+};
+
 export const loadAllProjectTitles = async () => {
     try {
         const response = await window.electron.ipcRenderer.invoke('load-all-project-titles');
@@ -33,8 +64,7 @@ export const saveProjectTitleToDatabase = async (title:string) => {
     }
 }
 
-export const loadProjectMetadata = async (projectId: number) => {
-    console.log(projectId);
+export const loadProjectMetadata = async (projectId: number): Promise<CorpusMetaData> => {
     try {
         const response = await fetch(`http://localhost:4000/api/corpus-data/metadata/${projectId}`, {
             method: "GET",
@@ -43,10 +73,10 @@ export const loadProjectMetadata = async (projectId: number) => {
             },
             credentials: 'include'
         })
-        const result = await response.json();
-        return JSON.parse(result);
+        const result: string = await response.json();
+        const corpusMetadata: CorpusMetaData = JSON.parse(result);
+        return corpusMetadata;
     } catch (error) {
-        console.error('Error getting corpus metadata for your project');
-        toast.error("Error getting corpus metadata for you project: " + error);
+        throw error;
     }
 }
