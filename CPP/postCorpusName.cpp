@@ -9,8 +9,8 @@ int main()
     std::getline(std::cin, text); // This will be stringified JSON
 
     nlohmann::json jsonData = nlohmann::json::parse(text); // Get the text back into JSON
-    std::string corpusName { jsonData["corpusName"] };
-    int projectId { jsonData["projectId"] };
+    std::string corpusName { jsonData["corpus_name"] };
+    int projectId { jsonData["project_id"] };
     
     sqlite3* db;
     

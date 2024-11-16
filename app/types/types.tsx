@@ -15,6 +15,11 @@ export type Corpus = {
     corpus_name: string;
 };
 
+export type CorpusProjectRelation = {
+    project_id: number;
+    corpus_name: string;
+}
+
 export type SubCorpus = {
     id: number;
     group_name: string;

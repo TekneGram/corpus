@@ -8,10 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import '../../manager.css';
 
 // import types
-import { SelectableProjectTitle } from '../../types/types';
+import { SelectableProjectTitle, CorpusProjectRelation } from '../../types/types';
 
 // APIs to server
-import { postCorpusName, patchCorpusName } from '@/app/ipcRenderer/corpusEdits';
+import { postCorpusName, patchCorpusName } from "@/app/api/manageCorpus";
 
 // import useContext aliases and state management
 import { useProjectTitles } from '@/app/context/ProjectsContext';
@@ -20,6 +20,7 @@ import { useState, useEffect } from 'react';
 
 // Child Components
 import FileUpload from "./FileUpload";
+import { toast } from "react-toastify";
 
 
 const Manager = () => {
@@ -57,32 +58,50 @@ const Manager = () => {
             setCorpusName((prevName) => "Write something!");
         }
     }
-    const updateCorpusName = () => {
+    const updateCorpusName = async () => {
         // Get the id of the currently selected project
         const projectId = projectTitles.filter(projectTitle => projectTitle.isSelected === true)[0].id;
-        const corpusDetails = {
-            corpusName: corpusName,
-            projectId: projectId
+        if (!projectId) throw new Error("No project selected");
+        
+        const corpusDetails: CorpusProjectRelation = {
+            project_id: projectId,
+            corpus_name: corpusName,
         };
 
         // Set the corpus name for this project
         if (corpusMetadata.corpus.corpus_name === '') {
-            if(corpusDispatch) {
-                corpusDispatch({
-                    type: "update-corpus-name", 
-                    corpusName: corpusName
-                });
-                postCorpusName(corpusDetails);
+            // Post new corpus name
+            const result = await postCorpusName(corpusDetails);
+            // If result fails show a toast error
+            if (result.status === 'fail') {
+                toast.error("Could not add your corpus name. Please try again.");
+            } else {
+                if (corpusDispatch) {
+                    postCorpusName(corpusDetails);
+                    corpusDispatch({
+                        type: "update-corpus-name", 
+                        corpusName: corpusName
+                    });
+                }
+                toast.success("Corpus name added successfully.");
             }
+
             
         } else {
-            // This time we just want to patch the name
-            if(corpusDispatch) {
-                corpusDispatch({
-                    type: "update-corpus-name", 
-                    corpusName: corpusName
-                });
-                patchCorpusName(corpusDetails);
+            // Update the corpus name on the database
+            const result = await patchCorpusName({ id: corpusMetadata.corpus.id, corpus_name: corpusName });
+
+            // If fails to update on the database, inform the user
+            if (result.status === 'fail') {
+                toast.error("Could not update your corpus name. Please try again.");
+            } else {
+                if(corpusDispatch) {
+                    corpusDispatch({
+                        type: "update-corpus-name", 
+                        corpusName: corpusName
+                    });
+                }
+                toast.success("Corpus name updated successfully.")
             }
         }
     }

@@ -34,6 +34,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     const dispatch = useProjectTitlesDispatch();
     const projectTitles = useProjectTitles();
     const dispatchCorpusMetaData = useCorpusDispatch();
+    const corpusMetadata = useCorpusMetaData();
 
     /**
      * Functionality to handle sorting the project titles
@@ -71,8 +72,12 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                     });
                 }
             } catch (error) {
+                // We failed to get new metadata, so set the selected project id back
+                // to its original one
+                dispatch({ type: "setSelected", id: corpusMetadata.projectTitle.id});
                 console.error("Error fetching metadata", error);
                 toast.error("Error fetching the project info.");
+                
             } finally {
                 // remove the loading icon
             }

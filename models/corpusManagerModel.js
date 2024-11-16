@@ -53,6 +53,7 @@ class CorpusManager {
     }
 
     addCorpusName(corpusNameString) {
+        console.log("Inside the manager model;", corpusNameString);
         const cppProcess = new CPPProcess('postCorpusName');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(corpusNameString, (error, output) => {

@@ -31,9 +31,10 @@ const getProjectMetadata = async (req, res) => {
 
 const createCorpusName = async (req, res) => {
     const corpusNameString = JSON.stringify(req.body);
+    console.log(corpusNameString);
     const cm = new CorpusManager();
     try {
-        const cppOutput = await cm.addCorpusGroup(corpusNameString);
+        const cppOutput = await cm.addCorpusName(corpusNameString);
         return res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: 'fail', message: 'Server error in cpp process' });
@@ -44,9 +45,11 @@ const patchCorpusName = async (req, res) => {
     console.log(req.body);
     // also need to get the corpusId from the req.params
     const corpusNameString = JSON.stringify(req.body);
+    console.log(corpusNameString);
     const cm = new CorpusManager();
     try {
-        const cppOutput = await cm.addCorpusGroup(corpusNameString);
+        const cppOutput = await cm.patchCorpusName(corpusNameString);
+        res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Server error in cpp process" });
     }

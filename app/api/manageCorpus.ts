@@ -1,4 +1,18 @@
-import { CorpusMetaData, ProjectTitle } from "../types/types"
+import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation } from "../types/types"
+
+export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/project`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const result: string = await response.json();
+        const projectTitles: ProjectTitle[] = JSON.parse(result);
+        return projectTitles;
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const loadProjectMetadata = async(projectId: number): Promise<CorpusMetaData> => {
     try {
@@ -17,15 +31,37 @@ export const loadProjectMetadata = async(projectId: number): Promise<CorpusMetaD
     }
 }
 
-export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
+export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promise<any> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/manager/project`, {
-            method: 'GET',
-            credentials: 'include'
+        const response = await fetch('http://localhost:4000/api/manager/corpus', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(corpusDetails)
         });
-        const result: string = await response.json();
-        const projectTitles: ProjectTitle[] = JSON.parse(result);
-        return projectTitles;
+        const result = await response.json();
+        console.log(result);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(corpus)
+        });
+        const result = await response.json();
+        console.log("Response from patching your corpus name:", result);
+        return result;
     } catch (error) {
         throw error;
     }

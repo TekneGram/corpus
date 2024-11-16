@@ -60,6 +60,41 @@ void DatabaseHandler::createCorpusName(const int& project_id, const std::string&
     sqlite3_finalize(statement);
 }
 
+void DatabaseHandler::updateCorpusName(const int& corpus_id, const std::string& corpus_name)
+{
+    sqlite3_stmt* statement;
+
+    const char* sql = "UPDATE corpus SET corpus_name = ? WHERE id = ?;";
+    int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
+    if (exit_code != SQLITE_OK) {
+        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+    // Bind parameters
+    exit_code = sqlite3_bind_text(statement, 1, corpus_name.c_str(), -1, SQLITE_STATIC);
+    if (exit_code != SQLITE_OK) {
+            std::cerr << "Error binding corpus_name: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_finalize(statement);
+            return;
+    }
+    exit_code = sqlite3_bind_int(statement, 2, corpus_id);
+    if (exit_code != SQLITE_OK) {
+            std::cerr << "Error binding corpus_id: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_finalize(statement);
+            return;
+    }
+
+    // Run the query
+    exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error updating data: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return;
+    }
+    std::cout << "Corpus name updated successfully!\n";
+    sqlite3_finalize(statement);
+}
+
 nlohmann::json DatabaseHandler::getProjectMetadata(const int& project_id)
 {
     CorpusMetadata::CorpusMetadata corpusMetadata;
