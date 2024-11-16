@@ -2,7 +2,6 @@ const { app, ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./database/index');
 const CreateDatabase = require('./models/createDatabase');
-const { addNewProject, loadAllProjectTitles } = require('./ipc/projectHandling');
 
 let mainWindow;
 
@@ -36,15 +35,10 @@ const createDatabase = () => {
     CreateDatabase.createFourBunsTable();
 }
 
-const newProjectHandling = () => {
-    addNewProject();
-    loadAllProjectTitles();
-}
 
 app.on('ready', () => {
     createDatabase();
     createWindow();
-    newProjectHandling();
 });
 
 app.on('window-all-closed', () => {

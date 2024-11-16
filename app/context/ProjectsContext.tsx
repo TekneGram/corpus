@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, ReactNode, Dispatch } from 'react';
 import { ProjectTitle, SelectableProjectTitle } from '@/app/types/types';
 import { ProjectTitlesActions } from './contextTypes/contextTypes';
-import { loadAllProjectTitles } from "../ipcRenderer/newProjects";
+import { loadAllProjectTitles } from '../api/manageCorpus';
 import { projectTitlesReducer } from './reducers/projectTitlesReducer';
 
 const ProjectTitlesContext = createContext<SelectableProjectTitle[]>([]);

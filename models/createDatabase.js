@@ -30,7 +30,7 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS corpus (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 corpus_name TEXT NOT NULL,
-                project_id INTEGER,
+                project_id INTEGER UNIQUE,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
             )
