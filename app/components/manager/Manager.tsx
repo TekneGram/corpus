@@ -108,10 +108,12 @@ const Manager = () => {
     return (
         <div className = 'manager-container'>
             
+        {   corpusMetadata.projectTitle.id !== 0 && 
+            
             <div className = {`manage-group-area ${``}`}>
                 
                 <div className = 'corpus-edit-area'>
-
+                    
                     <div className='corpus-title-area'>
                         {
                             editingCorpusName &&
@@ -142,6 +144,8 @@ const Manager = () => {
                             </span>
                         }
                     </div>
+
+                    
                     
                     <div className='add-group-area'>
                         <button
@@ -153,19 +157,24 @@ const Manager = () => {
                         </button>
                     </div>
                     
-
+        
                 </div>
+
                 <FileUpload />
                 <FileUpload />
                 <FileUpload />
                 <FileUpload />
                 
             </div>
-
+        }
+        {
+            corpusMetadata.projectTitle.id === 0 &&
             <div>
-                <p>This is where you will see info</p>
-                <p>Probably somewhere in the middle, related to your corpus</p>
+                <p>Add a new project on the left with the + button.</p>
+                <p>If you have projects, select a project to get started.</p>
             </div>
+        }
+
         </div>
     );
 };
