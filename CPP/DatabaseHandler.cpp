@@ -8,6 +8,23 @@ DatabaseHandler::DatabaseHandler(sqlite3* db)
 {
     dbConn = db;
 }
+void DatabaseHandler::startNewProject(const std::string& project_title)
+{
+    sqlite3_stmt* statement;
+    const char* sql = "INSERT INTO project (project_name) VALUES (?);";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing statement " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+    sqlite3_bind_text(statement, 1, project_title.c_str(), -1, SQLITE_STATIC);
+
+    int exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error inserting data: " << sqlite3_errmsg(dbConn);
+        sqlite3_finalize(statement);
+    }
+    std::cout << "Project successfully created!\n";
+    sqlite3_finalize(statement);
+}
 
 nlohmann::json DatabaseHandler::getProjectTitles()
 {

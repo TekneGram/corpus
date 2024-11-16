@@ -6,6 +6,28 @@ class CorpusManager {
 
     }
 
+    processNewProject(projectTitleString) {
+        const cppProcess = new CPPProcess('startNewProject');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(projectTitleString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process starting a new project"));
+                } else {
+                    console.log("Output from C++ process starting a new project is: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling project titles:", err.message);
+            throw err;
+        });
+    }
+
     processAllProjectTitles() {
         const cppProcess = new CPPProcess('getProjectTitles');
         return new Promise((resolve, reject) => {

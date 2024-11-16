@@ -9,7 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProjectTitle } from "@/app/types/types";
 
 // APIs
-import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
+//import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
+import { saveProjectTitleToDatabase } from "@/app/api/manageCorpus";
 import { loadProjectMetadata, loadAllProjectTitles } from "@/app/api/manageCorpus";
 
 // Context and state management

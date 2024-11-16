@@ -2,6 +2,17 @@
 
 const CorpusManager = require('../models/corpusManagerModel');
 
+const startNewProject = async(req, res) => {
+    const cm = new CorpusManager();
+    const projectTitleString = JSON.stringify(req.body);
+    try {
+        const cppOutput = await cm.processNewProject(projectTitleString);
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: 'fail', message: 'Internal server error in cpp process' });
+    }
+}
+
 const getAllProjectTitles = async (req, res) => {
     const cm = new CorpusManager();
     try {
@@ -69,6 +80,7 @@ const postGroupFile = (req, res) => {
 };
 
 module.exports = {
+    startNewProject,
     getAllProjectTitles,
     getProjectMetadata,
     createCorpusName,

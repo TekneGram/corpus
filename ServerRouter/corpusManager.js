@@ -1,5 +1,6 @@
 const express = require('express');
 const { 
+    startNewProject,
     getAllProjectTitles,
     getProjectMetadata, 
     createCorpusName, 
@@ -13,6 +14,7 @@ const {
 const router = express.Router();
 router.use(express.json());
 
+router.post('/project', startNewProject); // starts a new project by setting a title
 router.get('/project', getAllProjectTitles); // get all the project titles
 router.get('/project/:projectId/corpus/metadata', getProjectMetadata); // get the metadata for the corpus associated with a project with id projectId!
 router.post('/corpus', createCorpusName); // corpus name is in the body
