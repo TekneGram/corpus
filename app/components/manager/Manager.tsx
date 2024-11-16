@@ -77,7 +77,6 @@ const Manager = () => {
                 toast.error("Could not add your corpus name. Please try again.");
             } else {
                 if (corpusDispatch) {
-                    postCorpusName(corpusDetails);
                     corpusDispatch({
                         type: "update-corpus-name", 
                         corpusName: corpusName
