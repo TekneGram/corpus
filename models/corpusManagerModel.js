@@ -51,7 +51,6 @@ class CorpusManager {
     }
 
     processProjectMetadata(projectIdString) {
-        console.log("Model says: ", projectIdString);
         const cppProcess = new CPPProcess('getProjectMetadata');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(projectIdString, (error, output) => {
@@ -121,8 +120,26 @@ class CorpusManager {
         
     }
 
-    addCorpusGroup() {
-
+    createCorpusGroup(groupNameString) {
+        const cppProcess = new CPPProcess('createCorpusGroup');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(groupNameString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process creating a group name: " + error.message));
+                } else {
+                    console.log("Output from the cpp process adding a group name: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling adding a group name to the corpus: ", err.message);
+            throw err;
+        })
     }
 
     patchCorpusGroup() {

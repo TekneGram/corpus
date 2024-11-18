@@ -29,7 +29,6 @@ const getProjectMetadata = async (req, res) => {
     // Change the req.params into its correct form for the mode
     const projectId = {"projectId" : parseInt(req.params["projectId"])};
     const jsonDataString = JSON.stringify(projectId);
-    console.log("Controller also says: ", jsonDataString);
 
     const cm = new CorpusManager();
     try {
@@ -55,7 +54,7 @@ const createCorpusName = async (req, res) => {
 
 const patchCorpusName = async (req, res) => {
     console.log(req.body);
-    // also need to get the corpusId from the req.params
+    // also need to get the corpusId from the req.params - no we don't it's part of the body as well!
     const corpusNameString = JSON.stringify(req.body);
     console.log(corpusNameString);
     const cm = new CorpusManager();
@@ -68,8 +67,16 @@ const patchCorpusName = async (req, res) => {
 
 };
 
-const createCorpusGroup = (req, res) => {
-
+const createCorpusGroup = async (req, res) => {
+    console.log(req.body);
+    const groupName = JSON.stringify(req.body);
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = await cm.createCorpusGroup(groupName);
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+    }
 };
 
 const patchCorpusGroupName = (req, res) => {

@@ -3,9 +3,11 @@ import '../../manager.css';
 
 // APIs
 import { tekneGramText } from '@/app/ipcRenderer/corpusEdits';
+import { postGroupName } from '@/app/api/manageCorpus';
 
 // Context and state management
 import { useEffect, useState} from 'react';
+import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 interface FileUploadProps {
 
@@ -14,6 +16,12 @@ interface FileUploadProps {
 const FileUpload:React.FC<FileUploadProps> = ({ }) => {
 
     const [files, setFiles] = useState<File[]>([]);
+    const [subcorpusName, setSubcorpusName] = useState<string>('');
+    const corpusMetadata = useCorpusMetaData();
+    
+    const handleGroupNameChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+        setSubcorpusName(event.target.value);
+    }
 
     const handleFileChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files
@@ -43,6 +51,11 @@ const FileUpload:React.FC<FileUploadProps> = ({ }) => {
 
     const processUploadedFiles = async () => {
         const results = [];
+        // Process group name first and retrieve back the group_id
+        const group_info = await postGroupName(subcorpusName, corpusMetadata.corpus);
+        console.log('The file upload component says the group_info is: ', group_info);
+
+        // Then process each file one at a time
         for (const file of files) {
             const fileContent = await new Promise<string>((resolve, reject) => {
                 const reader = new FileReader();
@@ -69,6 +82,9 @@ const FileUpload:React.FC<FileUploadProps> = ({ }) => {
                 <input
                     className='group-name-input'
                     type='text' 
+                    onChange={(e) => handleGroupNameChange(e)}
+                    placeholder="Name subcorpus"
+                    value={subcorpusName}
                 />
                 <input
                     type='file'
@@ -80,11 +96,14 @@ const FileUpload:React.FC<FileUploadProps> = ({ }) => {
                     onChange={(e) => handleFileChange(e)}
                 />
                 <button
-                    className='file-uploader-button'
+                    className={files.length > 0 && subcorpusName.length > 3 ? `file-uploader-button` : `file-uploader-button-disabled`}
                     type='button'
                     onClick={processUploadedFiles}
+                    disabled={files.length === 0 && subcorpusName.length < 3}
                 >
-                    Add files
+                    {
+                        files.length > 0 && subcorpusName.length > 3 ? `Add files` : `Prepare name and files`
+                    }
                 </button>
             </div>
         
