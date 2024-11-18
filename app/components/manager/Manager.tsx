@@ -105,6 +105,14 @@ const Manager = () => {
         }
     }
 
+    /**
+     * Functionality for adding a new subcorpus
+     */
+    const [addingGroup, setAddingGroup] = useState<boolean>(false);
+    const handleAddGroup = () => {
+        setAddingGroup(true);
+    }
+
     return (
         <div className = 'manager-container'>
             
@@ -144,32 +152,49 @@ const Manager = () => {
                             </span>
                         }
                     </div>
-
-                    
                     
                     <div className='add-group-area'>
                         <button
                             className='add-group-button'
                             type='button'
+                            onClick={handleAddGroup}
                         >
                             Add group
                             <FontAwesomeIcon icon={faPlus} />
                         </button>
                     </div>
-                    
         
                 </div>
-
-                <FileUpload />
-                <FileUpload />
-                <FileUpload />
-                <FileUpload />
+                
+                {
+                    corpusMetadata.files.length > 0 &&
+                    <>
+                        {
+                            corpusMetadata.files.map((files) => (
+                                <div className='file-upload-area'>
+                                    <FileUpload />
+                                </div>
+                            ))
+                        }
+                    </>
+                }
+                {
+                    addingGroup === true &&
+                    <>
+                        <div className='file-upload-area'>
+                            <FileUpload />
+                        </div>
+                    </>
+                }
+                
                 
             </div>
         }
+
         {
             corpusMetadata.projectTitle.id === 0 &&
             <div>
+                <p>Welcome to Teknegram</p>
                 <p>Add a new project on the left with the + button.</p>
                 <p>If you have projects, select a project to get started.</p>
             </div>

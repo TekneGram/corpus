@@ -51,6 +51,7 @@ class CorpusManager {
     }
 
     processProjectMetadata(projectIdString) {
+        console.log("Model says: ", projectIdString);
         const cppProcess = new CPPProcess('getProjectMetadata');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(projectIdString, (error, output) => {

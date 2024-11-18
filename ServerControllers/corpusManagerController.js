@@ -25,10 +25,11 @@ const getAllProjectTitles = async (req, res) => {
 }
 
 const getProjectMetadata = async (req, res) => {
-    console.log(req.params);
+    console.log("Controller says: ", req.params);
     // Change the req.params into its correct form for the mode
     const projectId = {"projectId" : parseInt(req.params["projectId"])};
     const jsonDataString = JSON.stringify(projectId);
+    console.log("Controller also says: ", jsonDataString);
 
     const cm = new CorpusManager();
     try {
