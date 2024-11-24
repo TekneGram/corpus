@@ -3,6 +3,7 @@
 #include <iostream>
 #include "./lib/json.hpp"
 #include "CorpusMetadata.h"
+#include "CorpusAnalyzer.h"
 
 DatabaseHandler::DatabaseHandler(sqlite3* db)
 {
@@ -272,11 +273,166 @@ nlohmann::json DatabaseHandler::getProjectMetadata(const int& project_id)
     return corpusMetadataJSON;
 }
 
+nlohmann::json DatabaseHandler::createCorpusGroup(const int& corpus_id, const std::string& group_name)
+{
+    sqlite3_stmt* statement;
+    const char* sql = "INSERT INTO corpus_group (group_name, corpus_id) VALUES (?, ?);";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing statement " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+    sqlite3_bind_text(statement, 1, group_name.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(statement, 2, corpus_id);
 
-// void DatabaseHandler::createGroup()
-// {
+    int exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error inserting data: " << sqlite3_errmsg(dbConn);
+        sqlite3_finalize(statement);
+    }
+    sqlite3_finalize(statement);
 
-// }
+    int last_inserted_id = sqlite3_last_insert_rowid(dbConn);
+    if (last_inserted_id == 0) {
+        std::cerr << "Error fetching last insert ID." << std::endl;
+        return -1;
+    }
+    CorpusMetadata::SubCorpus newSubCorpus { last_inserted_id, group_name };
+    nlohmann::json newSubCorpusJSON = newSubCorpus;
+    return newSubCorpusJSON;
+}
+
+void DatabaseHandler::uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name)
+{
+    // First parse the text in the file.
+    std::vector<std::string> wordlist { }; // initialize an empty word list
+    std::vector<std::string> collList { };
+    std::vector<std::string> threeBundleList { };
+    std::vector<std::string> fourBundleList { };
+
+    CorpusAnalyzer corpusAnalyzer;
+    corpusAnalyzer.parseText(file_content, wordlist, collList, threeBundleList, fourBundleList);    
+    
+    // Now insert the file_name into the files table
+    sqlite3_stmt* statementFile;
+
+    const char* sql = "INSERT INTO files (file_name, group_id) VALUES (?, ?);";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statementFile, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare file statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    if (sqlite3_bind_text(statementFile, 1, file_name.c_str(), -1, SQLITE_STATIC) != SQLITE_OK) {
+        std::cerr << "failed to bind file_name: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    if (sqlite3_bind_int(statementFile, 2, group_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind group_id" << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    if (sqlite3_step(statementFile) != SQLITE_DONE) {
+        std::cout << "Got here 3!" << std::endl;
+        std::cerr << "Failed to insert file_name" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statementFile);
+        return;
+    }
+
+    sqlite3_finalize(statementFile);
+
+    // Retrieve the last inserted file ID
+    int fileId = -1;
+    fileId = sqlite3_last_insert_rowid(dbConn);
+    if (fileId == -1) {
+        std::cerr << "Failed to retrieve file ID" << std::endl;
+        return;
+    }
+
+    /**
+     * Now do batch insert by calling a private helper method batchInsert for the parsed text data
+     */
+    batchInsert(group_id, wordlist, fileId, "words", "word");
+    batchInsert(group_id, collList, fileId, "colls", "coll");
+    batchInsert(group_id, threeBundleList, fileId, "threeBuns", "threeBun");
+    batchInsert(group_id, fourBundleList, fileId, "fourBuns", "fourBun");
+    return;
+}
+
+void DatabaseHandler::batchInsert(const int& group_id, const std::vector<std::string> data, const int& file_id, const std::string& table_name, const std::string& col_name)
+{
+    sqlite3_stmt* statement;
+    std::string sql = "INSERT INTO " + table_name + " (group_id, file_id, " + col_name + " ) VALUES (?, ?, ?);";
+    if (sqlite3_prepare_v2(dbConn, sql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare statement during insertBatch" << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    // Start a transaction to speed up batch inserts
+    if (sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to being a transaction at batchInsert" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return;
+    }
+
+    for (const auto& item: data) {
+        if (sqlite3_bind_int(statement, 1, group_id) != SQLITE_OK ||
+            sqlite3_bind_int(statement, 2, file_id) != SQLITE_OK ||
+            sqlite3_bind_text(statement, 3, item.c_str(), -1, SQLITE_STATIC) != SQLITE_OK
+        ) {
+            std::cerr << "Failed to bind values" << sqlite3_errmsg(dbConn) << std::endl;
+            continue;
+        }
+
+        if (sqlite3_step(statement) != SQLITE_DONE) {
+            std::cerr << "Failed to execute statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        }
+
+        sqlite3_reset(statement);
+    }
+
+    if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to commit transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+
+    sqlite3_finalize(statement);
+    return;
+}
+
+void DatabaseHandler::updateCorpusGroup(const int& group_id, const std::string& group_name)
+{
+    sqlite3_stmt* statement;
+
+    const char* sql = "UPDATE corpus_group SET group_name = ? WHERE id = ?;";
+    int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
+    if (exit_code != SQLITE_OK) {
+        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+    // Bind parameters
+    exit_code = sqlite3_bind_text(statement, 1, group_name.c_str(), -1, SQLITE_STATIC);
+    if (exit_code != SQLITE_OK) {
+            std::cerr << "Error binding group_name: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_finalize(statement);
+            return;
+    }
+    exit_code = sqlite3_bind_int(statement, 2, group_id);
+    if (exit_code != SQLITE_OK) {
+            std::cerr << "Error binding group_id: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_finalize(statement);
+            return;
+    }
+
+    // Run the query
+    exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error updating data: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return;
+    }
+    std::cout << "Corpus name updated successfully!\n";
+    sqlite3_finalize(statement);
+}
+
+
 
 // void DatabaseHandler::insertFile()
 // {

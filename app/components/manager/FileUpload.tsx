@@ -3,7 +3,7 @@ import '../../manager.css';
 
 // APIs
 import { tekneGramText } from '@/app/ipcRenderer/corpusEdits';
-import { postGroupName } from '@/app/api/manageCorpus';
+import { postGroupName, uploadFileContent } from '@/app/api/manageCorpus';
 
 // Context and state management
 import { useEffect, useState} from 'react';
@@ -53,25 +53,18 @@ const FileUpload:React.FC<FileUploadProps> = ({ }) => {
         const results = [];
         // Process group name first and retrieve back the group_id
         const group_info = await postGroupName(subcorpusName, corpusMetadata.corpus);
-        console.log('The file upload component says the group_info is: ', group_info);
 
         // Then process each file one at a time
         for (const file of files) {
+            console.log(file);
             const fileContent = await new Promise<string>((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result as string);
-                // reader.onload = () => {
-                //     if (typeof reader.result === 'string') {
-                //         reader.onload = () => resolve(reader.result as string);
-                //     } else {
-                //         reject(new Error('File content is not a string'));
-                //     }
-                // };
                 reader.onerror = reject;
                 reader.readAsText(file);
             });
             // Send the text to be processed by R and C++
-            const result = await tekneGramText({fileContent: fileContent});
+            const result = await uploadFileContent(fileContent, group_info.id, file.name);
             results.push(result);
         }
     }

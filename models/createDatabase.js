@@ -74,10 +74,8 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS files (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 file_name TEXT NOT NULL,
-                corpus_id INTEGER,
                 group_id INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE
             )    
         `);
@@ -98,11 +96,9 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS words (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 word TEXT NOT NULL,
-                corpus_id INTEGER,
                 group_id INTEGER,
                 file_id INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
                 FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
             )
@@ -124,11 +120,9 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS colls (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 coll TEXT NOT NULL,
-                corpus_id INTEGER,
                 group_id INTEGER,
                 file_id INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
                 FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
             )
@@ -150,11 +144,9 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS threeBuns (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 threeBun TEXT NOT NULL,
-                corpus_id INTEGER,
                 group_id INTEGER,
                 file_id INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
                 FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
             )
@@ -176,11 +168,9 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS fourBuns (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 fourBun TEXT NOT NULL,
-                corpus_id INTEGER,
                 group_id INTEGER,
                 file_id INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
                 FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
             )

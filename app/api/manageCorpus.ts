@@ -1,4 +1,4 @@
-import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation } from "../types/types"
+import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus } from "../types/types"
 
 export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
     try {
@@ -86,9 +86,9 @@ export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
     }
 }
 
-export const postGroupName = async (groupName: string, corpus: Corpus): Promise<any> => {
+export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus> => {
     try {
-        const response = fetch('http://localhost:4000/api/manager/${corpus.id}/groups', {
+        const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}/group`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -96,8 +96,25 @@ export const postGroupName = async (groupName: string, corpus: Corpus): Promise<
             credentials: 'include',
             body: JSON.stringify({groupName: groupName})
         })
-        const result = (await response).json();
-        console.log("Response from posting your corpus name:", result);
+        const result = await response.json();
+        return JSON.parse(result);
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const uploadFileContent = async (fileContent: string, group_id: number, file_name: string): Promise<any> => {
+    console.log(fileContent);
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}/file`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ file_content: fileContent, file_name: file_name })
+        });
+        const result = await response.json();
         return result;
     } catch (error) {
         throw error;

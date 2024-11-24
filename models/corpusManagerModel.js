@@ -6,8 +6,11 @@ class CorpusManager {
 
     }
 
-    processNewProject(projectTitleString) {
-        const cppProcess = new CPPProcess('startNewProject');
+    processNewProject(titleJSON) {
+        titleJSON["command"] = "startNewProject"; // for cpp process to know which command to run
+        console.log(titleJSON);
+        const projectTitleString = JSON.stringify(titleJSON);
+        const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(projectTitleString, (error, output) => {
                 if (error) {
@@ -29,9 +32,9 @@ class CorpusManager {
     }
 
     processAllProjectTitles() {
-        const cppProcess = new CPPProcess('getProjectTitles');
+        const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
-            cppProcess.runProcess('', (error, output) => {
+            cppProcess.runProcess(JSON.stringify({command: "getProjectTitles"}), (error, output) => {
                 if (error) {
                     console.error("Error: ", error.message);
                     reject(new Error("There was an error running the C++ process getting the project titles: " + error.message));
@@ -50,10 +53,12 @@ class CorpusManager {
         });
     }
 
-    processProjectMetadata(projectIdString) {
-        const cppProcess = new CPPProcess('getProjectMetadata');
+    processProjectMetadata(projectIdInParams) {
+        const cppProcess = new CPPProcess('corpusManager');
+        const projectId = {"projectId" : parseInt(projectIdInParams["projectId"]), command: "getProjectMetadata"};
+        const jsonDataString = JSON.stringify(projectId);
         return new Promise((resolve, reject) => {
-            cppProcess.runProcess(projectIdString, (error, output) => {
+            cppProcess.runProcess(jsonDataString, (error, output) => {
                 if (error) {
                     console.error("Error:", error.message);
                     // throws the error to the controller to handle
@@ -74,9 +79,10 @@ class CorpusManager {
         
     }
 
-    addCorpusName(corpusNameString) {
-        console.log("Inside the manager model;", corpusNameString);
-        const cppProcess = new CPPProcess('postCorpusName');
+    addCorpusName(corpusName) {
+        corpusName["command"] = "postCorpusName";
+        const corpusNameString = JSON.stringify(corpusName);
+        const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(corpusNameString, (error, output) => {
                 if (error) {
@@ -97,8 +103,10 @@ class CorpusManager {
         
     }
 
-    patchCorpusName(corpusNameString) {
-        const cppProcess = new CPPProcess('patchCorpusName');
+    patchCorpusName(corpusName) {
+        corpusName["command"] = "patchCorpusName"
+        const corpusNameString = JSON.stringify(corpusName);
+        const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(corpusNameString, (error, output) => {
                 if (error) {
@@ -120,8 +128,12 @@ class CorpusManager {
         
     }
 
-    createCorpusGroup(groupNameString) {
-        const cppProcess = new CPPProcess('createCorpusGroup');
+    createCorpusGroup(groupName, corpusId) {
+        groupName["command"] = "createCorpusGroup";
+        groupName["corpus_id"] = parseInt(corpusId.corpusId);
+        const groupNameString = JSON.stringify(groupName);
+        console.log("My group name is:", groupNameString);
+        const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(groupNameString, (error, output) => {
                 if (error) {
@@ -146,8 +158,30 @@ class CorpusManager {
 
     }
 
-    processGroupFile() {
-
+    uploadFileContent(fileContent, groupId) {
+        fileContent["command"] = "uploadFileContent";
+        fileContent["group_id"] = parseInt(groupId.groupId);
+        const fileContentString = JSON.stringify(fileContent);
+        console.log(fileContentString);
+        const cppProcess = new CPPProcess('corpusManager');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(fileContentString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process adding file content: " + error.message));
+                } else {
+                    console.log("Output from the cpp process adding a file: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling adding file content to the corpus: ", err.message);
+            throw err;
+        });
     }
 
 }

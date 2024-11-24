@@ -55,7 +55,8 @@ class CPPProcess {
                 callback(null, this.cppOutput); // Pass the output to the callback
             } else {
                 console.log("Could not complete process");
-                callback(new Error(this.cppErrorOutput), null); // Pass error to the callback
+                const errorMsg = this.cppErrorOutput || `C++ process exited with code ${code} and no error output.`;
+                callback(new Error(errorMsg), null); // Pass error to the callback
             }
         })
     }
