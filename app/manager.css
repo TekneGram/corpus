@@ -51,6 +51,10 @@
     text-2xl font-extralight text-center text-white
 }
 
+.group-name-display-file-number {
+    @apply text-sm font-extralight text-center text-white
+}
+
 .file-chooser-button {
     @apply 
     file:mr-5 file:rounded-lg file:border-blue-400 file:border-0
@@ -73,5 +77,5 @@
 
 .file-display-container {
     @apply border-gray-400 border-2 border-t-0 rounded-b-lg p-1
-    font-extralight text-xs h-16 overflow-y-scroll overflow-x-hidden
+    font-extralight text-xs h-24 overflow-y-scroll overflow-x-hidden
 }
