@@ -16,9 +16,44 @@ interface FileDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
 }
 
+type FileSelected = {
+    fileId: number;
+    selected: boolean;
+}
+
 
 const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
 
+    /**
+     * Selecting a file
+     */
+    // Set the state so initially no files are selected
+    const [fileNameSelected, setFileNameSelected] = useState<FileSelected[]>(() => {
+        return subCorpusFiles.corpusFiles.map((corpusFile) => {
+            return {fileId: corpusFile.id, selected: false};
+        });
+    });
+
+    // useEffect can reset the state when there is a change in subCorpusFiles
+    useEffect(() => {
+        setFileNameSelected(
+            subCorpusFiles.corpusFiles.map((corpusFile) => {
+                return {fileId: corpusFile.id, selected: false};
+            })
+        );
+    }, [subCorpusFiles]);
+    
+    // selectFile updates the state when a file is selected
+    const selectFile = (corpusFileID: number) => {
+        console.log("My file id is:", corpusFileID);
+        setFileNameSelected((prevState) => {
+            return prevState.map((file) => {
+                return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
+            });
+        });
+        console.log(fileNameSelected);
+    };
+    // fileNameSelected.map((file) => file.fileId).indexOf(corpusFile.id)
 
     return (
         <div>
@@ -28,12 +63,15 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 <div className="group-name-display-file-number">{subCorpusFiles.corpusFiles.length} files</div>
             </div>
             <div className="file-display-container">
-                {/* Files display area. If a file is clicked, it displays the file text. */}
+                {/* Files display area. If a file is clicked, it highlights the file and will eventually display the file text. */}
                 {
                     subCorpusFiles.corpusFiles.map((corpusFile) => (
-                        <div className="">
-
-                            <div>{corpusFile.file_name}</div>
+                        // Ensures that the class name is conditionally applied to a selected item
+                        <div 
+                            className={ fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? 'file-selected' : 'file-not-selected' } 
+                            key={corpusFile.id}
+                        >
+                            <div onClick={() => selectFile(corpusFile.id)}>{corpusFile.file_name}</div>
 
                         </div>
                     ))
