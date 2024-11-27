@@ -22,7 +22,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
 
     return (
         <div>
-            <div>
+            <div className="group-name-display">
                 {/* Subcorpus name area. Can click to change the name of the subcorpus */}
                 {subCorpusFiles.subCorpus.group_name}
             </div>

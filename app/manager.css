@@ -46,6 +46,11 @@
     text-2xl font-extralight
 }
 
+.group-name-display {
+    @apply border-b-2 border-black outline-none bg-teal-600 rounded-t-xl p-2
+    text-2xl font-extralight text-center text-white
+}
+
 .file-chooser-button {
     @apply 
     file:mr-5 file:rounded-lg file:border-blue-400 file:border-0
