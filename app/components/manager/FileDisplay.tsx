@@ -51,9 +51,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
             });
         });
-        console.log(fileNameSelected);
     };
-    // fileNameSelected.map((file) => file.fileId).indexOf(corpusFile.id)
 
     return (
         <div>
@@ -71,7 +69,12 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                             className={ fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? 'file-selected' : 'file-not-selected' } 
                             key={corpusFile.id}
                         >
-                            <div onClick={() => selectFile(corpusFile.id)}>{corpusFile.file_name}</div>
+                            <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
+                                <div>{corpusFile.file_name}</div>
+                                {
+                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? <div>Delete File</div> : ''
+                                }
+                            </div>
 
                         </div>
                     ))

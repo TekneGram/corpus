@@ -81,9 +81,13 @@
 }
 
 .file-selected {
-    @apply bg-cyan-300;
+    @apply h-5 bg-slate-200;
 }
 
 .file-not-selected {
-    @apply bg-gray-200;
+    @apply h-5;
+}
+
+.file-name {
+    @apply flex flex-row justify-between;
 }
