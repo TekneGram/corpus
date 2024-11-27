@@ -58,7 +58,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             <div className="group-name-display">
                 {/* Subcorpus name area. Can click to change the name of the subcorpus */}
                 <div>{subCorpusFiles.subCorpus.group_name}</div>
-                <div className="group-name-display-file-number">{subCorpusFiles.corpusFiles.length} files</div>
+                <div className="group-name-display-file-number">{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
             </div>
             <div className="file-display-container">
                 {/* Files display area. If a file is clicked, it highlights the file and will eventually display the file text. */}
