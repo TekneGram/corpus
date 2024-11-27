@@ -20,6 +20,7 @@ import { useState, useEffect } from 'react';
 
 // Child Components
 import FileUpload from "./FileUpload";
+import FileDisplay from "./FileDisplay";
 import { toast } from "react-toastify";
 
 
@@ -172,7 +173,7 @@ const Manager = () => {
                         {
                             corpusMetadata.files.map((files) => (
                                 <div className='file-upload-area'>
-                                    <FileUpload />
+                                    <FileDisplay subCorpusFiles={files} />
                                 </div>
                             ))
                         }

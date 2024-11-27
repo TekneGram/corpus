@@ -2,7 +2,6 @@
 import '../../manager.css';
 
 // APIs
-import { tekneGramText } from '@/app/ipcRenderer/corpusEdits';
 import { postGroupName, uploadFileContent } from '@/app/api/manageCorpus';
 
 // Context and state management
