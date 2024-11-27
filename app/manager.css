@@ -52,7 +52,7 @@
 }
 
 .group-name-display-file-number {
-    @apply text-sm font-extralight text-center text-white
+    @apply text-sm font-extralight text-center text-white flex flex-row justify-between
 }
 
 .file-chooser-button {
