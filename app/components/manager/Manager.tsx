@@ -11,7 +11,7 @@ import '../../manager.css';
 import { SelectableProjectTitle, CorpusProjectRelation } from '../../types/types';
 
 // APIs to server
-import { postCorpusName, patchCorpusName } from "@/app/api/manageCorpus";
+import { postCorpusName, patchCorpusName, loadProjectMetadata } from "@/app/api/manageCorpus";
 
 // import useContext aliases and state management
 import { useProjectTitles } from '@/app/context/ProjectsContext';
@@ -130,14 +130,25 @@ const Manager = () => {
     /**
      * FUNCTIONALITY for adding a new subcorpus
      */
+    // For altering UI state
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
-    
     const handleAddGroup = () => {
         setAddingGroup(true);
     }
 
-    const confirmUploadSuccessful = () => {
+    // If files are uploaded successfully, reset the state of the Manager page
+    const confirmUploadSuccessful = async() => {
         setAddingGroup(false);
+        const projectId = projectTitles.filter(projectTitle => projectTitle.isSelected === true)[0].id;
+        const metadata = await loadProjectMetadata(projectId);
+        console.log("Here is the meta data:");
+        console.log(metadata);
+        if (metadata) {
+            corpusDispatch({
+                type: 'reload-corpus-metadata',
+                corpusMetadata: metadata,
+            });
+        }
     }
 
     return (
