@@ -1,7 +1,7 @@
 "use client"
 
 // Fonts
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // CSS
@@ -33,13 +33,19 @@ const Manager = () => {
     // The purpose of this useEffect is to populate the state of the corpusName from context
     const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false);
     const [corpusName, setCorpusName] = useState<string>('');
+    const [originalCorpusName, setOriginalCorpusName] = useState<string>(''); // used to allow the user to undo any changes while making a change
     useEffect(() => {
         setCorpusName((prevName) => {
             return corpusMetadata.corpus.corpus_name.length > 0 
             ? corpusMetadata.corpus.corpus_name// initial state on creating a project
             : 'Click to name';
         });
-    }, [setCorpusName, corpusMetadata]); 
+        setOriginalCorpusName((prevName) => {
+            return corpusMetadata.corpus.corpus_name.length > 0 
+            ? corpusMetadata.corpus.corpus_name// initial state on creating a project
+            : 'Click to name';
+        });
+    }, [setCorpusName, corpusMetadata, setOriginalCorpusName]); 
 
     
     console.log("The corpusName is:", corpusName);
@@ -47,6 +53,12 @@ const Manager = () => {
     const handleEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
     }
+
+    const cancelEditCorpusName = () => {
+        setEditingCorpusName(!editingCorpusName);
+        setCorpusName(originalCorpusName);
+    }
+
     const handleInputChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setCorpusName(event.target.value);
         if (corpusName.length > 23) {
@@ -69,7 +81,7 @@ const Manager = () => {
             corpus_name: corpusName,
         };
 
-        // Set the corpus name for this project
+        // Set the corpus name for this project for the first time
         if (corpusMetadata.corpus.corpus_name === '') {
             // Post new corpus name
             const result = await postCorpusName(corpusDetails);
@@ -84,11 +96,10 @@ const Manager = () => {
                     });
                 }
                 toast.success("Corpus name added successfully.");
+                setOriginalCorpusName(corpusName);
             }
-
-            
         } else {
-            // Update the corpus name on the database
+            // Update the corpus name on the database if the corpus name is being changed
             const result = await patchCorpusName({ id: corpusMetadata.corpus.id, corpus_name: corpusName });
 
             // If fails to update on the database, inform the user
@@ -102,6 +113,7 @@ const Manager = () => {
                     });
                 }
                 toast.success("Corpus name updated successfully.")
+                setOriginalCorpusName(corpusName);
             }
         }
     }
@@ -140,7 +152,18 @@ const Manager = () => {
                                         handleEditCorpusName();
                                         updateCorpusName();
                                     }}
-                                ><FontAwesomeIcon icon={faPlus} /></button>
+                                >
+                                    <FontAwesomeIcon icon={faCircleCheck} />
+                                </button>
+                                <button
+                                    className='corpus-name-cancel-button'
+                                    type='button'
+                                    onClick={() => {
+                                        cancelEditCorpusName();
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faCircleXmark} />
+                                </button>
                             </div>
                         }
                         {
