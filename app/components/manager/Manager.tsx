@@ -30,10 +30,11 @@ const Manager = () => {
     let corpusMetadata = useCorpusMetaData();
     let corpusDispatch = useCorpusDispatch();
 
-    // The purpose of this useEffect is to populate the state of the corpusName from context
-    const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false);
+    // The purpose of the useEffect below is to populate the state of the corpusName from context
+    const [editingCorpusName, setEditingCorpusName] = useState<boolean>(false); // for tracking UI state
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false); // for tracking UI state of add corpus name button
     const [corpusName, setCorpusName] = useState<string>('');
-    const [originalCorpusName, setOriginalCorpusName] = useState<string>(''); // used to allow the user to undo any changes while making a change
+    const [originalCorpusName, setOriginalCorpusName] = useState<string>(''); // allows the user to cancel any name change midway through making a change
     useEffect(() => {
         setCorpusName((prevName) => {
             return corpusMetadata.corpus.corpus_name.length > 0 
@@ -47,30 +48,38 @@ const Manager = () => {
         });
     }, [setCorpusName, corpusMetadata, setOriginalCorpusName]); 
 
-    
-    console.log("The corpusName is:", corpusName);
-
+    /**
+     * FUNCTIONALITY to edit the corpus name
+     */
+    // Change UI state
     const handleEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
     }
 
+    // Change UI state and revert to earlier data
     const cancelEditCorpusName = () => {
         setEditingCorpusName(!editingCorpusName);
         setCorpusName(originalCorpusName);
+        setButtonDisabled(false);
     }
 
+    // Track corpus name change
     const handleInputChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setCorpusName(event.target.value);
         if (corpusName.length > 23) {
             setCorpusName((prevName) => prevName.substring(0, 22));
         }
         /**
-         * UPDATE THIS - it should not surprise the user!
+         * If the name is less than 4 characters, then deselect the add button
          */
-        if(corpusName.length === 0) {
-            setCorpusName((prevName) => "Write something!");
+        if (corpusName.length < 4) {
+            setButtonDisabled(true);
+        } else {
+            setButtonDisabled(false);
         }
     }
+
+    // Update local state based on returned information from database
     const updateCorpusName = async () => {
         // Get the id of the currently selected project
         const projectId = projectTitles.filter(projectTitle => projectTitle.isSelected === true)[0].id;
@@ -99,7 +108,7 @@ const Manager = () => {
                 setOriginalCorpusName(corpusName);
             }
         } else {
-            // Update the corpus name on the database if the corpus name is being changed
+            // Update the corpus name on the database if the corpus name has been changed
             const result = await patchCorpusName({ id: corpusMetadata.corpus.id, corpus_name: corpusName });
 
             // If fails to update on the database, inform the user
@@ -119,7 +128,7 @@ const Manager = () => {
     }
 
     /**
-     * Functionality for adding a new subcorpus
+     * FUNCTIONALITY for adding a new subcorpus
      */
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
     const handleAddGroup = () => {
@@ -148,6 +157,7 @@ const Manager = () => {
                                 <button 
                                     className='corpus-name-update-button'
                                     type='button'
+                                    disabled={buttonDisabled}
                                     onClick={() => {
                                         handleEditCorpusName();
                                         updateCorpusName();
