@@ -98,6 +98,13 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         alert("This file will be deleted!");
     }
 
+    /**
+     * Functionality to delete the entire subcorpus
+     */
+    const handleDeleteSubcorpus = () => {
+        alert("Are you sure you want to do this? It can't be undone!");
+    }
+
     return (
         <div>
             <div className="group-name-display">
@@ -106,6 +113,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 <div className="group-name-display-file-number">
                     <div>{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
                     <div onClick={handleAddFiles}>Add files</div>
+                    <div onClick={handleDeleteSubcorpus}>Delete All</div>
                 </div>
                 {
                     showAddNewFileSelector &&

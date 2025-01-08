@@ -235,7 +235,7 @@ const Manager = () => {
                     <>
                         {
                             corpusMetadata.files.map((files) => (
-                                <div className='file-upload-area'>
+                                <div className='file-upload-area' key={files.subCorpus.id}>
                                     <FileDisplay subCorpusFiles={files} />
                                 </div>
                             ))
