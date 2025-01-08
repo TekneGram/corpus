@@ -131,8 +131,13 @@ const Manager = () => {
      * FUNCTIONALITY for adding a new subcorpus
      */
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
+    
     const handleAddGroup = () => {
         setAddingGroup(true);
+    }
+
+    const confirmUploadSuccessful = () => {
+        setAddingGroup(false);
     }
 
     return (
@@ -223,7 +228,7 @@ const Manager = () => {
                     addingGroup === true &&
                     <>
                         <div className='file-upload-area'>
-                            <FileUpload />
+                            <FileUpload confirmUploadSuccessful={confirmUploadSuccessful} />
                         </div>
                     </>
                 }

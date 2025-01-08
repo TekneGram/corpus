@@ -1,6 +1,8 @@
 # TekneGram
 
 ## To run
+Install node modules: npm install
+
 To start the backend: npm run start:backend
 
 To run the desktop app: npm run dev:electron
@@ -45,6 +47,9 @@ The `<Manager />` component is where a selected project is managed
 * Add and delete text files
 * Name your corpus
 * Name your subcorpus
+
+## `<FileUpload />` and `<FileDisplay />` components
+These are contained within the `<Manager />` component. The `<FileDisplay />` component renders a list of each subcorpus' files. The `<FileUpload />` component allows the user to upload files associated with a specific subcorpus.
 
 ## Software Design Features
 Overall design of the software follows an MVC approach. The front end uses React's context provider and reducer to manage the state of the app. The flow chart below shows the case for one component. As the user interacts with the component, an update is dispatched to the reducer to perform changes to the context. Information is sent to the server where, depending on the action, a route is chosen (using Express). A controller calls a model, which in turn spawns a CPP or an R process, interacting with the database and processing data. This is sent back up through the route to the reducer. The reducer then updates the context provider and finalizes the view for the user.
