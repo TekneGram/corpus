@@ -12,8 +12,8 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
             return corpusMetaData;
         }
         case 'reload-corpus-metadata': {
-
-            return { ...action.corpusMetadata};
+            
+            return action.corpusMetadata;
         }
         default: {
             return corpusMetaData;

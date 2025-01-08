@@ -10,9 +10,10 @@ import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContex
 
 interface FileUploadProps {
     confirmUploadSuccessful: (state:void) => void;
+    cancelAddNewSubcorpus: (state:void) => void;
 }
 
-const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful }) => {
+const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful, cancelAddNewSubcorpus }) => {
 
     const [files, setFiles] = useState<File[]>([]);
     const [subcorpusName, setSubcorpusName] = useState<string>('');
@@ -23,7 +24,7 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful }) => {
     }
 
     const handleFileChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files
+        const files = event.target.files;
         if (files) {
             setFiles(Array.from(files));
         } else {
@@ -70,6 +71,10 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful }) => {
         confirmUploadSuccessful();
     }
 
+    const handleCancelAddNewSubcorpus = () => {
+        cancelAddNewSubcorpus();
+    }
+
     return (
         
             <div className='group-input-area'>
@@ -98,6 +103,13 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful }) => {
                     {
                         files.length > 0 && subcorpusName.length > 3 ? `Add files` : `Prepare name and files`
                     }
+                </button>
+                <button
+                    className='cancel-add-files'
+                    type='button'
+                    onClick={handleCancelAddNewSubcorpus}
+                >
+                    Cancel
                 </button>
             </div>
         

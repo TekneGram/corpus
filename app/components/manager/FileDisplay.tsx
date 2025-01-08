@@ -24,6 +24,9 @@ type FileSelected = {
 
 const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
 
+    const [files, setFiles] = useState<File[]>([]); // State for storing files
+    const [showAddNewFileSelector, setShowAddNewFileSelector] = useState<boolean>(false);
+
     /**
      * Selecting a file
      */
@@ -65,8 +68,26 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
      * Adding new files
      */
     const handleAddFiles = () => {
-        // TODO
-        alert("You will be able to add files soon!")
+        setShowAddNewFileSelector(true);
+    }
+
+    const handleFileChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+        // Add this to the file handler.
+        const files = event.target.files;
+        if (files) {
+            setFiles(Array.from(files));
+        } else {
+            setFiles([]);
+        }
+    }
+
+    const processUploadedFiles = () => {
+        console.log("Here we go again!");
+        setShowAddNewFileSelector(false);
+    }
+
+    const handleCancelAddNewFiles = () => {
+        setShowAddNewFileSelector(false);
     }
 
     /**
@@ -77,6 +98,13 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         alert("This file will be deleted!");
     }
 
+    /**
+     * Functionality to delete the entire subcorpus
+     */
+    const handleDeleteSubcorpus = () => {
+        alert("Are you sure you want to do this? It can't be undone!");
+    }
+
     return (
         <div>
             <div className="group-name-display">
@@ -85,7 +113,38 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 <div className="group-name-display-file-number">
                     <div>{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
                     <div onClick={handleAddFiles}>Add files</div>
+                    <div onClick={handleDeleteSubcorpus}>Delete All</div>
                 </div>
+                {
+                    showAddNewFileSelector &&
+                        <div className='group-input-area'>
+                            <input
+                                type='file'
+                                id='new-file-upload'
+                                name='files'
+                                multiple
+                                accept='.txt'
+                                className='file-adder-button'
+                                onChange={(e) => handleFileChange(e)}
+                            />
+                            <button
+                                className={files.length > 0 ? `file-uploader-button` : `file-uploader-button-disabled`}
+                                type='button'
+                                onClick={processUploadedFiles}
+                                disabled={files.length === 0}
+                            >
+                                {
+                                    files.length > 0 ? `Add files` : `Select files first`
+                                }
+                            </button>
+                            <button
+                                className='cancel-add-new-files'
+                                type='button'
+                                onClick={handleCancelAddNewFiles}
+                            > Cancel 
+                            </button>
+                        </div>
+                }
             </div>
             <div className="file-display-container">
                 {/* Files display area. If a file is clicked, it highlights the file and will eventually display the file text. */}
