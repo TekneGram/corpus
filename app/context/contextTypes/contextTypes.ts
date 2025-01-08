@@ -8,4 +8,5 @@ export type ProjectTitlesActions =
 
 export type CorpusMetaDataActions = 
 | { type: 'initialize'; corpusMetadata: CorpusMetaData }
-| { type: 'update-corpus-name'; corpusName: string };
+| { type: 'update-corpus-name'; corpusName: string }
+| { type: 'reload-corpus-metadata'; corpusMetadata: CorpusMetaData};

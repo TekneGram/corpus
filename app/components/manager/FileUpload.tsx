@@ -9,10 +9,10 @@ import { useEffect, useState} from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 interface FileUploadProps {
-
+    confirmUploadSuccessful: (state:void) => void;
 }
 
-const FileUpload:React.FC<FileUploadProps> = ({ }) => {
+const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful }) => {
 
     const [files, setFiles] = useState<File[]>([]);
     const [subcorpusName, setSubcorpusName] = useState<string>('');
@@ -66,6 +66,8 @@ const FileUpload:React.FC<FileUploadProps> = ({ }) => {
             const result = await uploadFileContent(fileContent, group_info.id, file.name);
             results.push(result);
         }
+        console.log(results);
+        confirmUploadSuccessful();
     }
 
     return (
