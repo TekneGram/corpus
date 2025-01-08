@@ -147,33 +147,38 @@ const Manager = () => {
                     <div className='corpus-title-area'>
                         {
                             editingCorpusName &&
-                            <div>
-                                <input
-                                    className='corpus-name-input'
-                                    type='text' 
-                                    value={corpusName}
-                                    onChange={handleInputChange}
-                                />
-                                <button 
-                                    className='corpus-name-update-button'
-                                    type='button'
-                                    disabled={buttonDisabled}
-                                    onClick={() => {
-                                        handleEditCorpusName();
-                                        updateCorpusName();
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faCircleCheck} />
-                                </button>
-                                <button
-                                    className='corpus-name-cancel-button'
-                                    type='button'
-                                    onClick={() => {
-                                        cancelEditCorpusName();
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faCircleXmark} />
-                                </button>
+                            <div className="editing-corpus-name-area">
+                                <div>
+                                    <input
+                                        className='corpus-name-input'
+                                        type='text' 
+                                        value={corpusName}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <button 
+                                        className='corpus-name-update-button'
+                                        type='button'
+                                        disabled={buttonDisabled}
+                                        onClick={() => {
+                                            handleEditCorpusName();
+                                            updateCorpusName();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faCircleCheck} />
+                                    </button>
+                                    <button
+                                        className='corpus-name-cancel-button'
+                                        type='button'
+                                        onClick={() => {
+                                            cancelEditCorpusName();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faCircleXmark} />
+                                    </button>
+                                </div>
+                                
                             </div>
                         }
                         {
@@ -193,8 +198,10 @@ const Manager = () => {
                             type='button'
                             onClick={handleAddGroup}
                         >
-                            Add group
-                            <FontAwesomeIcon icon={faPlus} />
+                            <div>Add group</div>
+                            <div className="add-group-button-icon">
+                                <FontAwesomeIcon icon={faPlus} />
+                            </div>
                         </button>
                     </div>
         
