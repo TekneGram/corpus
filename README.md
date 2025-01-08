@@ -24,15 +24,27 @@ When up and running, the general layout of the app looks like this:
 
 -1- : `<Header />`
 
--2- : `<OperationsSideBar />`
+-2- : `<OperationsSideBar />` (Start a new project here)
 
--3- : `<ProjectsSidebar />`
+-3- : `<ProjectsSidebar />` (Select projects you are working on)
 
--4- : `<main> { children } </main>`
+-4- : `<main> { children } </main>` (Manage projects, analyze data, visualize charts)
 
 ## page.tsx
 Inside -4- `<main> { children } </main>`, page.tsx instantiates the `<TabsContainer />` component. This component can be found in app/components/tabs/TabsContainer.tsx
 
+## `<TabsContainer /> and <Tab />`: How they work
+The `<TabsContainer />` component contains three `<Tab />` components. Which tab component is active is tracked with local state called `activeTab`. A function called `handleSetActiveTab` handles setting the state. The component renders two divs, one on top and one on the bottom. The top div (`tabs-container` class) contains the clickable tab elements. The bottom div (`tab-page-container` class) contains the content which is displayed conditional on which tab is active. In the top div, the <Tab /> components are rendered. The `handleSetActiveTab` function is passed as a prop to allow the component to communicate whether it has been selected. Similarly, the `activeTab` state is passed to allow conditional rendering of styles depending on whether it is active or not.
+
+The first tab allows conditional rendering of the `<Manager /> component.
+
+## `<Manager />` component
+The `<Manager />` component is where a selected project is managed
+* Create subcorpora.
+* Upload corpus text files
+* Add and delete text files
+* Name your corpus
+* Name your subcorpus
 
 ## Software Design Features
 Overall design of the software follows an MVC approach. The front end uses React's context provider and reducer to manage the state of the app. The flow chart below shows the case for one component. As the user interacts with the component, an update is dispatched to the reducer to perform changes to the context. Information is sent to the server where, depending on the action, a route is chosen (using Express). A controller calls a model, which in turn spawns a CPP or an R process, interacting with the database and processing data. This is sent back up through the route to the reducer. The reducer then updates the context provider and finalizes the view for the user.
