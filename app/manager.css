@@ -121,3 +121,10 @@
 .file-name {
     @apply flex flex-row justify-between;
 }
+
+.file-adder-button {
+    @apply 
+    file:mr-5 file:rounded-lg file:border-blue-400 file:border-0
+    file:text-sm file:bg-sky-600 file:text-white mt-3
+    text-sm
+}

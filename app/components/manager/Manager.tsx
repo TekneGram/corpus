@@ -35,6 +35,8 @@ const Manager = () => {
     const [buttonDisabled, setButtonDisabled] = useState<boolean>(false); // for tracking UI state of add corpus name button
     const [corpusName, setCorpusName] = useState<string>('');
     const [originalCorpusName, setOriginalCorpusName] = useState<string>(''); // allows the user to cancel any name change midway through making a change
+    // For altering UI state when adding a subcorpus
+    const [addingGroup, setAddingGroup] = useState<boolean>(false);
     useEffect(() => {
         setCorpusName((prevName) => {
             return corpusMetadata.corpus.corpus_name.length > 0 
@@ -46,6 +48,8 @@ const Manager = () => {
             ? corpusMetadata.corpus.corpus_name// initial state on creating a project
             : 'Click to name';
         });
+        setEditingCorpusName(false); // reset the view if there is a change
+        setAddingGroup(false); // reset the view if there is a change
     }, [setCorpusName, corpusMetadata, setOriginalCorpusName]); 
 
     /**
@@ -130,8 +134,6 @@ const Manager = () => {
     /**
      * FUNCTIONALITY for adding a new subcorpus
      */
-    // For altering UI state
-    const [addingGroup, setAddingGroup] = useState<boolean>(false);
     const handleAddGroup = () => {
         setAddingGroup(true);
     }
@@ -149,6 +151,11 @@ const Manager = () => {
                 corpusMetadata: metadata,
             });
         }
+    }
+
+    // Cancel adding a new subcorpus
+    const cancelAddNewSubcorpus = () => {
+        setAddingGroup(false);
     }
 
     return (
@@ -239,7 +246,7 @@ const Manager = () => {
                     addingGroup === true &&
                     <>
                         <div className='file-upload-area'>
-                            <FileUpload confirmUploadSuccessful={confirmUploadSuccessful} />
+                            <FileUpload confirmUploadSuccessful={confirmUploadSuccessful} cancelAddNewSubcorpus={cancelAddNewSubcorpus} />
                         </div>
                     </>
                 }
