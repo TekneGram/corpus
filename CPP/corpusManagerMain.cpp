@@ -69,7 +69,7 @@ int main()
             handler.uploadFileContent(group_id, file_content, file_name);
         } else if (command == "patchCorpusGroup") {
             int group_id { inputData["group_id"] };
-            std::string group_name { inputData["group_name"] };
+            std::string group_name { inputData["groupName"] };
             handler.updateCorpusGroupName(group_id, group_name);
         }
     } catch (const std::exception& e) {
