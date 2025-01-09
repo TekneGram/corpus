@@ -547,6 +547,33 @@ void DatabaseHandler::deleteAFile(const int& file_id)
     // sqlite3_finalize(statement);
 }
 
+void DatabaseHandler::deleteSubcorpus(const int& group_id)
+{
+    sqlite3_stmt* statement;
+    std::cout << "Hello there!" << group_id << std::endl;
+
+    try {
+        const char* sql = "DELETE FROM corpus_group WHERE id = ?;";
+        if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+            throw std::runtime_error("Failed to prepare query to fetch group_id: " + std::string(sqlite3_errmsg(dbConn)));
+        }
+
+        sqlite3_bind_int(statement, 1, group_id);
+
+        if (sqlite3_step(statement) != SQLITE_DONE) {
+            throw std::runtime_error("Failed to delete subcorpus: " + std::string(sqlite3_errmsg(dbConn)));
+        }
+
+        sqlite3_finalize(statement);
+
+        std::cout << "Group with ID " << group_id << " deleted successfully." << std::endl;
+    } catch (const std::exception& ex) {
+        if (statement) sqlite3_finalize(statement);
+        std::cerr << "Error: " << ex.what() << std::endl;
+    }
+
+}
+
 
 
 // void DatabaseHandler::insertFile()
