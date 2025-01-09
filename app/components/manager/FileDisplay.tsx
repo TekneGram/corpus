@@ -1,5 +1,9 @@
 "use client"
 
+// Fonts
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 // CSS
 import '../../manager.css';
 
@@ -7,6 +11,7 @@ import '../../manager.css';
 import { CorpusFilesPerSubCorpus } from '@/app/types/types';
 
 // APIs
+import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
 
 // Context and State Management
 import { useState, useEffect } from 'react';
@@ -26,6 +31,11 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
 
     const [files, setFiles] = useState<File[]>([]); // State for storing files
     const [showAddNewFileSelector, setShowAddNewFileSelector] = useState<boolean>(false);
+    const [editingSubcorpusName, setEditingSubcorpusName] = useState<boolean>(false);
+
+    const [subcorpusName, setSubcorpusName] = useState<string>(subCorpusFiles.subCorpus.group_name);
+    const [originalSubcorpusName, setOriginalSubcorpusName] = useState<string>(subcorpusName); // To allow for undoing changes when the user cancels a name change.
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
     /**
      * Selecting a file
@@ -60,8 +70,39 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
      * Change the name of the subCorpus
      */
     const handleChangeName = () => {
-        // TODO
-        alert("You will soon be able to change the name of the subcorpus")
+        setEditingSubcorpusName(true);
+    }
+
+    const handleInputChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+        setSubcorpusName(event.target.value);
+        if (subcorpusName.length > 23) {
+            setSubcorpusName((prevName) => prevName.substring(0, 22));
+        }
+        /**
+         * If the name is less than 4 characters, then deselect the add button
+         */
+        if (subcorpusName.length < 4) {
+            setButtonDisabled(true);
+        } else {
+            setButtonDisabled(false);
+        }
+    }
+
+    const cancelChangeName = () => {
+        setSubcorpusName(originalSubcorpusName);
+        setEditingSubcorpusName(false);
+    }
+
+    const processSubcorpusNameChange = () => {
+
+        const result = patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
+        //TODO
+        /**
+         * If the result is successful
+         * update the subCorpusName in the context.
+         */
+        setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
+        setEditingSubcorpusName(false);
     }
 
     /**
@@ -81,8 +122,20 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         }
     }
 
-    const processUploadedFiles = () => {
+    const processUploadedFiles = async () => {
         console.log("Here we go again!");
+        let results = [];
+        for (const file of files) {
+            console.log(file);
+            const fileContent = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+            const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
+            results.push(result);
+        }
         setShowAddNewFileSelector(false);
     }
 
@@ -93,9 +146,12 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     /**
      * Deleting files that are no longer needed
      */
-    const handleDeleteFile = () => {
+    const handleDeleteFile = (file_id: number) => {
         // TODO
         alert("This file will be deleted!");
+        const result = deleteFile(file_id);
+        // Handle the result here
+        // The file should disappear from the view
     }
 
     /**
@@ -103,13 +159,55 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
      */
     const handleDeleteSubcorpus = () => {
         alert("Are you sure you want to do this? It can't be undone!");
+        const result = deleteSubcorpus(subCorpusFiles.subCorpus.id);
+        // Handle the result here
+        // If the subcorpus is deleted, show a message that it was deleted
+        // May need a prop to message up to parent Manager.tsx to update view
+        // and remove this component from the view.
     }
 
     return (
         <div>
             <div className="group-name-display">
                 {/* Subcorpus name area. Can click to change the name of the subcorpus */}
-                <div onClick={handleChangeName}>{subCorpusFiles.subCorpus.group_name}</div>
+                {
+                    editingSubcorpusName
+                    ?
+                        <div className="editing-subcorpus-name-area">
+                            <div>
+                                <input 
+                                    className='group-name-input text-black'
+                                    type='text'
+                                    value={subcorpusName}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div>
+                                <button
+                                    className='corpus-name-update-button'
+                                    type='button'
+                                    disabled={buttonDisabled}
+                                    onClick={processSubcorpusNameChange}
+                                >
+                                    <FontAwesomeIcon icon={faCircleCheck} />
+                                </button>
+                                <button
+                                    className='corpus-name-cancel-button'
+                                    type='button'
+                                    onClick={() => {
+                                        cancelChangeName();
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faCircleXmark} />
+                                </button>
+                            </div>
+                        </div>
+                    :
+                        <div onClick={handleChangeName}>{subCorpusFiles.subCorpus.group_name}</div>
+                }
+                
+
+                {/* Area for adding files or deleting the whole subcorpus */}
                 <div className="group-name-display-file-number">
                     <div>{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
                     <div onClick={handleAddFiles}>Add files</div>
@@ -158,7 +256,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                             <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
                                 <div>{corpusFile.file_name}</div>
                                 {
-                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? <div onClick={handleDeleteFile}>Delete File</div> : ''
+                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div> : ''
                                 }
                             </div>
 

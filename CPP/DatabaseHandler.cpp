@@ -397,7 +397,7 @@ void DatabaseHandler::batchInsert(const int& group_id, const std::vector<std::st
     return;
 }
 
-void DatabaseHandler::updateCorpusGroup(const int& group_id, const std::string& group_name)
+void DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::string& group_name)
 {
     sqlite3_stmt* statement;
 
@@ -428,7 +428,7 @@ void DatabaseHandler::updateCorpusGroup(const int& group_id, const std::string& 
         sqlite3_finalize(statement);
         return;
     }
-    std::cout << "Corpus name updated successfully!\n";
+    std::cout << "Corpus group name updated successfully!\n";
     sqlite3_finalize(statement);
 }
 
