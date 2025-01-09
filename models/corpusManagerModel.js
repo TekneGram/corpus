@@ -206,6 +206,31 @@ class CorpusManager {
         });
     }
 
+    deleteCorpusFile(fileId) {
+        const fileInfo = {"command": "deleteAFile", "fileId": parseInt(fileId.fileId) }
+        const fileInfoString = JSON.stringify(fileInfo);
+        const cppProcess = new CPPProcess('corpusManager');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(fileInfoString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process to delete a reference to a single file and all its associated data: " + error.message));
+
+                } else {
+                    console.log("Output from the cpp process deleting a single file: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling deleting reference to a file in the subcorpus: ", err.message);
+            throw err;
+        });
+    }
+
 }
 
 module.exports = CorpusManager;

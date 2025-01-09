@@ -9,6 +9,7 @@ DatabaseHandler::DatabaseHandler(sqlite3* db)
 {
     dbConn = db;
 }
+
 void DatabaseHandler::startNewProject(const std::string& project_title)
 {
     sqlite3_stmt* statement;
@@ -429,6 +430,36 @@ void DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::stri
         return;
     }
     std::cout << "Corpus group name updated successfully!\n";
+    sqlite3_finalize(statement);
+}
+
+void DatabaseHandler::deleteAFile(const int& file_id)
+{
+    sqlite3_stmt* statement;
+
+    const char* sql = "DELETE FROM files WHERE id = ?;";
+    int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
+    if (exit_code != SQLITE_OK) {
+        std::cerr << "Error preparing delete statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    // Bind the file_id parameter
+    exit_code = sqlite3_bind_int(statement, 1, file_id);
+    if (exit_code != SQLITE_OK) {
+        std::cerr << "Error binding file_id " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return;
+    }
+
+    // Execute the query
+    exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error deleting file: " << sqlite3_errmsg(dbConn) << std::endl;
+    } else {
+        std::cout << "File with ID " << file_id << " and related data deleted successfully." << std::endl;
+    }
+
     sqlite3_finalize(statement);
 }
 

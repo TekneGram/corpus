@@ -17,6 +17,7 @@ class DatabaseHandler
         nlohmann::json createCorpusGroup(const int& corpus_id, const std::string& group_name);
         void uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);
         void updateCorpusGroupName(const int& group_id, const std::string& group_name);
+        void deleteAFile(const int& file_id);
     
     private:
         sqlite3* dbConn;

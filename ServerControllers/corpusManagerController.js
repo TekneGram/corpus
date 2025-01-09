@@ -79,6 +79,7 @@ const patchCorpusGroupName = async (req, res) => {
     }
 };
 
+// For uploading the text from a single file
 const uploadFileContent = (req, res) => {
     const cm = new CorpusManager();
     try {
@@ -86,6 +87,17 @@ const uploadFileContent = (req, res) => {
         res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+    }
+};
+
+// For deleting a reference to a file and all associated text
+const deleteCorpusFile = (req, res) => {
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = cm.deleteCorpusFile(req.params);
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a file." });
     }
 };
 
@@ -97,5 +109,6 @@ module.exports = {
     patchCorpusName,
     createCorpusGroup,
     patchCorpusGroupName,
-    uploadFileContent
+    uploadFileContent,
+    deleteCorpusFile
 }
