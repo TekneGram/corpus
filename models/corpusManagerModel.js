@@ -215,7 +215,6 @@ class CorpusManager {
                 if (error) {
                     console.error("Error: ", error.message);
                     reject(new Error("There was an error running the C++ process to delete a reference to a single file and all its associated data: " + error.message));
-
                 } else {
                     console.log("Output from the cpp process deleting a single file: ", output);
                     resolve(output);
