@@ -1,5 +1,10 @@
 # TekneGram
 
+## To compile CPP programs into executables
+Inside corpus/CPP directory:
+
+g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHandler.cpp CorpusAnalyzer.cpp JSONConvert.cpp -lsqlite3
+
 ## To run
 Install node modules: npm install
 

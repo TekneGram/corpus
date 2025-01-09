@@ -158,6 +158,7 @@ class CorpusManager {
         groupName["command"] = "patchCorpusGroup";
         groupName["group_id"] = parseInt(groupId.groupId);
         const groupNameString = JSON.stringify(groupName);
+        console.log(groupNameString);
         const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(groupNameString, (error, output) => {
