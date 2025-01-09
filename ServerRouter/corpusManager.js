@@ -7,7 +7,8 @@ const {
     patchCorpusName, 
     createCorpusGroup, 
     patchCorpusGroupName, 
-    uploadFileContent 
+    uploadFileContent,
+    deleteCorpusFile,
 } = require('../ServerControllers/corpusManagerController.js');
 
 
@@ -22,5 +23,6 @@ router.patch('/corpus/:corpusId', patchCorpusName); // new corpus name is in the
 router.post('/corpus/:corpusId/group', createCorpusGroup); // create a group associated with a particular corpus id. Group name is in the body
 router.patch('/groups/:groupId', patchCorpusGroupName); // edit a group name associated with a particular group id. Group name is in the body
 router.post('/groups/:groupId/file', uploadFileContent); // add a file associated with a particular group id.
+router.delete('/files/:fileId', deleteCorpusFile); // delete a file given its ID. Will also delete other data associated with it.
 
 module.exports = router;

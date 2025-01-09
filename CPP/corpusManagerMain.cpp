@@ -71,6 +71,9 @@ int main()
             int group_id { inputData["group_id"] };
             std::string group_name { inputData["groupName"] };
             handler.updateCorpusGroupName(group_id, group_name);
+        } else if (command == "deleteAFile") {
+            int file_id { inputData["fileId"] };
+            handler.deleteAFile(file_id);
         }
     } catch (const std::exception& e) {
         handleError(e.what(), db);
