@@ -50,7 +50,7 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful, cancelA
     };
 
     const processUploadedFiles = async () => {
-        const results = [];
+        let results = [];
         // Process group name first and retrieve back the group_id
         const group_info = await postGroupName(subcorpusName, corpusMetadata.corpus);
 
