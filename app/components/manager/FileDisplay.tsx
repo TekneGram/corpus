@@ -7,6 +7,7 @@ import '../../manager.css';
 import { CorpusFilesPerSubCorpus } from '@/app/types/types';
 
 // APIs
+import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
 
 // Context and State Management
 import { useState, useEffect } from 'react';
@@ -81,8 +82,20 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         }
     }
 
-    const processUploadedFiles = () => {
+    const processUploadedFiles = async () => {
         console.log("Here we go again!");
+        let results = [];
+        for (const file of files) {
+            console.log(file);
+            const fileContent = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+            const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
+            results.push(result);
+        }
         setShowAddNewFileSelector(false);
     }
 
