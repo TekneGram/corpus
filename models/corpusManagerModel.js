@@ -154,8 +154,29 @@ class CorpusManager {
         })
     }
 
-    patchCorpusGroup() {
-
+    patchCorpusGroup(groupName, groupId) {
+        groupName["command"] = "patchCorpusGroup";
+        groupName["group_id"] = parseInt(groupId.groupId);
+        const groupNameString = JSON.stringify(groupName);
+        const cppProcess = new CPPProcess('corpusManager');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(groupNameString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process to update a group name: " + error.message));
+                } else {
+                    console.log("Output from the cpp process updating a group name: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling updating a group name in the corpus: ", err.message);
+            throw err;
+        });
     }
 
     uploadFileContent(fileContent, groupId) {

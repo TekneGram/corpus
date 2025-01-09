@@ -120,3 +120,52 @@ export const uploadFileContent = async (fileContent: string, group_id: number, f
         throw error;
     }
 }
+
+export const patchGroupName = async (groupName: string, group_id: number): Promise<any> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ groupName: groupName })
+        });
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteFile = async (file_id: number) => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/files/${file_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteSubcorpus = async (group_id: number) => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

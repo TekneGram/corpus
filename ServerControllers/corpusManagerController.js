@@ -68,8 +68,15 @@ const createCorpusGroup = async (req, res) => {
     }
 };
 
-const patchCorpusGroupName = (req, res) => {
-
+// For editing the subcorpus name
+const patchCorpusGroupName = async (req, res) => {
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = await cm.patchCorpusGroup(req.body, req.params);
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Server error in cpp process patching"});
+    }
 };
 
 const uploadFileContent = (req, res) => {
