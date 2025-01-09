@@ -18,6 +18,7 @@ class DatabaseHandler
         void uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);
         void updateCorpusGroupName(const int& group_id, const std::string& group_name);
         void deleteAFile(const int& file_id);
+        void deleteSubcorpus(const int& group_id);
     
     private:
         sqlite3* dbConn;

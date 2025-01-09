@@ -74,6 +74,9 @@ int main()
         } else if (command == "deleteAFile") {
             int file_id { inputData["fileId"] };
             handler.deleteAFile(file_id);
+        } else if (command == "deleteSubcorpus") {
+            int group_id { inputData["groupId"] };
+            handler.deleteSubcorpus(group_id);
         }
     } catch (const std::exception& e) {
         handleError(e.what(), db);

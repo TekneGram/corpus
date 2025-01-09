@@ -101,6 +101,17 @@ const deleteCorpusFile = (req, res) => {
     }
 };
 
+// For deleting a whole subcorpus and all associated files and texts
+const deleteSubcorpus = (req, res) => {
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = cm.deleteSubcorpus(req.params);
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a subcorpus." });
+    }
+};
+
 module.exports = {
     startNewProject,
     getAllProjectTitles,
@@ -110,5 +121,6 @@ module.exports = {
     createCorpusGroup,
     patchCorpusGroupName,
     uploadFileContent,
-    deleteCorpusFile
-}
+    deleteCorpusFile,
+    deleteSubcorpus
+};
