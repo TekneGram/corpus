@@ -184,7 +184,6 @@ class CorpusManager {
         fileContent["command"] = "uploadFileContent";
         fileContent["group_id"] = parseInt(groupId.groupId);
         const fileContentString = JSON.stringify(fileContent);
-        console.log(fileContentString);
         const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(fileContentString, (error, output) => {
@@ -192,7 +191,6 @@ class CorpusManager {
                     console.error("Error: ", error.message);
                     reject(new Error("There was an error running the C++ process adding file content: " + error.message));
                 } else {
-                    console.log("Output from the cpp process adding a file: ", output);
                     resolve(output);
                 }
             });

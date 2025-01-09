@@ -1,4 +1,4 @@
-import { SelectableProjectTitle, CorpusMetaData } from "@/app/types/types";
+import { SelectableProjectTitle, CorpusMetaData, CorpusFile } from "@/app/types/types";
 
 export type ProjectTitlesActions = 
 | { type: "initialize"; projectTitles: SelectableProjectTitle[] }
@@ -9,4 +9,5 @@ export type ProjectTitlesActions =
 export type CorpusMetaDataActions = 
 | { type: 'initialize'; corpusMetadata: CorpusMetaData }
 | { type: 'update-corpus-name'; corpusName: string }
+| { type: 'add-corpus-file'; subCorpusId: number; corpusFile: CorpusFile}
 | { type: 'reload-corpus-metadata'; corpusMetadata: CorpusMetaData};

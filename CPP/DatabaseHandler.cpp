@@ -301,7 +301,7 @@ nlohmann::json DatabaseHandler::createCorpusGroup(const int& corpus_id, const st
     return newSubCorpusJSON;
 }
 
-void DatabaseHandler::uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name)
+CorpusMetadata::CorpusFile DatabaseHandler::uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name)
 {
     // First parse the text in the file.
     std::vector<std::string> wordlist { }; // initialize an empty word list
@@ -318,24 +318,24 @@ void DatabaseHandler::uploadFileContent(const int& group_id, const std::string& 
     const char* sql = "INSERT INTO files (file_name, group_id) VALUES (?, ?);";
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statementFile, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare file statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Database error during file insertion.");
     }
 
     if (sqlite3_bind_text(statementFile, 1, file_name.c_str(), -1, SQLITE_STATIC) != SQLITE_OK) {
         std::cerr << "failed to bind file_name: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Database error during file_name binding");
     }
 
     if (sqlite3_bind_int(statementFile, 2, group_id) != SQLITE_OK) {
         std::cerr << "Failed to bind group_id" << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Database error during group_id binding");
     }
 
     if (sqlite3_step(statementFile) != SQLITE_DONE) {
         std::cout << "Got here 3!" << std::endl;
         std::cerr << "Failed to insert file_name" << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statementFile);
-        return;
+        throw std::runtime_error("Database error during file insertion");
     }
 
     sqlite3_finalize(statementFile);
@@ -345,7 +345,7 @@ void DatabaseHandler::uploadFileContent(const int& group_id, const std::string& 
     fileId = sqlite3_last_insert_rowid(dbConn);
     if (fileId == -1) {
         std::cerr << "Failed to retrieve file ID" << std::endl;
-        return;
+        throw std::runtime_error("Failed to retrieve file ID after insertion");
     }
 
     /**
@@ -355,7 +355,8 @@ void DatabaseHandler::uploadFileContent(const int& group_id, const std::string& 
     batchInsert(group_id, collList, fileId, "colls", "coll");
     batchInsert(group_id, threeBundleList, fileId, "threeBuns", "threeBun");
     batchInsert(group_id, fourBundleList, fileId, "fourBuns", "fourBun");
-    return;
+    
+    return CorpusMetadata::CorpusFile {fileId, file_name};
 }
 
 void DatabaseHandler::batchInsert(const int& group_id, const std::vector<std::string> data, const int& file_id, const std::string& table_name, const std::string& col_name)

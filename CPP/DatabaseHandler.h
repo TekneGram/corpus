@@ -15,7 +15,7 @@ class DatabaseHandler
         void updateCorpusName(const int& corpus_id, const std::string& corpus_name);
         nlohmann::json getProjectMetadata(const int& project_id);
         nlohmann::json createCorpusGroup(const int& corpus_id, const std::string& group_name);
-        void uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);
+        CorpusMetadata::CorpusFile uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);
         void updateCorpusGroupName(const int& group_id, const std::string& group_name);
         void deleteAFile(const int& file_id);
         void deleteSubcorpus(const int& group_id);

@@ -66,7 +66,8 @@ int main()
             int group_id { inputData["group_id"] };
             std::string file_content { inputData["file_content"] };
             std::string file_name { inputData["file_name"] };
-            handler.uploadFileContent(group_id, file_content, file_name);
+            nlohmann::json result = handler.uploadFileContent(group_id, file_content, file_name);
+            std::cout << result.dump() << std::endl;
         } else if (command == "patchCorpusGroup") {
             int group_id { inputData["group_id"] };
             std::string group_name { inputData["groupName"] };

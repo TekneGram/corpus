@@ -80,21 +80,27 @@ const patchCorpusGroupName = async (req, res) => {
 };
 
 // For uploading the text from a single file
-const uploadFileContent = (req, res) => {
+const uploadFileContent = async (req, res) => {
     const cm = new CorpusManager();
     try {
-        const cppOutput = cm.uploadFileContent(req.body, req.params);
-        res.status(200).json(cppOutput);
+        const cppOutput = await cm.uploadFileContent(req.body, req.params);
+        console.log(cppOutput);
+        if (cppOutput === '') {
+            res.status(200).json({ status: "success" });
+        } else {
+            res.status(200).json(cppOutput);
+        }
+        
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
     }
 };
 
 // For deleting a reference to a file and all associated text
-const deleteCorpusFile = (req, res) => {
+const deleteCorpusFile = async (req, res) => {
     const cm = new CorpusManager();
     try {
-        const cppOutput = cm.deleteCorpusFile(req.params);
+        const cppOutput = await cm.deleteCorpusFile(req.params);
         res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a file." });
@@ -102,10 +108,10 @@ const deleteCorpusFile = (req, res) => {
 };
 
 // For deleting a whole subcorpus and all associated files and texts
-const deleteSubcorpus = (req, res) => {
+const deleteSubcorpus = async (req, res) => {
     const cm = new CorpusManager();
     try {
-        const cppOutput = cm.deleteSubcorpus(req.params);
+        const cppOutput = await cm.deleteSubcorpus(req.params);
         res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a subcorpus." });

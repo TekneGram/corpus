@@ -14,7 +14,8 @@ import { CorpusFilesPerSubCorpus } from '@/app/types/types';
 import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
 
 // Context and State Management
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // FileDisplayProps
 interface FileDisplayProps {
@@ -37,6 +38,9 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     const [originalSubcorpusName, setOriginalSubcorpusName] = useState<string>(subcorpusName); // To allow for undoing changes when the user cancels a name change.
     const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
+    const corpusMetadata = useCorpusMetaData();
+    const corpusDispatch = useCorpusDispatch();
+
     /**
      * Selecting a file
      */
@@ -55,6 +59,10 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             })
         );
     }, [subCorpusFiles]);
+
+    // useEffect(() => {
+    //     console.log("State changed:", corpusMetadata);
+    // }, [corpusMetadata]); // Log when the state updates
     
     // selectFile updates the state when a file is selected
     const selectFile = (corpusFileID: number) => {
@@ -126,7 +134,6 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         console.log("Here we go again!");
         let results = [];
         for (const file of files) {
-            console.log(file);
             const fileContent = await new Promise<string>((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result as string);
@@ -134,7 +141,15 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 reader.readAsText(file);
             });
             const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
-            results.push(result);
+            results.push(JSON.parse(result));
+        }
+
+        /** TODO */
+        // Show a success and give feedback about which files were not uploaded properly.
+
+        // Update the context
+        for (const result of results) {
+            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result });
         }
         setShowAddNewFileSelector(false);
     }
