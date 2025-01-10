@@ -84,11 +84,10 @@ const uploadFileContent = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.uploadFileContent(req.body, req.params);
-        console.log(cppOutput);
         if (cppOutput === '') {
             res.status(200).json({ status: "success" });
         } else {
-            res.status(200).json(cppOutput);
+            res.status(200).json(JSON.parse(cppOutput));
         }
         
     } catch (error) {

@@ -14,7 +14,7 @@ import { CorpusFilesPerSubCorpus } from '@/app/types/types';
 import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
 
 // Context and State Management
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // FileDisplayProps
@@ -61,8 +61,8 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     }, [subCorpusFiles]);
 
     // useEffect(() => {
-    //     console.log("State changed:", corpusMetadata);
-    // }, [corpusMetadata]); // Log when the state updates
+    //     console.log("State changed:", subCorpusFiles);
+    // }, [subCorpusFiles]); // Log when the state updates
     
     // selectFile updates the state when a file is selected
     const selectFile = (corpusFileID: number) => {
@@ -104,11 +104,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     const processSubcorpusNameChange = () => {
 
         const result = patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
-        //TODO
-        /**
-         * If the result is successful
-         * update the subCorpusName in the context.
-         */
+        corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
         setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
         setEditingSubcorpusName(false);
     }
@@ -131,7 +127,6 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     }
 
     const processUploadedFiles = async () => {
-        console.log("Here we go again!");
         let results = [];
         for (const file of files) {
             const fileContent = await new Promise<string>((resolve, reject) => {
@@ -141,7 +136,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                 reader.readAsText(file);
             });
             const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
-            results.push(JSON.parse(result));
+            results.push(result);
         }
 
         /** TODO */

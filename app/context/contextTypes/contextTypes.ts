@@ -10,4 +10,5 @@ export type CorpusMetaDataActions =
 | { type: 'initialize'; corpusMetadata: CorpusMetaData }
 | { type: 'update-corpus-name'; corpusName: string }
 | { type: 'add-corpus-file'; subCorpusId: number; corpusFile: CorpusFile}
+| { type: 'update-subcorpus-name'; subCorpusId: number; subCorpusName: string}
 | { type: 'reload-corpus-metadata'; corpusMetadata: CorpusMetaData};

@@ -11,7 +11,27 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
 
         case 'update-corpus-name': {
             corpusMetaData.corpus.corpus_name = action.corpusName;
-            return corpusMetaData;
+            return {
+                ...corpusMetaData,
+            };
+        }
+
+        case 'update-subcorpus-name': {
+            return {
+                ...corpusMetaData,
+                files: corpusMetaData.files.map((file) => {
+                    if (file.subCorpus.id === action.subCorpusId) {
+                        return {
+                            ...file,
+                            subCorpus: {
+                                ...file.subCorpus,
+                                group_name: action.subCorpusName
+                            }
+                        }
+                    }
+                    return file;
+                })
+            };
         }
 
         case 'add-corpus-file': {
