@@ -88,7 +88,7 @@ const uploadFileContent = async (req, res) => {
         if (cppOutput === '') {
             res.status(200).json({ status: "success" });
         } else {
-            res.status(200).json({ status: "success", cppOutput: error });
+            res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
         }
         
     } catch (error) {

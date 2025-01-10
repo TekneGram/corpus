@@ -114,7 +114,7 @@ export const uploadFileContent = async (fileContent: string, group_id: number, f
             credentials: 'include',
             body: JSON.stringify({ file_content: fileContent, file_name: file_name })
         });
-        const result: CorpusFile = await response.json();
+        const result = await response.json();
         return result;
     } catch (error) {
         throw error;

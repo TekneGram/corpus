@@ -152,9 +152,18 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         // Show a success and give feedback about which files were not uploaded properly.
 
         // Update the context
+        let errorMessages = "";
         for (const result of results) {
             console.log(result);
+            if(result.status === 'fail') {
+                errorMessages = errorMessages + result.cppOutput + "\n";
+            }
             corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result.cppOutput });
+        }
+        if (errorMessages === "") {
+            toast.success("All files were successfully uploaded");
+        } else {
+            toast.warning("The following error messages were received: \n" + errorMessages);
         }
         setShowAddNewFileSelector(false);
     }
