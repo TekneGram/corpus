@@ -160,8 +160,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         // TODO
         alert("This file will be deleted!");
         const result = deleteFile(file_id);
-        // Handle the result here
-        // The file should disappear from the view
+        corpusDispatch({ type: 'delete-file', subCorpusId: subCorpusFiles.subCorpus.id, fileId: file_id });
     }
 
     /**

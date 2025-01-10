@@ -36,7 +36,6 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
 
         case 'add-corpus-file': {
             const { subCorpusId, corpusFile } = action;
-            console.log("Reducer update:", action.subCorpusId, action.corpusFile);
             return {
                 ...corpusMetaData,
                 files: corpusMetaData.files.map((filesPerSubCorpus) => {
@@ -48,6 +47,24 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
                     }
                     return filesPerSubCorpus;
                 }),
+            };
+        }
+
+        case 'delete-file': {
+            const {subCorpusId, fileId } = action;
+            return {
+                ...corpusMetaData,
+                files: corpusMetaData.files.map((filesPerSubCorpus) => {
+                    if (filesPerSubCorpus.subCorpus.id === subCorpusId) {
+                        return {
+                            ...filesPerSubCorpus,
+                            corpusFiles: filesPerSubCorpus.corpusFiles.filter(
+                                (corpusFile) => corpusFile.id !== fileId
+                            ),
+                        };
+                    }
+                    return filesPerSubCorpus;
+                })
             };
         }
 
