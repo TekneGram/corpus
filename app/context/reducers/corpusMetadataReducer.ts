@@ -10,9 +10,13 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
         }
 
         case 'update-corpus-name': {
-            corpusMetaData.corpus.corpus_name = action.corpusName;
+            const { corpusId, corpusName } = action
             return {
                 ...corpusMetaData,
+                corpus: {
+                    id: corpusId,
+                    corpus_name: corpusName
+                }
             };
         }
 

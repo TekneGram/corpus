@@ -61,7 +61,6 @@ export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promis
             body: JSON.stringify(corpusDetails)
         });
         const result = await response.json();
-        console.log(result);
         return result;
     } catch (error) {
         throw error;
@@ -79,7 +78,6 @@ export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
             body: JSON.stringify(corpus)
         });
         const result = await response.json();
-        console.log("Response from patching your corpus name:", result);
         return result;
     } catch (error) {
         throw error;

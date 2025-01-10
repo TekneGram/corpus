@@ -104,7 +104,8 @@ const Manager = () => {
             } else {
                 if (corpusDispatch) {
                     corpusDispatch({
-                        type: "update-corpus-name", 
+                        type: "update-corpus-name",
+                        corpusId: result.cppOutput.id, // get these from the database
                         corpusName: corpusName
                     });
                 }
@@ -121,7 +122,8 @@ const Manager = () => {
             } else {
                 if(corpusDispatch) {
                     corpusDispatch({
-                        type: "update-corpus-name", 
+                        type: "update-corpus-name",
+                        corpusId: corpusMetadata.corpus.id,
                         corpusName: corpusName
                     });
                 }

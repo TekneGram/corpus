@@ -4,7 +4,6 @@ const CorpusManager = require('../models/corpusManagerModel');
 
 const startNewProject = async(req, res) => {
     const cm = new CorpusManager();
-    // const projectTitleString = JSON.stringify(req.body); // originally stringified
     try {
         const cppOutput = await cm.processNewProject(req.body);
         res.status(200).json(cppOutput);
@@ -40,9 +39,10 @@ const createCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.addCorpusName(req.body);
-        return res.status(200).json(cppOutput);
+        console.log("This is the CPP Output: ", cppOutput);
+        return res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput)});
     } catch (error) {
-        res.status(500).json({ status: 'fail', message: 'Server error in cpp process' });
+        res.status(500).json({ status: 'fail', cppOutput: error });
     }
 };
 
@@ -51,9 +51,10 @@ const patchCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.patchCorpusName(req.body);
-        res.status(200).json(cppOutput);
+        console.log("This is the CPP Output in patchCorpusName: ", cppOutput);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process" });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 
 };

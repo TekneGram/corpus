@@ -58,7 +58,7 @@ nlohmann::json DatabaseHandler::getProjectTitles()
     return projectTitles;
 }
 
-void DatabaseHandler::createCorpusName(const int& project_id, const std::string& corpus_name)
+CorpusMetadata::Corpus DatabaseHandler::createCorpusName(const int& project_id, const std::string& corpus_name)
 {
     sqlite3_stmt* statement; // Pointer to a prepared statement
 
@@ -75,11 +75,19 @@ void DatabaseHandler::createCorpusName(const int& project_id, const std::string&
         std::cerr << "Error inserting data: " << sqlite3_errmsg(dbConn);
         sqlite3_finalize(statement);
     }
-    std::cout << "Data inserted successfully!\n";
     sqlite3_finalize(statement);
+
+    // Retrieve the last inserted file ID
+    int corpusId = -1;
+    corpusId = sqlite3_last_insert_rowid(dbConn);
+    if (corpusId == -1) {
+        std::cerr << "Failed to retrieve corpus ID" << std::endl;
+        throw std::runtime_error("Failed to retrieve corpus ID after inserting the corpus name");
+    }
+    return CorpusMetadata::Corpus {corpusId, corpus_name};
 }
 
-void DatabaseHandler::updateCorpusName(const int& corpus_id, const std::string& corpus_name)
+CorpusMetadata::Corpus DatabaseHandler::updateCorpusName(const int& corpus_id, const std::string& corpus_name)
 {
     sqlite3_stmt* statement;
 
@@ -87,20 +95,20 @@ void DatabaseHandler::updateCorpusName(const int& corpus_id, const std::string& 
     int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
     if (exit_code != SQLITE_OK) {
         std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Failed to prepare statement when updating corpus name" + std::string(sqlite3_errmsg(dbConn)));
     }
     // Bind parameters
     exit_code = sqlite3_bind_text(statement, 1, corpus_name.c_str(), -1, SQLITE_STATIC);
     if (exit_code != SQLITE_OK) {
             std::cerr << "Error binding corpus_name: " << sqlite3_errmsg(dbConn) << std::endl;
             sqlite3_finalize(statement);
-            return;
+            throw std::runtime_error("Failed to bind text to statement when updating corpus name" + std::string(sqlite3_errmsg(dbConn)));
     }
     exit_code = sqlite3_bind_int(statement, 2, corpus_id);
     if (exit_code != SQLITE_OK) {
             std::cerr << "Error binding corpus_id: " << sqlite3_errmsg(dbConn) << std::endl;
             sqlite3_finalize(statement);
-            return;
+            throw std::runtime_error("Failed to bind integer to statement when updating corpus name" + std::string(sqlite3_errmsg(dbConn)));
     }
 
     // Run the query
@@ -108,10 +116,11 @@ void DatabaseHandler::updateCorpusName(const int& corpus_id, const std::string& 
     if (exit_code != SQLITE_DONE) {
         std::cerr << "Error updating data: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Failed to execute sql when updating corpus name" + std::string(sqlite3_errmsg(dbConn)));
     }
-    std::cout << "Corpus name updated successfully!\n";
     sqlite3_finalize(statement);
+
+    return CorpusMetadata::Corpus {corpus_id, corpus_name};
 }
 
 nlohmann::json DatabaseHandler::getProjectMetadata(const int& project_id)
@@ -523,7 +532,7 @@ void DatabaseHandler::deleteAFile(const int& file_id)
         std::cerr << "Error: " << ex.what() << std::endl; // handle the error here
         //throw; // Throw the exception for the caller to handle.
     }
-    
+
     return ;
 
     // const char* sql = "DELETE FROM files WHERE id = ?;";
