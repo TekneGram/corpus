@@ -17,6 +17,9 @@ import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '
 import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
+// Child components
+import { toast } from "react-toastify";
+
 // FileDisplayProps
 interface FileDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
@@ -101,12 +104,20 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         setEditingSubcorpusName(false);
     }
 
-    const processSubcorpusNameChange = () => {
+    const processSubcorpusNameChange = async () => {
 
-        const result = patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
-        corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
-        setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
+        const result = await patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
+        if (result.status === "success") {
+            corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
+            setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
+            toast.success("Successfully updated the subcorpus name to: " + result.cppOutput.group_name);
+        } else {
+            setOriginalSubcorpusName(subcorpusName);
+            toast.error("Error changing the subcorpus name: " + result.cppOutput);
+        }
+
         setEditingSubcorpusName(false);
+        
     }
 
     /**
@@ -144,7 +155,8 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
 
         // Update the context
         for (const result of results) {
-            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result });
+            console.log(result);
+            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result.cppOutput });
         }
         setShowAddNewFileSelector(false);
     }

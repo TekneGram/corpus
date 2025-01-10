@@ -66,12 +66,22 @@ int main()
             int group_id { inputData["group_id"] };
             std::string file_content { inputData["file_content"] };
             std::string file_name { inputData["file_name"] };
-            nlohmann::json result = handler.uploadFileContent(group_id, file_content, file_name);
-            std::cout << result.dump() << std::endl;
+            try {
+                nlohmann::json result = handler.uploadFileContent(group_id, file_content, file_name);
+                std::cout << result.dump() << std::endl;
+            } catch (const std::exception& e) {
+                std::cerr << "Error uploading file content: " << e.what() << std::endl;
+            }
         } else if (command == "patchCorpusGroup") {
             int group_id { inputData["group_id"] };
             std::string group_name { inputData["groupName"] };
-            handler.updateCorpusGroupName(group_id, group_name);
+            try {
+                nlohmann::json result = handler.updateCorpusGroupName(group_id, group_name);
+                std::cout << result.dump() << std::endl;
+            } catch (const std::exception& e) {
+                std::cerr << "Error changing subcorpus group name: " << e.what() << std::endl;
+            }
+            
         } else if (command == "deleteAFile") {
             int file_id { inputData["fileId"] };
             handler.deleteAFile(file_id);

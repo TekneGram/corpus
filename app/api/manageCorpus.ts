@@ -132,6 +132,7 @@ export const patchGroupName = async (groupName: string, group_id: number): Promi
             body: JSON.stringify({ groupName: groupName })
         });
         const result = await response.json();
+        console.log("In the patchGroupName function: ", result);
         return result;
     } catch (error) {
         throw error;

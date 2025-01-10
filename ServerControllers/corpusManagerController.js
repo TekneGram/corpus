@@ -73,9 +73,10 @@ const patchCorpusGroupName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.patchCorpusGroup(req.body, req.params);
-        res.status(200).json(cppOutput);
+        console.log(cppOutput);
+        res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process patching"});
+        res.status(500).json({ status: "fail", cppOutput:error });
     }
 };
 
@@ -87,11 +88,11 @@ const uploadFileContent = async (req, res) => {
         if (cppOutput === '') {
             res.status(200).json({ status: "success" });
         } else {
-            res.status(200).json(JSON.parse(cppOutput));
+            res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
         }
         
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+        res.status(500).json({ status: "fail", cppOutput:error });
     }
 };
 

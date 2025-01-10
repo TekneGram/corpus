@@ -399,7 +399,7 @@ void DatabaseHandler::batchInsert(const int& group_id, const std::vector<std::st
     return;
 }
 
-void DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::string& group_name)
+CorpusMetadata::SubCorpus DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::string& group_name)
 {
     sqlite3_stmt* statement;
 
@@ -407,20 +407,20 @@ void DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::stri
     int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
     if (exit_code != SQLITE_OK) {
         std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Failed to prepare statement to update subcorpus group name: " + std::string(sqlite3_errmsg(dbConn)));
     }
     // Bind parameters
     exit_code = sqlite3_bind_text(statement, 1, group_name.c_str(), -1, SQLITE_STATIC);
     if (exit_code != SQLITE_OK) {
-            std::cerr << "Error binding group_name: " << sqlite3_errmsg(dbConn) << std::endl;
-            sqlite3_finalize(statement);
-            return;
+        std::cerr << "Error binding group_name: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to bind group_name to sql: " + std::string(sqlite3_errmsg(dbConn)));
     }
     exit_code = sqlite3_bind_int(statement, 2, group_id);
     if (exit_code != SQLITE_OK) {
-            std::cerr << "Error binding group_id: " << sqlite3_errmsg(dbConn) << std::endl;
-            sqlite3_finalize(statement);
-            return;
+        std::cerr << "Error binding group_id: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to bind group_id to sql: " + std::string(sqlite3_errmsg(dbConn)));
     }
 
     // Run the query
@@ -428,10 +428,12 @@ void DatabaseHandler::updateCorpusGroupName(const int& group_id, const std::stri
     if (exit_code != SQLITE_DONE) {
         std::cerr << "Error updating data: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Failed to update the subcorpus group name: " + std::string(sqlite3_errmsg(dbConn)));
     }
-    std::cout << "Corpus group name updated successfully!\n";
     sqlite3_finalize(statement);
+    // The database was successfully updated, so we can return the values here.
+    CorpusMetadata::SubCorpus subcorpus{group_id, group_name};
+    return subcorpus;
 }
 
 // Deletes the file with a given file_id
