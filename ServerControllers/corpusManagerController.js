@@ -62,7 +62,8 @@ const createCorpusGroup = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.createCorpusGroup(req.body, req.params);
-        res.status(200).json({ status: "success", cppOutput: cppOutput });
+        console.log(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
     }
@@ -76,7 +77,8 @@ const patchCorpusGroupName = async (req, res) => {
         console.log(cppOutput);
         res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", cppOutput:error });
+        console.log(error);
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 

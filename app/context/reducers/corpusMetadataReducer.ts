@@ -16,6 +16,23 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
             };
         }
 
+        case 'add-new-subcorpus': {
+            const { subCorpusName, subCorpusId } = action;
+            return {
+                ...corpusMetaData,
+                files: [
+                    ...corpusMetaData.files,
+                    {
+                        corpusFiles: [],
+                        subCorpus: {
+                            id: subCorpusId,
+                            group_name: subCorpusName,
+                        },
+                    },
+                ],
+            };
+        }
+
         case 'update-subcorpus-name': {
             return {
                 ...corpusMetaData,
@@ -76,11 +93,6 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
                     (filesPerSubCorpus) => filesPerSubCorpus.subCorpus.id !== subCorpusId
                 )
             };
-        }
-
-        case 'reload-corpus-metadata': {
-            
-            return action.corpusMetadata;
         }
 
         default: {

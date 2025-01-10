@@ -86,7 +86,7 @@ export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
     }
 }
 
-export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus> => {
+export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus | any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}/group`, {
             method: 'POST',
@@ -97,7 +97,7 @@ export const postGroupName = async (groupName: string, corpus: Corpus): Promise<
             body: JSON.stringify({groupName: groupName})
         })
         const result = await response.json();
-        return JSON.parse(result);
+        return result;
     } catch (error) {
         throw error;
     }

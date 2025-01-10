@@ -147,10 +147,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
             results.push(result);
         }
-
-        /** TODO */
-        // Show a success and give feedback about which files were not uploaded properly.
-
+        
         // Update the context
         let errorMessages = "";
         for (const result of results) {

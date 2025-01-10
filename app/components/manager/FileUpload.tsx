@@ -8,16 +8,19 @@ import { postGroupName, uploadFileContent } from '@/app/api/manageCorpus';
 import { useEffect, useState} from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
+// Child components
+import { toast } from 'react-toastify';
+
 interface FileUploadProps {
-    confirmUploadSuccessful: (state:void) => void;
     cancelAddNewSubcorpus: (state:void) => void;
 }
 
-const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful, cancelAddNewSubcorpus }) => {
+const FileUpload:React.FC<FileUploadProps> = ({ cancelAddNewSubcorpus }) => {
 
     const [files, setFiles] = useState<File[]>([]);
     const [subcorpusName, setSubcorpusName] = useState<string>('');
     const corpusMetadata = useCorpusMetaData();
+    const corpusDispatch = useCorpusDispatch();
     
     const handleGroupNameChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setSubcorpusName(event.target.value);
@@ -30,45 +33,52 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful, cancelA
         } else {
             setFiles([]);
         }
-        // const fileReadPromises = Array.from(event.target.files || []).map((file) => {
-        //     return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-        //         const reader = new FileReader();
-        //         reader.onload = () => resolve(reader.result);
-        //         reader.onerror = reject;
-        //         reader.readAsText(file);
-        //     });
-        // });
-        
-        // try {
-        //     const contents = await Promise.all(fileReadPromises) as string[]; // casting will assert type safety
-        //     setFileContents(contents);
-        // } catch (error) {
-        //     console.error("Error reading files:", error);
-        // }
-
-        // fileContents.forEach(file => console.log(file));
     };
 
     const processUploadedFiles = async () => {
         let results = [];
         // Process group name first and retrieve back the group_id
-        const group_info = await postGroupName(subcorpusName, corpusMetadata.corpus);
+        const name_result = await postGroupName(subcorpusName, corpusMetadata.corpus);
+        if (name_result.status === "success") {
+            // Update the context state with the subcorpus name
+            const subCorpusId = name_result.cppOutput.id;
+            corpusDispatch({ type: 'add-new-subcorpus', subCorpusName: subcorpusName, subCorpusId: subCorpusId });
 
-        // Then process each file one at a time
-        for (const file of files) {
-            console.log(file);
-            const fileContent = await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result as string);
-                reader.onerror = reject;
-                reader.readAsText(file);
-            });
-            // Send the text to be processed by R and C++
-            const result = await uploadFileContent(fileContent, group_info.id, file.name);
-            results.push(result);
+            // Then process each file one at a time
+            for (const file of files) {
+                console.log(file);
+                const fileContent = await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+                // Send the text to be processed by R and C++
+                const result = await uploadFileContent(fileContent, subCorpusId, file.name);
+                results.push(result);
+            }
+            console.log(results);
+
+            let errorMessages = "";
+            for (const result of results) {
+                console.log(result);
+                if(result.status === 'fail') {
+                    errorMessages = errorMessages + result.cppOutput + "\n";
+                }
+                // Update the context
+                corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusId, corpusFile: result.cppOutput })
+            }
+
+            if (errorMessages === "") {
+                toast.success("All files were successfully uploaded");
+            } else {
+                toast.warning("The following error messages were received: \n" + errorMessages);
+            }
+            // Update the context
+            //confirmUploadSuccessful();
+        } else {
+            toast.error("There was an error creating your subcorpus");
         }
-        console.log(results);
-        confirmUploadSuccessful();
     }
 
     const handleCancelAddNewSubcorpus = () => {
@@ -76,7 +86,6 @@ const FileUpload:React.FC<FileUploadProps> = ({ confirmUploadSuccessful, cancelA
     }
 
     return (
-        
             <div className='group-input-area'>
                 <input
                     className='group-name-input'

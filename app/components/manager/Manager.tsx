@@ -138,21 +138,6 @@ const Manager = () => {
         setAddingGroup(true);
     }
 
-    // If files are uploaded successfully, reset the state of the Manager page
-    const confirmUploadSuccessful = async() => {
-        setAddingGroup(false);
-        const projectId = projectTitles.filter(projectTitle => projectTitle.isSelected === true)[0].id;
-        const metadata = await loadProjectMetadata(projectId);
-        console.log("Here is the meta data:");
-        console.log(metadata);
-        if (metadata) {
-            corpusDispatch({
-                type: 'reload-corpus-metadata',
-                corpusMetadata: metadata,
-            });
-        }
-    }
-
     // Cancel adding a new subcorpus
     const cancelAddNewSubcorpus = () => {
         setAddingGroup(false);
@@ -246,7 +231,7 @@ const Manager = () => {
                     addingGroup === true &&
                     <>
                         <div className='file-upload-area'>
-                            <FileUpload confirmUploadSuccessful={confirmUploadSuccessful} cancelAddNewSubcorpus={cancelAddNewSubcorpus} />
+                            <FileUpload cancelAddNewSubcorpus={cancelAddNewSubcorpus} />
                         </div>
                     </>
                 }
