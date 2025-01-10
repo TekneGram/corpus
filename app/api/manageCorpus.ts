@@ -1,5 +1,10 @@
 import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile } from "../types/types"
 
+interface ApiResponse<T> {
+    status: "success" | "fail";
+    cppOutput: T
+}
+
 export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/project`, {
@@ -50,7 +55,7 @@ export const loadProjectMetadata = async(projectId: number): Promise<CorpusMetaD
     }
 }
 
-export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promise<any> => {
+export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promise<ApiResponse<Corpus | string>> => {
     try {
         const response = await fetch('http://localhost:4000/api/manager/corpus', {
             method: 'POST',
@@ -137,7 +142,7 @@ export const patchGroupName = async (groupName: string, group_id: number): Promi
     }
 }
 
-export const deleteFile = async (file_id: number) => {
+export const deleteFile = async (file_id: number): Promise<any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/files/${file_id}`, {
             method: 'DELETE',
@@ -153,7 +158,7 @@ export const deleteFile = async (file_id: number) => {
     }
 }
 
-export const deleteSubcorpus = async (group_id: number) => {
+export const deleteSubcorpus = async (group_id: number): Promise<any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}`, {
             method: 'DELETE',

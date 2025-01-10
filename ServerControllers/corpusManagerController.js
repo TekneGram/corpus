@@ -16,7 +16,7 @@ const getAllProjectTitles = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.processAllProjectTitles();
-        console.log("This is the cppOutput:", cppOutput);
+        console.log("This is the cppOutput for getting all project titles:", cppOutput);
         return res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: 'fail', message: 'Server error in cpp process' });
@@ -35,6 +35,10 @@ const getProjectMetadata = async (req, res) => {
     
 };
 
+/**
+ * Responses are all standardized from here.
+ * Need to standardize the ones above. 
+ */
 const createCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
