@@ -4,7 +4,6 @@ const CorpusManager = require('../models/corpusManagerModel');
 
 const startNewProject = async(req, res) => {
     const cm = new CorpusManager();
-    // const projectTitleString = JSON.stringify(req.body); // originally stringified
     try {
         const cppOutput = await cm.processNewProject(req.body);
         res.status(200).json(cppOutput);
@@ -40,9 +39,10 @@ const createCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.addCorpusName(req.body);
-        return res.status(200).json(cppOutput);
+        console.log("This is the CPP Output: ", cppOutput);
+        return res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput)});
     } catch (error) {
-        res.status(500).json({ status: 'fail', message: 'Server error in cpp process' });
+        res.status(500).json({ status: 'fail', cppOutput: error });
     }
 };
 
@@ -51,9 +51,10 @@ const patchCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.patchCorpusName(req.body);
-        res.status(200).json(cppOutput);
+        console.log("This is the CPP Output in patchCorpusName: ", cppOutput);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process" });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 
 };
@@ -62,9 +63,10 @@ const createCorpusGroup = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.createCorpusGroup(req.body, req.params);
-        res.status(200).json(cppOutput);
+        console.log(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -73,9 +75,11 @@ const patchCorpusGroupName = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.patchCorpusGroup(req.body, req.params);
-        res.status(200).json(cppOutput);
+        console.log(cppOutput);
+        res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process patching"});
+        console.log(error);
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -87,11 +91,11 @@ const uploadFileContent = async (req, res) => {
         if (cppOutput === '') {
             res.status(200).json({ status: "success" });
         } else {
-            res.status(200).json(JSON.parse(cppOutput));
+            res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
         }
         
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -100,9 +104,9 @@ const deleteCorpusFile = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteCorpusFile(req.params);
-        res.status(200).json(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: "file successfully deleted" });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a file." });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -111,9 +115,9 @@ const deleteSubcorpus = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteSubcorpus(req.params);
-        res.status(200).json(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: "subcorpus successfully deleted" });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a subcorpus." });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 

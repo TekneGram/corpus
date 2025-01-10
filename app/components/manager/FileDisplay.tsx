@@ -17,6 +17,9 @@ import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '
 import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
+// Child components
+import { toast } from "react-toastify";
+
 // FileDisplayProps
 interface FileDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
@@ -101,11 +104,17 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         setEditingSubcorpusName(false);
     }
 
-    const processSubcorpusNameChange = () => {
+    const processSubcorpusNameChange = async () => {
 
-        const result = patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
-        corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
-        setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
+        const result = await patchGroupName(subcorpusName, subCorpusFiles.subCorpus.id);
+        if (result.status === "success") {
+            corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
+            setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
+            toast.success("Successfully updated the subcorpus name to: " + result.cppOutput.group_name);
+        } else {
+            setOriginalSubcorpusName(subcorpusName);
+            toast.error("Error changing the subcorpus name: " + result.cppOutput);
+        }
         setEditingSubcorpusName(false);
     }
 
@@ -138,13 +147,20 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
             results.push(result);
         }
-
-        /** TODO */
-        // Show a success and give feedback about which files were not uploaded properly.
-
+        
         // Update the context
+        let errorMessages = "";
         for (const result of results) {
-            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result });
+            console.log(result);
+            if(result.status === 'fail') {
+                errorMessages = errorMessages + result.cppOutput + "\n";
+            }
+            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result.cppOutput });
+        }
+        if (errorMessages === "") {
+            toast.success("All files were successfully uploaded");
+        } else {
+            toast.warning("The following error messages were received: \n" + errorMessages);
         }
         setShowAddNewFileSelector(false);
     }
@@ -156,24 +172,29 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     /**
      * Deleting files that are no longer needed
      */
-    const handleDeleteFile = (file_id: number) => {
-        // TODO
+    const handleDeleteFile = async (file_id: number) => {
         alert("This file will be deleted!");
-        const result = deleteFile(file_id);
-        corpusDispatch({ type: 'delete-file', subCorpusId: subCorpusFiles.subCorpus.id, fileId: file_id });
+        const result = await deleteFile(file_id);
+        if (result.status === 'success') {
+            corpusDispatch({ type: 'delete-file', subCorpusId: subCorpusFiles.subCorpus.id, fileId: file_id });
+            toast.success("File successfully deleted.");
+        } else {
+            toast.error("There was an error deleting your file: " + result.cppOutput);
+        }
     }
 
     /**
      * Functionality to delete the entire subcorpus
      */
-    const handleDeleteSubcorpus = () => {
+    const handleDeleteSubcorpus = async () => {
         alert("Are you sure you want to do this? It can't be undone!");
-        const result = deleteSubcorpus(subCorpusFiles.subCorpus.id);
-        // Handle the result here
-        // If the subcorpus is deleted, show a message that it was deleted
-        // May need a prop to message up to parent Manager.tsx to update view
-        // and remove this component from the view.
-        corpusDispatch( { type: 'delete-subcorpus', subCorpusId: subCorpusFiles.subCorpus.id });
+        const result = await deleteSubcorpus(subCorpusFiles.subCorpus.id);
+        if (result.status === 'success') {
+            corpusDispatch( { type: 'delete-subcorpus', subCorpusId: subCorpusFiles.subCorpus.id });
+            toast.success("Subcorpus group successfully deleted.");
+        } else {
+            toast.error("There was an error deleting the subcorpus: " + result.cppOutput);
+        }
     }
 
     return (

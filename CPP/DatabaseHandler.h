@@ -11,12 +11,12 @@ class DatabaseHandler
 
         void startNewProject(const std::string& project_title);
         nlohmann::json getProjectTitles();
-        void createCorpusName(const int& project_id, const std::string& corpus_name);
-        void updateCorpusName(const int& corpus_id, const std::string& corpus_name);
+        CorpusMetadata::Corpus createCorpusName(const int& project_id, const std::string& corpus_name);
+        CorpusMetadata::Corpus updateCorpusName(const int& corpus_id, const std::string& corpus_name);
         nlohmann::json getProjectMetadata(const int& project_id);
         nlohmann::json createCorpusGroup(const int& corpus_id, const std::string& group_name);
         CorpusMetadata::CorpusFile uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);
-        void updateCorpusGroupName(const int& group_id, const std::string& group_name);
+        CorpusMetadata::SubCorpus updateCorpusGroupName(const int& group_id, const std::string& group_name);
         void deleteAFile(const int& file_id);
         void deleteSubcorpus(const int& group_id);
     

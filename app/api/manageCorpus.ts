@@ -61,7 +61,6 @@ export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promis
             body: JSON.stringify(corpusDetails)
         });
         const result = await response.json();
-        console.log(result);
         return result;
     } catch (error) {
         throw error;
@@ -79,14 +78,13 @@ export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
             body: JSON.stringify(corpus)
         });
         const result = await response.json();
-        console.log("Response from patching your corpus name:", result);
         return result;
     } catch (error) {
         throw error;
     }
 }
 
-export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus> => {
+export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus | any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}/group`, {
             method: 'POST',
@@ -97,7 +95,7 @@ export const postGroupName = async (groupName: string, corpus: Corpus): Promise<
             body: JSON.stringify({groupName: groupName})
         })
         const result = await response.json();
-        return JSON.parse(result);
+        return result;
     } catch (error) {
         throw error;
     }
@@ -114,7 +112,7 @@ export const uploadFileContent = async (fileContent: string, group_id: number, f
             credentials: 'include',
             body: JSON.stringify({ file_content: fileContent, file_name: file_name })
         });
-        const result: CorpusFile = await response.json();
+        const result = await response.json();
         return result;
     } catch (error) {
         throw error;
@@ -132,6 +130,7 @@ export const patchGroupName = async (groupName: string, group_id: number): Promi
             body: JSON.stringify({ groupName: groupName })
         });
         const result = await response.json();
+        console.log("In the patchGroupName function: ", result);
         return result;
     } catch (error) {
         throw error;

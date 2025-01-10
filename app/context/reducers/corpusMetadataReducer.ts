@@ -10,9 +10,30 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
         }
 
         case 'update-corpus-name': {
-            corpusMetaData.corpus.corpus_name = action.corpusName;
+            const { corpusId, corpusName } = action
             return {
                 ...corpusMetaData,
+                corpus: {
+                    id: corpusId,
+                    corpus_name: corpusName
+                }
+            };
+        }
+
+        case 'add-new-subcorpus': {
+            const { subCorpusName, subCorpusId } = action;
+            return {
+                ...corpusMetaData,
+                files: [
+                    ...corpusMetaData.files,
+                    {
+                        corpusFiles: [],
+                        subCorpus: {
+                            id: subCorpusId,
+                            group_name: subCorpusName,
+                        },
+                    },
+                ],
             };
         }
 
@@ -76,11 +97,6 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
                     (filesPerSubCorpus) => filesPerSubCorpus.subCorpus.id !== subCorpusId
                 )
             };
-        }
-
-        case 'reload-corpus-metadata': {
-            
-            return action.corpusMetadata;
         }
 
         default: {
