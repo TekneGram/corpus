@@ -173,6 +173,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         // If the subcorpus is deleted, show a message that it was deleted
         // May need a prop to message up to parent Manager.tsx to update view
         // and remove this component from the view.
+        corpusDispatch( { type: 'delete-subcorpus', subCorpusId: subCorpusFiles.subCorpus.id });
     }
 
     return (

@@ -9,7 +9,8 @@ export type ProjectTitlesActions =
 export type CorpusMetaDataActions = 
 | { type: 'initialize'; corpusMetadata: CorpusMetaData }
 | { type: 'update-corpus-name'; corpusName: string }
-| { type: 'add-corpus-file'; subCorpusId: number; corpusFile: CorpusFile}
-| { type: 'update-subcorpus-name'; subCorpusId: number; subCorpusName: string}
-| { type: 'delete-file', subCorpusId: number; fileId: number}
-| { type: 'reload-corpus-metadata'; corpusMetadata: CorpusMetaData};
+| { type: 'add-corpus-file'; subCorpusId: number; corpusFile: CorpusFile }
+| { type: 'update-subcorpus-name'; subCorpusId: number; subCorpusName: string }
+| { type: 'delete-file', subCorpusId: number; fileId: number }
+| { type: 'delete-subcorpus', subCorpusId: number }
+| { type: 'reload-corpus-metadata'; corpusMetadata: CorpusMetaData };

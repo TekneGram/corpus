@@ -68,6 +68,16 @@ export const corpusMetaDataReducer = (corpusMetaData: CorpusMetaData, action: Co
             };
         }
 
+        case 'delete-subcorpus': {
+            const { subCorpusId } = action;
+            return {
+                ...corpusMetaData,
+                files: corpusMetaData.files.filter(
+                    (filesPerSubCorpus) => filesPerSubCorpus.subCorpus.id !== subCorpusId
+                )
+            };
+        }
+
         case 'reload-corpus-metadata': {
             
             return action.corpusMetadata;
