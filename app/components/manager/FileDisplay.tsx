@@ -115,9 +115,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             setOriginalSubcorpusName(subcorpusName);
             toast.error("Error changing the subcorpus name: " + result.cppOutput);
         }
-
         setEditingSubcorpusName(false);
-        
     }
 
     /**

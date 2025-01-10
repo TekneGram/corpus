@@ -84,7 +84,12 @@ int main()
             
         } else if (command == "deleteAFile") {
             int file_id { inputData["fileId"] };
-            handler.deleteAFile(file_id);
+            try {
+                handler.deleteAFile(file_id);
+            } catch (const std::exception& e) {
+                std::cerr << "Error deleting a file: " << e.what() << std::endl;
+            }
+            
         } else if (command == "deleteSubcorpus") {
             int group_id { inputData["groupId"] };
             handler.deleteSubcorpus(group_id);

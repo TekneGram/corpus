@@ -523,6 +523,8 @@ void DatabaseHandler::deleteAFile(const int& file_id)
         std::cerr << "Error: " << ex.what() << std::endl; // handle the error here
         //throw; // Throw the exception for the caller to handle.
     }
+    
+    return ;
 
     // const char* sql = "DELETE FROM files WHERE id = ?;";
     // int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);

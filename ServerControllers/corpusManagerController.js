@@ -62,9 +62,9 @@ const createCorpusGroup = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.createCorpusGroup(req.body, req.params);
-        res.status(200).json(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: cppOutput });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process adding a group name" });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -88,11 +88,11 @@ const uploadFileContent = async (req, res) => {
         if (cppOutput === '') {
             res.status(200).json({ status: "success" });
         } else {
-            res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
+            res.status(200).json({ status: "success", cppOutput: error });
         }
         
     } catch (error) {
-        res.status(500).json({ status: "fail", cppOutput:error });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -101,9 +101,9 @@ const deleteCorpusFile = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteCorpusFile(req.params);
-        res.status(200).json(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: "file successfully deleted" });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a file." });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
@@ -112,9 +112,9 @@ const deleteSubcorpus = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteSubcorpus(req.params);
-        res.status(200).json(cppOutput);
+        res.status(200).json({ status: "success", cppOutput: "subcorpus successfully deleted" });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Server error in cpp process deleting a subcorpus." });
+        res.status(500).json({ status: "fail", cppOutput: error });
     }
 };
 
