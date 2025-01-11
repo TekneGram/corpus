@@ -1,9 +1,9 @@
-import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile } from "../types/types"
+import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput } from "../types/types"
 
-interface ApiResponse<T> {
-    status: "success" | "fail";
-    cppOutput: T
-}
+type ApiResponse =
+    | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
+    | { status: "fail"; cppOutput: string };
+
 
 export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
     try {
@@ -55,7 +55,7 @@ export const loadProjectMetadata = async(projectId: number): Promise<CorpusMetaD
     }
 }
 
-export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promise<ApiResponse<Corpus | string>> => {
+export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promise<ApiResponse> => {
     try {
         const response = await fetch('http://localhost:4000/api/manager/corpus', {
             method: 'POST',
@@ -72,7 +72,7 @@ export const postCorpusName = async(corpusDetails:CorpusProjectRelation): Promis
     }
 }
 
-export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
+export const patchCorpusName = async(corpus: Corpus): Promise<ApiResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}`, {
             method: 'PATCH',
@@ -89,7 +89,7 @@ export const patchCorpusName = async(corpus: Corpus): Promise<any> => {
     }
 }
 
-export const postGroupName = async (groupName: string, corpus: Corpus): Promise<SubCorpus | any> => {
+export const postGroupName = async (groupName: string, corpus: Corpus): Promise<ApiResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/corpus/${corpus.id}/group`, {
             method: 'POST',
@@ -106,8 +106,7 @@ export const postGroupName = async (groupName: string, corpus: Corpus): Promise<
     }
 }
 
-export const uploadFileContent = async (fileContent: string, group_id: number, file_name: string): Promise<CorpusFile | any> => {
-    console.log(fileContent);
+export const uploadFileContent = async (fileContent: string, group_id: number, file_name: string): Promise<ApiResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}/file`, {
             method: 'POST',
@@ -117,14 +116,14 @@ export const uploadFileContent = async (fileContent: string, group_id: number, f
             credentials: 'include',
             body: JSON.stringify({ file_content: fileContent, file_name: file_name })
         });
-        const result = await response.json();
+        const result: ApiResponse = await response.json();
         return result;
     } catch (error) {
         throw error;
     }
 }
 
-export const patchGroupName = async (groupName: string, group_id: number): Promise<any> => {
+export const patchGroupName = async (groupName: string, group_id: number): Promise<ApiResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}`, {
             method: 'PATCH',
@@ -142,7 +141,7 @@ export const patchGroupName = async (groupName: string, group_id: number): Promi
     }
 }
 
-export const deleteFile = async (file_id: number): Promise<any> => {
+export const deleteFile = async (file_id: number): Promise<ApiResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/files/${file_id}`, {
             method: 'DELETE',

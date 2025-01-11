@@ -105,18 +105,13 @@ const Manager = () => {
             if (result.status === 'fail') {
                 toast.error("Could not add your corpus name. Please try again.");
             } else {
-                // Use the custom type guard to ensure we have a
-                if (isCorpus(result.cppOutput)) {
-                    corpusDispatch({
-                        type: "update-corpus-name",
-                        corpusId: result.cppOutput.id, // get these from the database
-                        corpusName: corpusName
-                    });
-                    toast.success("Corpus name added successfully.");
-                    setOriginalCorpusName(corpusName);
-                } else {
-                    toast.warning("There was some problem with updating the corpus name.")
-                }
+                corpusDispatch({
+                    type: "update-corpus-name",
+                    corpusId: result.cppOutput.id, // get these from the database
+                    corpusName: corpusName
+                });
+                toast.success("Corpus name added successfully.");
+                setOriginalCorpusName(corpusName);
             }
         } else {
             // Update the corpus name on the database if the corpus name has been changed

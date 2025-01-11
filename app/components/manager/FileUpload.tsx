@@ -1,6 +1,9 @@
 // CSS
 import '../../manager.css';
 
+// import types
+import { CorpusFile } from '@/app/types/types';
+
 // APIs
 import { postGroupName, uploadFileContent } from '@/app/api/manageCorpus';
 
@@ -10,6 +13,9 @@ import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContex
 
 // Child components
 import { toast } from 'react-toastify';
+
+// Typeguards
+import { isSubCorpus } from '@/app/types/typeguards';
 
 interface FileUploadProps {
     cancelAddNewSubcorpus: (state:void) => void;
@@ -41,6 +47,7 @@ const FileUpload:React.FC<FileUploadProps> = ({ cancelAddNewSubcorpus }) => {
         const name_result = await postGroupName(subcorpusName, corpusMetadata.corpus);
         if (name_result.status === "success") {
             // Update the context state with the subcorpus name
+            // Apply a typeguard here
             const subCorpusId = name_result.cppOutput.id;
             corpusDispatch({ type: 'add-new-subcorpus', subCorpusName: subcorpusName, subCorpusId: subCorpusId });
 
@@ -66,7 +73,7 @@ const FileUpload:React.FC<FileUploadProps> = ({ cancelAddNewSubcorpus }) => {
                     errorMessages = errorMessages + result.cppOutput + "\n";
                 }
                 // Update the context
-                corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusId, corpusFile: result.cppOutput })
+                corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusId, corpusFile: result.cppOutput as CorpusFile })
             }
 
             if (errorMessages === "") {
