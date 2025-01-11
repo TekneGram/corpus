@@ -92,6 +92,7 @@ const uploadFileContent = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.uploadFileContent(req.body, req.params);
+        // cppOutput type is CorpusFile
         res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
@@ -103,6 +104,7 @@ const deleteCorpusFile = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteCorpusFile(req.params);
+        // cppOutput type is EmptyCPPOutput
         res.status(200).json({ status: "success", cppOutput: { id: 0, message: "File successfully deleted" } });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
@@ -114,6 +116,7 @@ const deleteSubcorpus = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteSubcorpus(req.params);
+        // cppOutput type is EmptyCPPOutput
         res.status(200).json({ status: "success", cppOutput: { id: 0, message: "Subcorpus successfully deleted" } });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });

@@ -9,7 +9,8 @@
     "lint": "next lint",
     "start:backend": "nodemon ./server.js",
     "electron": "electron ./electron.js",
-    "dev:electron": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && npm run electron\""
+    "dev:electron": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && npm run electron\"",
+    "test-front": "vitest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -40,15 +41,21 @@
     "wait-on": "^8.0.1"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.3.4",
     "electron": "^33.2.0",
     "electron-rebuild": "^3.2.9",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
+    "jsdom": "^26.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^2.1.8"
   }
 }

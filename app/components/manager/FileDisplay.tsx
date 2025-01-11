@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../../manager.css';
 
 // import types
-import { CorpusFile, CorpusFilesPerSubCorpus, SubCorpus } from '@/app/types/types';
+import { CorpusFile, CorpusFilesPerSubCorpus, EmptyCPPOutput, SubCorpus } from '@/app/types/types';
 
 // APIs
 import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
@@ -177,7 +177,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         const result = await deleteFile(file_id);
         if (result.status === 'success') {
             corpusDispatch({ type: 'delete-file', subCorpusId: subCorpusFiles.subCorpus.id, fileId: file_id });
-            toast.success("File successfully deleted.");
+            toast.success((result.cppOutput as EmptyCPPOutput).message);
         } else {
             toast.error("There was an error deleting your file: " + result.cppOutput);
         }
