@@ -179,7 +179,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
 
     return (
         <>
-            <aside className='projects-sidebar' style = {{ width: projectsBarWidth }}>
+            <aside className='projects-sidebar' style = {{ width: projectsBarWidth }} data-testid="projects-sidebar">
             
                 {/* For creating a new project */}
                 {startingNewProject && (
@@ -207,7 +207,7 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                         </button>
                     </div>
                 )}
-                <div className='project-titles-bar'>
+                <div className='project-titles-bar' data-testid="project-titles-bar">
                     <button
                         className="sort-project-titles-button"
                         onClick={handleSortAscending}

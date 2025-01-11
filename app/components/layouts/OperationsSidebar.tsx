@@ -9,11 +9,13 @@ interface OperationsSidebarProps {
 const OperationsSidebar:React.FC<OperationsSidebarProps> = ({ handleStartingNewProject }) => {
 
     return (
-        <aside className='operations-sidebar'>
+        <aside className='operations-sidebar' data-testid="operations-sidebar">
             
             <button 
                 className='add-project-button'
                 onClick={() => handleStartingNewProject(true)}
+                aria-label="Add new project"
+                data-testid="add-project-button"
             >
                 <FontAwesomeIcon icon={faPlus} />
             </button>
