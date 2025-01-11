@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../../manager.css';
 
 // import types
-import { CorpusFilesPerSubCorpus } from '@/app/types/types';
+import { CorpusFile, CorpusFilesPerSubCorpus, SubCorpus } from '@/app/types/types';
 
 // APIs
 import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
@@ -110,7 +110,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
         if (result.status === "success") {
             corpusDispatch({ type: 'update-subcorpus-name', subCorpusId: subCorpusFiles.subCorpus.id, subCorpusName: subcorpusName})
             setOriginalSubcorpusName(subcorpusName); // Set a new value for the original
-            toast.success("Successfully updated the subcorpus name to: " + result.cppOutput.group_name);
+            toast.success("Successfully updated the subcorpus name to: " + (result.cppOutput as SubCorpus).group_name);
         } else {
             setOriginalSubcorpusName(subcorpusName);
             toast.error("Error changing the subcorpus name: " + result.cppOutput);
@@ -147,7 +147,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             const result = await uploadFileContent(fileContent, subCorpusFiles.subCorpus.id, file.name);
             results.push(result);
         }
-        
+
         // Update the context
         let errorMessages = "";
         for (const result of results) {
@@ -155,7 +155,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             if(result.status === 'fail') {
                 errorMessages = errorMessages + result.cppOutput + "\n";
             }
-            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result.cppOutput });
+            corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusFiles.subCorpus.id, corpusFile: result.cppOutput as CorpusFile });
         }
         if (errorMessages === "") {
             toast.success("All files were successfully uploaded");

@@ -16,7 +16,7 @@ const getAllProjectTitles = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.processAllProjectTitles();
-        console.log("This is the cppOutput:", cppOutput);
+        console.log("This is the cppOutput for getting all project titles:", cppOutput);
         return res.status(200).json(cppOutput);
     } catch (error) {
         res.status(500).json({ status: 'fail', message: 'Server error in cpp process' });
@@ -35,6 +35,10 @@ const getProjectMetadata = async (req, res) => {
     
 };
 
+/**
+ * Responses are all standardized from here.
+ * Need to standardize the ones above. 
+ */
 const createCorpusName = async (req, res) => {
     const cm = new CorpusManager();
     try {
@@ -76,7 +80,7 @@ const patchCorpusGroupName = async (req, res) => {
     try {
         const cppOutput = await cm.patchCorpusGroup(req.body, req.params);
         console.log(cppOutput);
-        res.status(200).json({ status: "success", cppOutput:JSON.parse(cppOutput) });
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: "fail", cppOutput: error });
@@ -88,12 +92,7 @@ const uploadFileContent = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.uploadFileContent(req.body, req.params);
-        if (cppOutput === '') {
-            res.status(200).json({ status: "success" });
-        } else {
-            res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
-        }
-        
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
     }
@@ -104,7 +103,7 @@ const deleteCorpusFile = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteCorpusFile(req.params);
-        res.status(200).json({ status: "success", cppOutput: "file successfully deleted" });
+        res.status(200).json({ status: "success", cppOutput: { id: 0, message: "File successfully deleted" } });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
     }
@@ -115,7 +114,7 @@ const deleteSubcorpus = async (req, res) => {
     const cm = new CorpusManager();
     try {
         const cppOutput = await cm.deleteSubcorpus(req.params);
-        res.status(200).json({ status: "success", cppOutput: "subcorpus successfully deleted" });
+        res.status(200).json({ status: "success", cppOutput: { id: 0, message: "Subcorpus successfully deleted" } });
     } catch (error) {
         res.status(500).json({ status: "fail", cppOutput: error });
     }

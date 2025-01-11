@@ -40,3 +40,9 @@ export type CorpusMetaData = {
     corpus: Corpus;
     files: CorpusFilesPerSubCorpus[];
 };
+
+// For handling empty cppOutput returns
+export type EmptyCPPOutput = {
+    id: number;
+    message: string;
+}

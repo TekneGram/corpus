@@ -23,6 +23,9 @@ import FileUpload from "./FileUpload";
 import FileDisplay from "./FileDisplay";
 import { toast } from "react-toastify";
 
+// Typeguards
+import { isCorpus } from "@/app/types/typeguards";
+
 
 const Manager = () => {
 
@@ -102,13 +105,11 @@ const Manager = () => {
             if (result.status === 'fail') {
                 toast.error("Could not add your corpus name. Please try again.");
             } else {
-                if (corpusDispatch) {
-                    corpusDispatch({
-                        type: "update-corpus-name",
-                        corpusId: result.cppOutput.id, // get these from the database
-                        corpusName: corpusName
-                    });
-                }
+                corpusDispatch({
+                    type: "update-corpus-name",
+                    corpusId: result.cppOutput.id, // get these from the database
+                    corpusName: corpusName
+                });
                 toast.success("Corpus name added successfully.");
                 setOriginalCorpusName(corpusName);
             }
