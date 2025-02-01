@@ -1,10 +1,15 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import RootLayout from '../layout';
 import { useCorpusMetaData, useCorpusDispatch } from '../context/CorpusContext';
 import * as ProjectsContext from '@/app/context/ProjectsContext';
 
 describe("RootLayout component", () => {
+    beforeEach(() => {
+        vi.resetModules();
+        vi.clearAllMocks();
+    });
+
     it('renders children inside RootLayout', () => {
         render(
             <RootLayout>

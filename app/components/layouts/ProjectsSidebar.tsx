@@ -1,6 +1,6 @@
 "use client"
 // Fonts
-import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faUserPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // CSS
@@ -174,6 +174,17 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
      */
 
     /**
+     * Functionality to handle editing a project title
+     */
+    const handleEditProjectTitle = (id: number) => {
+        console.log("Editing project title with id: ", id);
+    }
+
+    /**
+     * End of functionality to handle editing a project title
+     */
+
+    /**
      * Functionality for selecting title
      */
 
@@ -224,12 +235,12 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                 {projectTitles.map(projectTitle => (
                     <div 
                         key={projectTitle.id}
-                        className='project-title-entry'
+                        className={`project-title-entry ${projectTitle.isSelected ? 'project-selected' : ''}`}
                     >
                         <div className={`project-title-bar ${projectTitle.isSelected ? 'project-selected' : ''}`} onClick={() => toggleSelected(projectTitle.id)}>
                             <span className='project-title'>{projectTitle.project_name}</span>
                         </div>
-                        
+                        <div className='project-title-entry-edit' onClick={() => handleEditProjectTitle(projectTitle.id)}><FontAwesomeIcon icon={faUserPen}/></div>
                     </div>
                 ))}
 

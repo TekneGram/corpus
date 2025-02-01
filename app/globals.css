@@ -75,7 +75,12 @@ body {
 }
 
 .project-title-entry {
-  @apply w-[100%]
+  @apply w-[100%] flex flex-row justify-between
+  pr-2 hover:cursor-pointer
+}
+
+.project-title-entry-edit {
+  @apply hover:text-black;
 }
 
 .project-selected {

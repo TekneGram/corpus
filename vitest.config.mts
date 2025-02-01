@@ -7,6 +7,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         globals: true,
-        setupFiles: './app/__tests__/setupTests.ts'
+        setupFiles: './app/__tests__/setupTests.ts',
+        isolate: true,
     },
 });
