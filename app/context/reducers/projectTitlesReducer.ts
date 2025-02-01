@@ -24,6 +24,11 @@ export const projectTitlesReducer = (projectTitles: SelectableProjectTitle[], ac
         case 'refreshed': {
             return action.projectTitles;
         }
+        case 'update-project-title': {
+            return projectTitles.map((projectTitle) => {
+                return projectTitle.id === action.id ? {...projectTitle, project_name: action.project_name} : projectTitle;
+            });
+        }
         default: {
             return projectTitles;
         }
