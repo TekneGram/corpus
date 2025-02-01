@@ -5,6 +5,7 @@ export type ProjectTitlesActions =
 | { type: "sorted"; sortType: "asc" | "desc" }
 | { type: "setSelected"; id: number }
 | { type: "refreshed"; projectTitles: SelectableProjectTitle[]}
+| { type: "update-project-title"; id: number; project_name: string }
 
 export type CorpusMetaDataActions = 
 | { type: 'initialize'; corpusMetadata: CorpusMetaData }

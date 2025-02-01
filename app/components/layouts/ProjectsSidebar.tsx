@@ -1,6 +1,6 @@
 "use client"
 // Fonts
-import { faCircleCheck, faX, faArrowUpAZ, faArrowDownZA, faUserPen } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleXmark, faX, faArrowUpAZ, faArrowDownZA, faUserPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // CSS
@@ -10,7 +10,7 @@ import { ProjectTitle } from "@/app/types/types";
 
 // APIs
 //import { saveProjectTitleToDatabase } from "../../ipcRenderer/newProjects";
-import { saveProjectTitleToDatabase } from "@/app/api/manageCorpus";
+import { saveProjectTitleToDatabase, updateProjectTitleInDatabase } from "@/app/api/manageCorpus";
 import { loadProjectMetadata, loadAllProjectTitles } from "@/app/api/manageCorpus";
 
 // Context and state management
@@ -176,8 +176,69 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
     /**
      * Functionality to handle editing a project title
      */
+    const [editingProjectTitle, setEditingProjectTitle] = useState<Array<boolean>>((projectTitles.map(() => false)));
+    const [aProjectName, setAProjectName] = useState<string>(''); // Stores the original project name so it can be cancelled after being changed.
+    // useEffect(() => {
+    //     console.log("Editing project titles: ", editingProjectTitle);
+    // });
     const handleEditProjectTitle = (id: number) => {
-        console.log("Editing project title with id: ", id);
+        setAProjectName(projectTitles[id-1].project_name);
+        setEditingProjectTitle(() => {
+            return projectTitles.map((project) => {
+                if (project.id === id) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        });
+    }
+
+    const updateProjectTitle = (value: string, id: number) => {
+        dispatch({
+            type: "update-project-title",
+            id: id,
+            project_name: value
+        });
+    }
+
+    const confirmProjectTitleUpdate = async (id: number) => {
+        const projectTitle = projectTitles.find((project) => {
+            return project.id === id;
+        })?.project_name;
+        if (!projectTitle || projectTitle.length < 4) {
+            // Handle the error - a project title cannot be an empty string
+            // Return an error to the user telling them to enter a valid project title.
+            toast.error("A Project Title cannot be empty.");
+            dispatch({
+                type: "update-project-title",
+                id: id,
+                project_name: aProjectName
+            });
+        } else {
+            // Make a call to the backend with the new name.
+            // Handle what happens if the call fails, namely, revert back to the original name.
+            const result = await updateProjectTitleInDatabase(id, projectTitle);
+            console.log(result);
+            toast.success("Project title updated to: ", result.project_name);
+        }
+
+        setAProjectName('');
+        setEditingProjectTitle(() => {
+            return projectTitles.map(() => false);
+        })
+    }
+
+    const cancelProjectTitleUpdate = (id: number) => {
+        dispatch({
+            type: "update-project-title",
+            id: id,
+            project_name: aProjectName
+        });
+        setAProjectName('');
+        setEditingProjectTitle(() => {
+            return projectTitles.map(() => false);
+        });
     }
 
     /**
@@ -233,15 +294,53 @@ const ProjectsSidebar: React.FC<ProjectSidebarProps> = ({
                     </button>
                 </div>
                 {projectTitles.map(projectTitle => (
-                    <div 
-                        key={projectTitle.id}
-                        className={`project-title-entry ${projectTitle.isSelected ? 'project-selected' : ''}`}
-                    >
-                        <div className={`project-title-bar ${projectTitle.isSelected ? 'project-selected' : ''}`} onClick={() => toggleSelected(projectTitle.id)}>
-                            <span className='project-title'>{projectTitle.project_name}</span>
-                        </div>
-                        <div className='project-title-entry-edit' onClick={() => handleEditProjectTitle(projectTitle.id)}><FontAwesomeIcon icon={faUserPen}/></div>
-                    </div>
+                    // Get the editing status from the setEditingProjectTitle state
+                    // If it is false, then the project title is not being edited
+                    // If it is true, then the project title is being edited, so show an input field and okay button.
+                    // If the okay button is clicked, then set the editing status to false
+                    <>
+                        {
+                            editingProjectTitle[projectTitle.id-1] ? (
+                                <>
+                                    <div 
+                                        key={projectTitle.id} 
+                                        className = 'project-title-entry'
+                                    >
+                                        <input 
+                                            className="edit-project-title-input"
+                                            type='text'
+                                            value={projectTitle.project_name}
+                                            onChange={(e) => updateProjectTitle(e.target.value, projectTitle.id)}
+                                        />
+                                        <button 
+                                            onClick={() => confirmProjectTitleUpdate(projectTitle.id)}
+                                        >
+                                            <FontAwesomeIcon icon={faCircleCheck}/>
+                                        </button>
+                                        <button 
+                                            onClick={() => cancelProjectTitleUpdate(projectTitle.id)}
+                                        >
+                                            <FontAwesomeIcon icon={faCircleXmark}/>
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div 
+                                        key={projectTitle.id}
+                                        className={`project-title-entry ${projectTitle.isSelected ? 'project-selected' : ''}`}
+                                    >
+                                        <div className={`project-title-bar ${projectTitle.isSelected ? 'project-selected' : ''}`} 
+                                            onClick={() => toggleSelected(projectTitle.id)}
+                                        >
+                                            <span className='project-title'>{projectTitle.project_name}</span>
+                                        </div>
+                                        <div className='project-title-entry-edit' onClick={() => handleEditProjectTitle(projectTitle.id)}><FontAwesomeIcon icon={faUserPen}/></div>
+                                    </div>
+                                </>
+                            )
+                        }
+                    </>
                 ))}
 
             </aside>

@@ -28,6 +28,36 @@ void DatabaseHandler::startNewProject(const std::string& project_title)
     sqlite3_finalize(statement);
 }
 
+nlohmann::json DatabaseHandler::updateProjectTitle(const int& project_id, const std::string& project_title)
+{
+    sqlite3_stmt* statement;
+    const char* sql = "UPDATE project SET project_name = ? WHERE id = ?;";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK){
+        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        nlohmann::json errorJSON;
+        errorJSON["error"] = "Failed to prepare statement for updating project title";
+        return errorJSON;
+    }
+    sqlite3_bind_text(statement, 1, project_title.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(statement, 2, project_id);
+
+    int exit_code = sqlite3_step(statement);
+    if (exit_code != SQLITE_DONE) {
+        std::cerr << "Error updating data: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        nlohmann::json errorJSON;
+        errorJSON["error"] = "Failed to update project title";
+        return errorJSON;
+    }
+    sqlite3_finalize(statement);
+
+    // Return the updated project title
+    nlohmann::json updatedProjectTitleJSON;
+    updatedProjectTitleJSON["id"] = project_id;
+    updatedProjectTitleJSON["project_name"] = project_title;
+    return updatedProjectTitleJSON;
+}
+
 nlohmann::json DatabaseHandler::getProjectTitles()
 {
     std::vector<CorpusMetadata::ProjectTitle> projectTitles;

@@ -38,6 +38,25 @@ export const saveProjectTitleToDatabase = async(title: string): Promise<any> => 
     }
 }
 
+export const updateProjectTitleInDatabase = async(projectId: number, title: string): Promise<any> => {
+    const projectTitle = { projectTitle: title };
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/project/${projectId}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(projectTitle)
+        });
+        const result = await response.json();
+        return JSON.parse(result);
+    } catch (error) {
+        throw error;
+        // Can I return something here to the user so that they know the update failed?
+    }
+}
+
 export const loadProjectMetadata = async(projectId: number): Promise<CorpusMetaData> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/project/${projectId}/corpus/metadata`, {

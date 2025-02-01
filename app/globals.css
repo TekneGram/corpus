@@ -83,6 +83,11 @@ body {
   @apply hover:text-black;
 }
 
+.edit-project-title-input {
+  @apply p-1 w-full text-white bg-slate-600 focus:outline-none
+  text-center font-extralight font-sans
+}
+
 .project-selected {
   @apply bg-stone-200 text-black
 }

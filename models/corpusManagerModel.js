@@ -31,6 +31,31 @@ class CorpusManager {
         });
     }
 
+    processUpdateProjectTitle(titleJSON, projectId) {
+        titleJSON["command"] = "updateProjectTitle";
+        titleJSON["projectId"] = parseInt(projectId.projectId);
+        const projectTitleString = JSON.stringify(titleJSON);
+        const cppProcess = new CPPProcess('corpusManager');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(projectTitleString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process to update the project title: "));
+                } else {
+                    console.log("Output from C++ process updating the project title is: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling the project title update: ", err.message);
+            throw err;
+        });
+    }
+
     processAllProjectTitles() {
         const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {

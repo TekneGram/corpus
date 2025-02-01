@@ -43,6 +43,12 @@ int main()
             handler.startNewProject(project_title);
             std::cout << "Project successfully created!" << std::endl;
 
+        } else if (command == "updateProjectTitle") {
+            std::string project_title = inputData["projectTitle"];
+            int project_id = inputData["projectId"];
+            nlohmann::json result = handler.updateProjectTitle(project_id, project_title);
+            std::cout << result.dump() << std::endl;
+
         } else if (command == "getProjectTitles") {
             nlohmann::json result = handler.getProjectTitles();
             std::cout << result.dump() << std::endl;
