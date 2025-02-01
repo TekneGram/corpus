@@ -10,6 +10,7 @@ class DatabaseHandler
         DatabaseHandler(sqlite3* db); // constructor
 
         void startNewProject(const std::string& project_title);
+        nlohmann::json updateProjectTitle(const int& project_id, const std::string& project_title);
         nlohmann::json getProjectTitles();
         CorpusMetadata::Corpus createCorpusName(const int& project_id, const std::string& corpus_name);
         CorpusMetadata::Corpus updateCorpusName(const int& corpus_id, const std::string& corpus_name);

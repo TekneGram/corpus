@@ -12,6 +12,16 @@ const startNewProject = async(req, res) => {
     }
 }
 
+const updateProjectTitle = async(req, res) => {
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = await cm.processUpdateProjectTitle(req.body, req.params); // title is in the body, projectId is in the params
+        res.status(200).json(cppOutput);
+    } catch (error) {
+        res.status(500).json({ status: 'fail', message: 'Internal server error in cpp process; could not update project title' });
+    }
+}
+
 const getAllProjectTitles = async (req, res) => {
     const cm = new CorpusManager();
     try {
@@ -125,6 +135,7 @@ const deleteSubcorpus = async (req, res) => {
 
 module.exports = {
     startNewProject,
+    updateProjectTitle,
     getAllProjectTitles,
     getProjectMetadata,
     createCorpusName,
