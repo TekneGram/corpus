@@ -1,4 +1,5 @@
 "use client"
+import React from 'react';
 
 // Fonts
 import { faPlus, faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
