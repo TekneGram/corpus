@@ -61,7 +61,7 @@
 
 .add-group-button {
     @apply flex flex-row justify-self-center justify-center
-    border-blue-400 border-2 rounded-lg p-1 mb-3
+    border-blue-400 border-2 rounded-lg p-1 mb-3 text-blue-400
     font-normal text-sm hover:text-white hover:bg-blue-400
     w-[90%];
 }
