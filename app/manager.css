@@ -24,7 +24,7 @@
 }
 
 .corpus-title-area {
-    @apply text-center mt-3 mb-3;
+    @apply text-center text-slate-600 mt-3 mb-3;
 }
 
 .editing-corpus-name-area {
@@ -32,15 +32,15 @@
 }
 
 .corpus-name-input {
-    @apply font-light w-11/12 text-2xl p-1 rounded drop-shadow-md text-center focus:outline-none;
+    @apply font-light text-black w-11/12 text-2xl p-1 rounded drop-shadow-md text-center focus:outline-none;
 }
 
 .corpus-name-update-button {
-    @apply p-1 text-2xl disabled:text-transparent;
+    @apply p-1 text-2xl text-blue-400 disabled:text-transparent;
 }
 
 .corpus-name-cancel-button {
-    @apply p-1 text-2xl;
+    @apply p-1 text-2xl text-red-400;
 }
 
 .corpus-title {
@@ -61,7 +61,7 @@
 
 .add-group-button {
     @apply flex flex-row justify-self-center justify-center
-    border-blue-400 border-2 rounded-lg p-1 mb-3
+    border-blue-400 border-2 rounded-lg p-1 mb-3 text-blue-400
     font-normal text-sm hover:text-white hover:bg-blue-400
     w-[90%];
 }
