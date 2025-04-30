@@ -1,5 +1,5 @@
 // CSS
-import '../../../manager.css';
+import '@/manager.css';
 
 // import types
 import { CorpusFile } from '@/app/types/types';
