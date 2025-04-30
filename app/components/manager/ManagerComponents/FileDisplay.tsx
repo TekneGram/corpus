@@ -5,13 +5,13 @@ import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // CSS
-import '../../manager.css';
+import '../../../manager.css';
 
 // import types
 import { CorpusFile, CorpusFilesPerSubCorpus, EmptyCPPOutput, SubCorpus } from '@/app/types/types';
 
 // APIs
-import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../api/manageCorpus';
+import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '../../../api/manageCorpus';
 
 // Context and State Management
 import { useState, useEffect } from 'react';

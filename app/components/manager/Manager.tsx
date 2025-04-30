@@ -20,8 +20,8 @@ import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContex
 import { useState, useEffect } from 'react';
 
 // Child Components
-import FileUpload from "./FileUpload";
-import FileDisplay from "./FileDisplay";
+import FileUpload from "./ManagerComponents/FileUpload";
+import FileDisplay from "./ManagerComponents/FileDisplay";
 import { toast } from "react-toastify";
 
 // Typeguards

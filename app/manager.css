@@ -71,7 +71,7 @@
 }
 
 .group-name-input {
-    @apply border-b-2 border-black 
+    @apply border-b-2 border-black
     outline-none bg-slate-200 rounded-t-xl p-2
     text-2xl font-extralight;
 }
