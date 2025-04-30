@@ -24,7 +24,7 @@
 }
 
 .corpus-title-area {
-    @apply text-center mt-3 mb-3;
+    @apply text-center text-slate-600 mt-3 mb-3;
 }
 
 .editing-corpus-name-area {
