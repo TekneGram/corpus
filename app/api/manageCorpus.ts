@@ -191,3 +191,19 @@ export const deleteSubcorpus = async (group_id: number): Promise<any> => {
         throw error;
     }
 }
+
+export const getCorpusFileText = async (file_id: number): Promise<ApiResponse> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/files/${file_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
