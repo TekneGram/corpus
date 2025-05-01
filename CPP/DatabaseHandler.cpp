@@ -387,6 +387,9 @@ CorpusMetadata::CorpusFile DatabaseHandler::uploadFileContent(const int& group_i
         throw std::runtime_error("Failed to retrieve file ID after insertion");
     }
 
+    // Insert the full file content into the corpus_file_text table using the private insertFileText method defined below
+    insertFileText(group_id, fileId, file_content);
+
     /**
      * Now do batch insert by calling a private helper method batchInsert for the parsed text data
      */
@@ -396,6 +399,31 @@ CorpusMetadata::CorpusFile DatabaseHandler::uploadFileContent(const int& group_i
     batchInsert(group_id, fourBundleList, fileId, "fourBuns", "fourBun");
     
     return CorpusMetadata::CorpusFile {fileId, file_name};
+}
+
+void DatabaseHandler::insertFileText(const int& group_id, const int& file_id, const std::string& file_content)
+{
+    sqlite3_stmt* statement;
+    const char* sql = "INSERT INTO corpus_file_text (text, group_id, file_id) VALUES (?, ?, ?);";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare file_text insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        return;
+    }
+
+    if (sqlite3_bind_text(statement, 1, file_content.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_int(statement, 2, group_id) != SQLITE_OK ||
+        sqlite3_bind_int(statement, 3, file_id) != SQLITE_OK) {
+            std::cerr << "Failed to bind values in insertFileText: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_finalize(statement);
+            return;
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to insert text into corpus_file_text: " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+
+    sqlite3_finalize(statement);
 }
 
 void DatabaseHandler::batchInsert(const int& group_id, const std::vector<std::string> data, const int& file_id, const std::string& table_name, const std::string& col_name)
