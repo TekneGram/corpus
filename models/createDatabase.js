@@ -187,6 +187,30 @@ class CreateDatabase {
         dbQuery.finalize();
     }
 
+    static createCorpusFileTextTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS corpus_file_text (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                text TEXT NOT NULL,
+                group_id INTEGER,
+                file_id INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
+                FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating corpus_file_text table', error.message);
+            } else {
+                console.log("corpus_file_text table created or already exists.");
+            }
+        });
+
+        dbQuery.finalize();
+    }
+
 }
 
 module.exports = CreateDatabase;

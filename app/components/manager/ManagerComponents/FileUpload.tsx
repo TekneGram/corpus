@@ -78,8 +78,10 @@ const FileUpload:React.FC<FileUploadProps> = ({ cancelAddNewSubcorpus }) => {
 
             if (errorMessages === "") {
                 toast.success("All files were successfully uploaded");
+                cancelAddNewSubcorpus();
             } else {
                 toast.warning("The following error messages were received: \n" + errorMessages);
+                cancelAddNewSubcorpus();
             }
             // Update the context
             //confirmUploadSuccessful();

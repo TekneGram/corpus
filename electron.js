@@ -33,6 +33,7 @@ const createDatabase = () => {
     CreateDatabase.createCollsTable();
     CreateDatabase.createThreeBunsTable();
     CreateDatabase.createFourBunsTable();
+    CreateDatabase.createCorpusFileTextTable();
 }
 
 

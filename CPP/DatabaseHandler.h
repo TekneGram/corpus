@@ -24,4 +24,5 @@ class DatabaseHandler
     private:
         sqlite3* dbConn;
         void batchInsert(const int& group_id, std::vector<std::string> data, const int& file_id, const std::string& table_name, const std::string& col_name);
+        void insertFileText(const int& group_id, const int& file_id, const std::string& file_content);
 };
