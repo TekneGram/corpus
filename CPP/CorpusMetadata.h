@@ -39,6 +39,11 @@ namespace CorpusMetadata {
         std::vector<CorpusFilesPerSubCorpus> files;
     };
 
+    struct CorpusFileText {
+        CorpusFile corpusFile;
+        std::string file_text;
+    };
+
     // JSON conversion function
     void to_json(nlohmann::json& j, const ProjectTitle& projectTitle);
     void to_json(nlohmann::json& j, const Corpus& corpus);
@@ -46,6 +51,7 @@ namespace CorpusMetadata {
     void to_json(nlohmann::json& j, const SubCorpus& subCorpus);
     void to_json(nlohmann::json& j, const CorpusFilesPerSubCorpus& filesPerSubCorpus);
     void to_json(nlohmann::json& j, const CorpusMetadata& corpusMetadata);
+    void to_json(nlohmann::json& j, const CorpusFileText& corpusFileText);
 
 } // namespace CorpusMetaData
 

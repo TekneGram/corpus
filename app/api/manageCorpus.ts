@@ -194,7 +194,7 @@ export const deleteSubcorpus = async (group_id: number): Promise<any> => {
 
 export const getCorpusFileText = async (file_id: number): Promise<ApiResponse> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/manager/files/${file_id}`, {
+        const response = await fetch(`http://localhost:4000/api/manager/text/${file_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
