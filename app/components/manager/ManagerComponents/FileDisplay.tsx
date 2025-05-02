@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 // FileDisplayProps
 interface FileDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
+    showTextWithFileID: (fileId: number) => void; // Function to show text with file ID
 }
 
 type FileSelected = {
@@ -31,7 +32,7 @@ type FileSelected = {
 }
 
 
-const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
+const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFileID }) => {
 
     const [files, setFiles] = useState<File[]>([]); // State for storing files
     const [showAddNewFileSelector, setShowAddNewFileSelector] = useState<boolean>(false);
@@ -76,6 +77,11 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
             });
         });
     };
+
+    // transmitCorpusFileID is used to send the selected file ID to the parent component
+    const transmitCorpusFileID = (corpusFileID: number) => {
+        showTextWithFileID(corpusFileID);
+    }
 
     /**
      * Change the name of the subCorpus
@@ -284,10 +290,12 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                             className={ fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? 'file-selected' : 'file-not-selected' } 
                             key={corpusFile.id}
                         >
-                            <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
+                            <div className='file-name' onClick={() => {selectFile(corpusFile.id); transmitCorpusFileID(corpusFile.id);}}>
                                 <div>{corpusFile.file_name}</div>
                                 {
-                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div> : ''
+                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected 
+                                    ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div>
+                                    : ''
                                 }
                             </div>
 

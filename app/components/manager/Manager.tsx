@@ -37,6 +37,15 @@ const Manager = () => {
         setAddingGroup(false);
     }
 
+    /**
+     * FUNCTIONALITY for displaying text with a file ID
+     * @param fileID
+     * @returns
+     */
+    const showTextWithFileID = (fileID: number) => {
+        console.log("This is the file ID: ", fileID);
+    }
+
     return (
         <div className = 'manager-container'>
             
@@ -68,7 +77,7 @@ const Manager = () => {
                         {
                             corpusMetadata.files.map((files) => (
                                 <div className='file-upload-area' key={files.subCorpus.id}>
-                                    <FileDisplay subCorpusFiles={files} />
+                                    <FileDisplay subCorpusFiles={files} showTextWithFileID={showTextWithFileID} />
                                 </div>
                             ))
                         }
