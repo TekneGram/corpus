@@ -279,6 +279,7 @@ class CorpusManager {
 
     getFileText(fileId) {
         const fileInfo = {"command": "getFileText", "fileId": parseInt(fileId.fileId) };
+        console.log("File info is: ", fileInfo);
         const fileInfoString = JSON.stringify(fileInfo);
         const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {

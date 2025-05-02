@@ -34,7 +34,7 @@ namespace CorpusMetadata {
 
     void to_json(nlohmann::json& j, const CorpusFileText& corpusFileText)
     {
-        j = nlohmann::json{{"file_id", corpusFileText.file_id}, {"file_text", corpusFileText.file_text}};
+        j = nlohmann::json{{"id", corpusFileText.file_id}, {"file_text", corpusFileText.file_text}};
     }
 
 

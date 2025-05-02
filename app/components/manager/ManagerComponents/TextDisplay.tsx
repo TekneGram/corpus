@@ -12,11 +12,29 @@ import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContex
 // Child components
 import { toast } from 'react-toastify';
 
-const TextDisplay: React.FC = () => {
+interface TextDisplayProps {
+    fileID: number | null;
+    fileText: string;
+}
+
+const TextDisplay: React.FC<TextDisplayProps> = ({ fileID, fileText }) => {
 
     return (
         <div className='text-display-area'>
-
+            <div className='text-display-header'>
+                <h2>Here is your lovely text</h2>
+            </div>
+            <div className='text-display-body'>
+                {fileText.length > 0 ? (
+                    <div className='text-display-text'>
+                        {fileText}
+                    </div>
+                ) : (
+                    <div className='text-display-text'>
+                        No text available for this file.
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

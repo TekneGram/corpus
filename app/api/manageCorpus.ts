@@ -1,7 +1,8 @@
-import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput } from "../types/types"
+import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText } from "../types/types"
 
 type ApiResponse =
     | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
+    | { status: "success"; cppOutput: FileText }
     | { status: "fail"; cppOutput: string };
 
 
