@@ -40,7 +40,7 @@ namespace CorpusMetadata {
     };
 
     struct CorpusFileText {
-        CorpusFile corpusFile;
+        int file_id;
         std::string file_text;
     };
 

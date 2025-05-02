@@ -663,6 +663,8 @@ CorpusMetadata::CorpusFileText DatabaseHandler::getFileText(const int& file_id)
         std::cerr << "Error retrieving file text: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
     }
+    // Should return an empty object if there is no text
+    return CorpusMetadata::CorpusFileText {file_id, ""};
 }
 
 
