@@ -14,11 +14,21 @@ import { toast } from 'react-toastify';
 
 interface TextDisplayProps {
     fileID: number | null;
+    setSelectedFileID: React.Dispatch<React.SetStateAction<number | null>>;
     fileText: string;
+    setSelectedFileText: React.Dispatch<React.SetStateAction<string>>;
     showTextDisplay: boolean;
+    setShowTextDisplay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TextDisplay: React.FC<TextDisplayProps> = ({ fileID, fileText, showTextDisplay }) => {
+const TextDisplay: React.FC<TextDisplayProps> = (
+    { fileID, 
+        setSelectedFileID, 
+        fileText, 
+        setSelectedFileText, 
+        showTextDisplay, 
+        setShowTextDisplay 
+    }) => {
 
     const [isRendered, setIsRendered] = useState<boolean>(false);
     useEffect(() => {
@@ -29,23 +39,42 @@ const TextDisplay: React.FC<TextDisplayProps> = ({ fileID, fileText, showTextDis
         }
     }, [showTextDisplay]);
 
+    /**
+     * Hide the text display area
+     */
+    const handleHideTextDisplay = () => {
+        setTimeout(() => {
+            // Reset the file ID and text after the animation
+            setSelectedFileID(null);
+            setSelectedFileText("");
+            setIsRendered(false);
+            setShowTextDisplay(false);
+        })
+    }
+
     return (
-        <div className={'text-display-area bottom-0 left-0 transition-transform ' + (isRendered ? 'translate-y' : 'hidden translate-y-full')}>
-            <div className='text-display-header'>
-                <h2>Here is your lovely text</h2>
+        <div className={`transition-all duration-500 ease-in-out transform ${isRendered ? 'translate-y-0 opacity-100 max-h-96' : 'translate-y-full opacity-0 max-h-0'}`}>
+            <div className='text-hide-area'>
+                <button type='button' className='text-hide-button' onClick={handleHideTextDisplay}>X</button>
             </div>
-            <div className='text-display-body'>
-                {fileText.length > 0 ? (
-                    <div className='text-display-text'>
-                        {fileText}
-                    </div>
-                ) : (
-                    <div className='text-display-text'>
-                        No text available for this file.
-                    </div>
-                )}
+            <div className='text-display-area'>
+                <div className='text-display-header'>
+                    <h2>Here is your lovely text</h2>
+                </div>
+                <div className='text-display-body'>
+                    {fileText.length > 0 ? (
+                        <div className='text-display-text'>
+                            {fileText}
+                        </div>
+                    ) : (
+                        <div className='text-display-text'>
+                            No text available for this file.
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
+        
     );
 }
 

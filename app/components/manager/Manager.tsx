@@ -133,8 +133,8 @@ const Manager = () => {
                 <p>If you have projects, select a project to get started.</p>
             </div>
         }
-        <div>
-            <TextDisplay fileID={selectedFileID} fileText={selectedFileText} showTextDisplay={showTextDisplay} />
+        <div className='text-display-container'>
+            <TextDisplay fileID={selectedFileID} setSelectedFileID={setSelectedFileID} fileText={selectedFileText} setSelectedFileText={setSelectedFileText} showTextDisplay={showTextDisplay} setShowTextDisplay={setShowTextDisplay} />
         </div>
 
         </div>
