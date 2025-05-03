@@ -19,7 +19,7 @@ import { useState, useEffect } from 'react';
 import CorpusEdit from "./ManagerComponents/CorpusEdit"; // Edits the corpus name
 import FileUpload from "./ManagerComponents/FileUpload"; // Uploads files to a subcorpus
 import FileDisplay from "./ManagerComponents/FileDisplay"; // Displays the file names in a subcorpus
-import TextDisplay from './ManagerComponents/TextDisplay';
+import TextDisplay from './ManagerComponents/TextDisplay'; // Displays the text of a selected corpus file
 
 const Manager = () => {
     /**

@@ -70,18 +70,39 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
     
     // selectFile updates the state when a file is selected
     const selectFile = (corpusFileID: number) => {
-        console.log("My file id is:", corpusFileID);
+        // console.log("My file id is:", corpusFileID);
+        // setFileNameSelected((prevState) => {
+        //     return prevState.map((file) => {
+        //         return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
+        //     });
+        // });
         setFileNameSelected((prevState) => {
-            return prevState.map((file) => {
-                return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
+            const nextState = prevState.map((file) => {
+                return file.fileId === corpusFileID
+                    ? { ...file, selected: !file.selected }
+                    : { ...file, selected: false };
             });
+
+            // Find the file in the next state (after the change)
+            const selectedFile = nextState.find(file => file.fileId === corpusFileID)
+            if (selectedFile?.selected) {
+                showTextWithFileID(corpusFileID);
+            }
+            return nextState;
         });
     };
 
     // transmitCorpusFileID is used to send the selected file ID to the parent component
-    const transmitCorpusFileID = (corpusFileID: number) => {
-        showTextWithFileID(corpusFileID);
-    }
+    // NO LONGER NECESSARY SINCE THIS IS HANDLED IN THE SELECTFILE FUNCTION
+    // const transmitCorpusFileID = (corpusFileID: number) => {
+    //     // in selectFile, the file ID is set to selected if clicked once, then if clicked again, it is set to false
+    //     // so we need to check if the file is selected
+    //     const selectedFile = fileNameSelected.find(file => file.fileId === corpusFileID);
+    //     if (selectedFile && selectedFile.selected) {
+    //         // If the file is selected, show the text     
+    //         showTextWithFileID(corpusFileID);
+    //     }
+    // }
 
     /**
      * Change the name of the subCorpus
@@ -290,7 +311,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
                             className={ fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? 'file-selected' : 'file-not-selected' } 
                             key={corpusFile.id}
                         >
-                            <div className='file-name' onClick={() => {selectFile(corpusFile.id); transmitCorpusFileID(corpusFile.id);}}>
+                            <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
                                 <div>{corpusFile.file_name}</div>
                                 {
                                     fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected 

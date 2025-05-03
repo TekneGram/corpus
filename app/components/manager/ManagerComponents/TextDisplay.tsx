@@ -1,9 +1,9 @@
 // CSS
 import '@/manager.css';
 
-// import APIs
-
-import { getCorpusFileText } from '@/app/api/manageCorpus';
+// Fonts
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Context and state management
 import { useState, useEffect } from 'react';
@@ -54,12 +54,12 @@ const TextDisplay: React.FC<TextDisplayProps> = (
 
     return (
         <div className={`transition-all duration-500 ease-in-out transform ${isRendered ? 'translate-y-0 opacity-100 max-h-96' : 'translate-y-full opacity-0 max-h-0'}`}>
-            <div className='text-hide-area'>
-                <button type='button' className='text-hide-button' onClick={handleHideTextDisplay}>X</button>
-            </div>
             <div className='text-display-area'>
                 <div className='text-display-header'>
                     <h2>Here is your lovely text</h2>
+                    <button type='button' className='text-hide-button' onClick={handleHideTextDisplay}>
+                        <FontAwesomeIcon icon={faCircleXmark} />
+                    </button>
                 </div>
                 <div className='text-display-body'>
                     {fileText.length > 0 ? (
