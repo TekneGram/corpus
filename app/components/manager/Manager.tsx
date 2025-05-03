@@ -23,12 +23,13 @@ import TextDisplay from './ManagerComponents/TextDisplay';
 
 const Manager = () => {
     /**
-     * CONTEXT
+     * CONTEXT AND STATTE MANAGEMENT
      */
     let corpusMetadata = useCorpusMetaData();
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
     const [selectedFileID, setSelectedFileID] = useState<number | null>(null); // For keeping track of the file ID selected in the FileDisplay child component.
     const [selectedFileText, setSelectedFileText] = useState<string>(""); // For displaying the text of the selected corpus file.
+    const [showTextDisplay, setShowTextDisplay] = useState<boolean>(false); // For displaying the text of the selected corpus file.
 
     /**
      * FUNCTIONALITY for adding a new subcorpus
@@ -48,7 +49,7 @@ const Manager = () => {
      * @returns
      */
     const showTextWithFileID = (fileID: number) => {
-        setSelectedFileID(fileID);
+        setSelectedFileID(fileID); // set the selected file ID
     }
 
     useEffect(() => {
@@ -63,6 +64,7 @@ const Manager = () => {
                         const text = (response.cppOutput as any).file_text ?? "";
                         console.log("This is the text I got: ", text);
                         setSelectedFileText(text);
+                        setShowTextDisplay(true); // Tell the child component (TextDisplay) to show the text.
                     } else if (response.status === "fail") {
                         console.log("There was an error!");
                     }
@@ -132,7 +134,7 @@ const Manager = () => {
             </div>
         }
         <div>
-            <TextDisplay fileID={selectedFileID} fileText={selectedFileText} />
+            <TextDisplay fileID={selectedFileID} fileText={selectedFileText} showTextDisplay={showTextDisplay} />
         </div>
 
         </div>

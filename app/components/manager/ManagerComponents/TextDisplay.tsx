@@ -6,7 +6,7 @@ import '@/manager.css';
 import { getCorpusFileText } from '@/app/api/manageCorpus';
 
 // Context and state management
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // Child components
@@ -15,12 +15,22 @@ import { toast } from 'react-toastify';
 interface TextDisplayProps {
     fileID: number | null;
     fileText: string;
+    showTextDisplay: boolean;
 }
 
-const TextDisplay: React.FC<TextDisplayProps> = ({ fileID, fileText }) => {
+const TextDisplay: React.FC<TextDisplayProps> = ({ fileID, fileText, showTextDisplay }) => {
+
+    const [isRendered, setIsRendered] = useState<boolean>(false);
+    useEffect(() => {
+        if (showTextDisplay) {
+            setTimeout(() => setIsRendered(true), 500);
+        } else {
+            setIsRendered(false);
+        }
+    }, [showTextDisplay]);
 
     return (
-        <div className='text-display-area'>
+        <div className={'text-display-area bottom-0 left-0 transition-transform ' + (isRendered ? 'translate-y' : 'hidden translate-y-full')}>
             <div className='text-display-header'>
                 <h2>Here is your lovely text</h2>
             </div>
