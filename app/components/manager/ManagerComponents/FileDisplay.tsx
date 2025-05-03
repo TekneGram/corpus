@@ -88,18 +88,6 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
         });
     };
 
-    // transmitCorpusFileID is used to send the selected file ID to the parent component
-    // NO LONGER NECESSARY SINCE THIS IS HANDLED IN THE SELECTFILE FUNCTION
-    // const transmitCorpusFileID = (corpusFileID: number) => {
-    //     // in selectFile, the file ID is set to selected if clicked once, then if clicked again, it is set to false
-    //     // so we need to check if the file is selected
-    //     const selectedFile = fileNameSelected.find(file => file.fileId === corpusFileID);
-    //     if (selectedFile && selectedFile.selected) {
-    //         // If the file is selected, show the text     
-    //         showTextWithFileID(corpusFileID);
-    //     }
-    // }
-
     /**
      * Change the name of the subCorpus
      */
