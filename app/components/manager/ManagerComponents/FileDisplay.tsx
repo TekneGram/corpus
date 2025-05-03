@@ -70,21 +70,17 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
     
     // selectFile updates the state when a file is selected
     const selectFile = (corpusFileID: number) => {
-        // console.log("My file id is:", corpusFileID);
-        // setFileNameSelected((prevState) => {
-        //     return prevState.map((file) => {
-        //         return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
-        //     });
-        // });
         setFileNameSelected((prevState) => {
             const nextState = prevState.map((file) => {
                 return file.fileId === corpusFileID
-                    ? { ...file, selected: !file.selected }
+                    ? { ...file, selected: !file.selected } // this allows the file to be selected or deselected
                     : { ...file, selected: false };
             });
 
             // Find the file in the next state (after the change)
             const selectedFile = nextState.find(file => file.fileId === corpusFileID)
+            // This ensures that if the file is deselected, the text is not shown.
+            // i.e., it is only shown is the file is selected
             if (selectedFile?.selected) {
                 showTextWithFileID(corpusFileID);
             }
