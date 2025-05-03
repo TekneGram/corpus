@@ -145,6 +145,18 @@
     font-normal text-lg text-slate-600
 }
 
+.text-display-editor-area {
+    
+}
+
+.text-edit-button {
+    @apply text-blue-600 mr-1
+}
+
+.text-hide-button {
+    @apply text-red-600 mr-1
+}
+
 .text-display-body {
 
 }

@@ -2,7 +2,7 @@
 import '@/manager.css';
 
 // Fonts
-import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Context and state management
@@ -57,9 +57,15 @@ const TextDisplay: React.FC<TextDisplayProps> = (
             <div className='text-display-area'>
                 <div className='text-display-header'>
                     <h2>Here is your lovely text</h2>
-                    <button type='button' className='text-hide-button' onClick={handleHideTextDisplay}>
-                        <FontAwesomeIcon icon={faCircleXmark} />
-                    </button>
+                    <div className='text-display-editor-area'>
+                        <button type='button' className='text-edit-button'>
+                            <FontAwesomeIcon icon={faPen} />
+                        </button>
+                        <button type='button' className='text-hide-button' onClick={handleHideTextDisplay}>
+                            <FontAwesomeIcon icon={faCircleXmark} />
+                        </button>
+                    </div>
+                    
                 </div>
                 <div className='text-display-body'>
                     {fileText.length > 0 ? (
