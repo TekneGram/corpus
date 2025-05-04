@@ -1,3 +1,4 @@
+// LEGACY CODE. Demonstrates a simple tab component that is hard coded for 4 tabs.
 "use client"
 
 // CSS
@@ -13,7 +14,7 @@ import Manager from '../manager/Manager';
 
 const TabsContainer = () => {
     const [activeTab, setActiveTab] = useState<number>(1);
-    const [tabTally, setTabTally] = useState<number[]>([1, 2, 3]); // start with 3 tabs displayed
+    const [tabTally, setTabTally] = useState<number[]>([1, 2, 3, 4]); // start with 4 tabs displayed
 
     const handleSetActiveTab = (tabNum: number) => {
         setActiveTab(tabNum);
@@ -41,8 +42,9 @@ const TabsContainer = () => {
             {/* Tab Page Space */}
             <div className='tab-page-container'>
                 {activeTab === 1 && <Manager />}
-                {activeTab === 2 && <div>This is the second tab page space</div>}
-                {activeTab === 3 && <div>This is the third tab page space</div>}
+                {activeTab === 2 && <div>This tab is for summarizing the corpus.</div>}
+                {activeTab === 3 && <div>This tab is for preparing corpus samples.</div>}
+                {activeTab === 4 && <div>This tab is for performing analyses of the corpus ot samples.</div>}
             </div>
         </div>
         

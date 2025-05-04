@@ -96,6 +96,11 @@ int main()
         } else if (command == "deleteSubcorpus") {
             int group_id { inputData["groupId"] };
             handler.deleteSubcorpus(group_id);
+
+        } else if (command == "getFileText") {
+            int file_id { inputData["fileId"] };
+            nlohmann::json result = handler.getFileText(file_id);
+            std::cout << result.dump() << std::endl;
         }
     } catch (const std::exception& e) {
         handleError(e.what(), db);

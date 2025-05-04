@@ -646,6 +646,27 @@ void DatabaseHandler::deleteSubcorpus(const int& group_id)
 
 }
 
+CorpusMetadata::CorpusFileText DatabaseHandler::getFileText(const int& file_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = "SELECT text FROM corpus_file_text WHERE file_id = ?;";
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing statement " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+    sqlite3_bind_int(statement, 1, file_id);
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        const char* text = reinterpret_cast<const char*>(sqlite3_column_text(statement, 0));
+        std::string fileText = text ? text : ""; // accounts for nullptr from database
+        sqlite3_finalize(statement);
+        return CorpusMetadata::CorpusFileText {file_id, fileText};
+    } else {
+        std::cerr << "Error retrieving file text: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+    }
+    // Should return an empty object if there is no text
+    return CorpusMetadata::CorpusFileText {file_id, ""};
+}
+
 
 
 // void DatabaseHandler::insertFile()

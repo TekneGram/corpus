@@ -32,6 +32,11 @@ namespace CorpusMetadata {
         j = nlohmann::json{{"projectTitle", corpusMetadata.projectTitle}, {"corpus", corpusMetadata.corpus}, {"files", corpusMetadata.files}};
     }
 
+    void to_json(nlohmann::json& j, const CorpusFileText& corpusFileText)
+    {
+        j = nlohmann::json{{"id", corpusFileText.file_id}, {"file_text", corpusFileText.file_text}};
+    }
+
 
 
 }

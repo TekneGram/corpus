@@ -1,7 +1,8 @@
-import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput } from "../types/types"
+import { CorpusMetaData, ProjectTitle, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText } from "../types/types"
 
 type ApiResponse =
     | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
+    | { status: "success"; cppOutput: FileText }
     | { status: "fail"; cppOutput: string };
 
 
@@ -180,6 +181,22 @@ export const deleteSubcorpus = async (group_id: number): Promise<any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/manager/groups/${group_id}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getCorpusFileText = async (file_id: number): Promise<ApiResponse> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/manager/text/${file_id}`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },

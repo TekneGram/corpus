@@ -133,6 +133,18 @@ const deleteSubcorpus = async (req, res) => {
     }
 };
 
+// For getting the text of a file
+const getFileText = async (req, res) => {
+    const cm = new CorpusManager();
+    try {
+        const cppOutput = await cm.getFileText(req.params);
+        // cppOutput is a string
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput)})
+    } catch (error) {
+        res.status(500).json({ status: "fail", cppOutput: error });
+    }
+}
+
 module.exports = {
     startNewProject,
     updateProjectTitle,
@@ -144,5 +156,6 @@ module.exports = {
     patchCorpusGroupName,
     uploadFileContent,
     deleteCorpusFile,
-    deleteSubcorpus
+    deleteSubcorpus,
+    getFileText,
 };

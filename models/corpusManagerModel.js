@@ -277,6 +277,31 @@ class CorpusManager {
         });
     }
 
+    getFileText(fileId) {
+        const fileInfo = {"command": "getFileText", "fileId": parseInt(fileId.fileId) };
+        console.log("File info is: ", fileInfo);
+        const fileInfoString = JSON.stringify(fileInfo);
+        const cppProcess = new CPPProcess('corpusManager');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(fileInfoString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process to get the text of a file: " + error.message));
+                } else {
+                    console.log("Output from the cpp process getting the text of a file: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then(output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error handling getting the text of a file.");
+            throw err;
+        });
+    }
+
 }
 
 module.exports = CorpusManager;

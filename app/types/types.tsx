@@ -46,3 +46,9 @@ export type EmptyCPPOutput = {
     id: number;
     message: string;
 }
+
+// Text from the database
+export type FileText = {
+    id: number;
+    file_text: string;
+}

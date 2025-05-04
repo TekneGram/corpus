@@ -1,3 +1,4 @@
+// LEGACY CODE. Demonstrates a simple tab component that is hard coded for 4 tabs.
 "use client"
 
 // CSS
@@ -15,7 +16,7 @@ interface TabProps {
 
 const Tab:React.FC<TabProps> = ({ tabNum, handleSetActiveTab, activeTab }) => {
     
-    const [tabTitle, setTabTitle] = useState<string[]>(['Manager', 'Analysis', 'Charts']);
+    const [tabTitle, setTabTitle] = useState<string[]>(['Manage', 'Summarize', 'Sample', 'Analyze']);
     const [isActiveTab, setIsActiveTab] = useState<boolean>(false);
 
     useEffect(() => {

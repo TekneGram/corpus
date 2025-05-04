@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 // FileDisplayProps
 interface FileDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
+    showTextWithFileID: (fileId: number) => void; // Function to show text with file ID
 }
 
 type FileSelected = {
@@ -31,7 +32,7 @@ type FileSelected = {
 }
 
 
-const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
+const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFileID }) => {
 
     const [files, setFiles] = useState<File[]>([]); // State for storing files
     const [showAddNewFileSelector, setShowAddNewFileSelector] = useState<boolean>(false);
@@ -69,11 +70,21 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
     
     // selectFile updates the state when a file is selected
     const selectFile = (corpusFileID: number) => {
-        console.log("My file id is:", corpusFileID);
         setFileNameSelected((prevState) => {
-            return prevState.map((file) => {
-                return file.fileId === corpusFileID ? { ...file, selected: !file.selected } : { ...file, selected: false};
+            const nextState = prevState.map((file) => {
+                return file.fileId === corpusFileID
+                    ? { ...file, selected: !file.selected } // this allows the file to be selected or deselected
+                    : { ...file, selected: false };
             });
+
+            // Find the file in the next state (after the change)
+            const selectedFile = nextState.find(file => file.fileId === corpusFileID)
+            // This ensures that if the file is deselected, the text is not shown.
+            // i.e., it is only shown is the file is selected
+            if (selectedFile?.selected) {
+                showTextWithFileID(corpusFileID);
+            }
+            return nextState;
         });
     };
 
@@ -287,7 +298,9 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles }) => {
                             <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
                                 <div>{corpusFile.file_name}</div>
                                 {
-                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div> : ''
+                                    fileNameSelected.find(file => file.fileId === corpusFile.id)?.selected 
+                                    ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div>
+                                    : ''
                                 }
                             </div>
 
