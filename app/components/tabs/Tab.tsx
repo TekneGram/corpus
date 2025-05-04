@@ -1,3 +1,4 @@
+// LEGACY CODE. Demonstrates a simple tab component that is hard coded for 4 tabs.
 "use client"
 
 // CSS
