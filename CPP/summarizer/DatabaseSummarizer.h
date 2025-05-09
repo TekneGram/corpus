@@ -8,15 +8,14 @@ class DatabaseSummarizer
 {
     public:
         DatabaseSummarizer(sqlite3* db); // constructor
+        void summarizeCorpus(const int& corpus_id);
 
+    private:
+        sqlite3* dbConn;
         void countWordsPerFile(const int& corpus_id);
         void createWordListPerFile(const int& corpus_id);
         void countWordsPerGroup(const int& corpus_id);
         void createWordListPerGroup(const int& corpus_id);
         void countWordsPerCorpus(const int& corpus_id);
         void createWordListPerCorpus(const int& corpus_id);
-        void summarizeCorpus(const int& corpus_id);
-
-    private:
-        sqlite3* dbConn;
 };
