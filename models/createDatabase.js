@@ -211,6 +211,13 @@ class CreateDatabase {
         dbQuery.finalize();
     }
 
+    /**
+     * WORD COUNTS AND WORD LISTS TABLES
+     * These tables are used to store the word and token counts per file, the word list per file,
+     * the word and token counts per subcorpus group and the word list per subcorpus group,
+     * and the word and token counts for the entire corpus as well as the word list with counts for the entire corpus.
+     */
+
     static createWordCountsPerFileTable() {
         const dbQuery = db.prepare(`
             CREATE TABLE IF NOT EXISTS word_counts_per_file (
@@ -259,8 +266,93 @@ class CreateDatabase {
         dbQuery.finalize();
     }
 
+    static createWordCountsPerGroupTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_counts_per_group (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                group_id INTEGER,
+                word_count INTEGER,
+                token_count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE
+            )
+        `);
 
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_counts_per_group table', error.message);
+            } else {
+                console.log('word_counts_per_group table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
 
+    static createWordListPerGroupTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_list_per_group (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                group_id INTEGER,
+                word TEXT NOT NULL,
+                count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_list_per_group table', error.message);
+            } else {
+                console.log('word_list_per_group table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
+
+    static createWordCountsPerCorpusTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_counts_per_corpus (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                corpus_id INTEGER,
+                word_count INTEGER,
+                token_count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_counts_per_corpus table', error.message);
+            } else {
+                console.log('word_counts_per_corpus table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
+
+    static createWordListPerCorpusTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_list_per_corpus (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                corpus_id INTEGER,
+                word TEXT NOT NULL,
+                count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_list_per_corpus table', error.message);
+            } else {
+                console.log('word_list_per_corpus table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
 }
 
 module.exports = CreateDatabase;
