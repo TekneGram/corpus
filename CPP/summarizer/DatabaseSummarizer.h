@@ -13,6 +13,9 @@ class DatabaseSummarizer
         void createWordListPerFile(const int& corpus_id);
         void countWordsPerGroup(const int& corpus_id);
         void createWordListPerGroup(const int& corpus_id);
+        void countWordsPerCorpus(const int& corpus_id);
+        void createWordListPerCorpus(const int& corpus_id);
+        void summarizeCorpus(const int& corpus_id);
 
     private:
         sqlite3* dbConn;
