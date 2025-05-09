@@ -34,6 +34,12 @@ const createDatabase = () => {
     CreateDatabase.createThreeBunsTable();
     CreateDatabase.createFourBunsTable();
     CreateDatabase.createCorpusFileTextTable();
+    CreateDatabase.createWordCountsPerFileTable();
+    CreateDatabase.createWordListPerFileTable();
+    CreateDatabase.createWordCountsPerGroupTable();
+    CreateDatabase.createWordListPerGroupTable();
+    CreateDatabase.createWordCountsPerCorpusTable();
+    CreateDatabase.createWordListPerCorpusTable();
 }
 
 

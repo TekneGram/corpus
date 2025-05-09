@@ -317,7 +317,7 @@ class CreateDatabase {
                 corpus_id INTEGER,
                 word_count INTEGER,
                 token_count INTEGER,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
             )
         `);
@@ -339,7 +339,7 @@ class CreateDatabase {
                 corpus_id INTEGER,
                 word TEXT NOT NULL,
                 count INTEGER,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
             )
         `);
