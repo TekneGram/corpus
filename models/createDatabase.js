@@ -211,6 +211,56 @@ class CreateDatabase {
         dbQuery.finalize();
     }
 
+    static createWordCountsPerFileTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_counts_per_file (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                group_id INTEGER,
+                file_id INTEGER,
+                word_count INTEGER,
+                token_count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
+                FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_counts_per_file table', error.message);
+            } else {
+                console.log('word_counts_per_file table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
+
+    static createWordListPerFileTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS word_list_per_file (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                group_id INTEGER,
+                file_id INTEGER,
+                word TEXT NOT NULL,
+                count INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
+                FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the word_list_per_file table', error.message);
+            } else {
+                console.log('word_list_per_file table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
+
+
+
 }
 
 module.exports = CreateDatabase;

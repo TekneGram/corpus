@@ -1,0 +1,42 @@
+
+/* This section contains styles for the WordCount component */
+.word-count-container {
+    @apply flex flex-col;
+}
+
+.word-count-title {
+    @apply text-2xl font-bold mb-4;
+}
+
+.word-count-operations-container {
+    @apply flex flex-col gap-4;
+}
+
+.word-count-start-button {
+    @apply bg-blue-500 text-white font-light py-2 px-4 rounded
+    hover:bg-white hover:text-blue-500;
+}
+
+.word-count-corpus-container {
+
+}
+
+.word-count-corpus-header {
+
+}
+
+.word-count-data-display {
+
+}
+
+.word-count-subcorpus-container {
+
+}
+
+.word-count-subcorpus-header {
+
+}
+
+.word-count-subcorpus-display {
+
+}
