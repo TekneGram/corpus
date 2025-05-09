@@ -224,7 +224,7 @@ class CreateDatabase {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 group_id INTEGER,
                 file_id INTEGER,
-                word_count INTEGER,
+                type_count INTEGER,
                 token_count INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE,
@@ -271,7 +271,7 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS word_counts_per_group (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 group_id INTEGER,
-                word_count INTEGER,
+                type_count INTEGER,
                 token_count INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (group_id) REFERENCES corpus_group(id) ON DELETE CASCADE
@@ -315,7 +315,7 @@ class CreateDatabase {
             CREATE TABLE IF NOT EXISTS word_counts_per_corpus (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 corpus_id INTEGER,
-                word_count INTEGER,
+                type_count INTEGER,
                 token_count INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
