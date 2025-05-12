@@ -8,7 +8,7 @@ class DatabaseSummarizer
 {
     public:
         DatabaseSummarizer(sqlite3* db); // constructor
-        void summarizeCorpus(const int& corpus_id);
+        void summarizeCorpusWords(const int& corpus_id);
 
     private:
         sqlite3* dbConn;

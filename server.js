@@ -5,6 +5,7 @@ const cors = require("cors");
 const processFilesRoutes = require('./ServerRouter/corpusEdits.js');
 const getProjectMetadata = require('./ServerRouter/projectData.js');
 const corpusManager = require('./ServerRouter/corpusManager.js');
+const corpusSummarizer = require('./ServerRouter/corpusSummarizer.js');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(morgan("dev"));
 app.use("/api/corpus-edits", processFilesRoutes);
 app.use("/api/corpus-data", getProjectMetadata);
 app.use("/api/manager", corpusManager);
+app.use("/api/summarizer", corpusSummarizer);
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello from the home page" });

@@ -11,7 +11,7 @@ const WordCount = () => {
 
     const corpusMetadata = useCorpusMetaData();
     const corpusDispatch = useCorpusDispatch();
-    
+
     
     const [hasWordCountData, setHasWordCountData] = useState<boolean>(false); // This will be used to track the existence of word count data.
     const [wordCountData, setWordCountData] = useState<any>(null); // TODO: Define the type of this data.
@@ -43,12 +43,29 @@ const WordCount = () => {
         fetchWordCountData
     }, []);
 
+    const handleSummarizeWords = async () => {
+        console.log("Counting words...");
+        try {
+            const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/wordCount`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            const result = await response.json();
+            console.log("This is the result of the word count operation: ", result);
+        } catch (error) {
+            console.error("Error counting words: ", error);
+        }
+    }
+
     return (
         <div className='word-count-container'>
             <div className='word-count-title'>Word Counts</div>
             <div className='word-count-operations-container'>
                 <div className='word-count-operations-header'>
-                    <button className='word-count-start-button' type='button'>Count words</button>
+                    <button className='word-count-start-button' type='button' onClick={handleSummarizeWords}>Count words</button>
                 </div>
             </div>
             {/* What displays next should depend on whether counting data exists or not. */}

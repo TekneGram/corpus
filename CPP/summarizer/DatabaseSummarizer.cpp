@@ -11,6 +11,12 @@ DatabaseSummarizer::DatabaseSummarizer(sqlite3* db)
 
 void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
 {
+    // Enable extended result codes for better error diagnostics
+    sqlite3_extended_result_codes(dbConn, 1);
+
+    // Enable foreign key constraints
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
     sqlite3_stmt* statement;
     const char* sql = R"(
         SELECT
@@ -29,68 +35,75 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
     )";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         return;
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
-        std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error binding corpus_id: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
     const char* insertSQL = R"(
-        INSERT INTO words_counts_per_file (group_id, file_id, type_count, token_count) VALUES (?, ?, ?, ?);
+        INSERT INTO word_counts_per_file (group_id, file_id, type_count, token_count) VALUES (?, ?, ?, ?);
     )";
 
     sqlite3_stmt* insertStatement;
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
-    // Start a transaction to speed up batch inserts
-    int exit_code = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
-    if (exit_code != SQLITE_OK) {
-        std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+    // Begin transaction
+    int rc = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
         return;
     }
 
-    // Execute the query and insert the results into the new table
     while (sqlite3_step(statement) == SQLITE_ROW) {
         int group_id = sqlite3_column_int(statement, 0);
         int file_id = sqlite3_column_int(statement, 1);
         int type_count = sqlite3_column_int(statement, 2);
         int token_count = sqlite3_column_int(statement, 3);
 
+        std::cout << "Inserting: group_id=" << group_id
+                  << ", file_id=" << file_id
+                  << ", type_count=" << type_count
+                  << ", token_count=" << token_count << std::endl;
+
+        // Bind values
         if (sqlite3_bind_int(insertStatement, 1, group_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 2, file_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 3, type_count) != SQLITE_OK ||
-            sqlite3_bind_int(insertStatement, 4, token_count) != SQLITE_OK
-        ) {
-            std::cerr << "Error binding values to insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_bind_int(insertStatement, 4, token_count) != SQLITE_OK) {
+            std::cerr << "Error binding values to INSERT: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_reset(insertStatement);
             continue;
         }
 
-        if (sqlite3_step(insertStatement) != SQLITE_DONE) {
-            std::cerr << "Error executing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        // Execute insert
+        rc = sqlite3_step(insertStatement);
+        if (rc != SQLITE_DONE) {
+            std::cerr << "Error executing INSERT (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         }
 
         sqlite3_reset(insertStatement);
     }
 
-    // Commit the transaction
-    if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-        std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+    // Commit transaction
+    rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
     }
 
-    // Finalize the statements
+    // Final cleanup
     sqlite3_finalize(statement);
     sqlite3_finalize(insertStatement);
-    return;
 }
 
 void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
@@ -175,6 +188,12 @@ void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
 
 void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
 {
+    // Enable extended error codes for better debugging
+    sqlite3_extended_result_codes(dbConn, 1);
+
+    // Enforce foreign key constraints
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
     sqlite3_stmt* statement;
     const char* sql = R"(
         SELECT
@@ -192,62 +211,73 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
     )";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         return;
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
-        std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error binding corpus_id to SELECT: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
     const char* insertSQL = R"(
-        INSERT INTO words_counts_per_group (group_id, type_count, token_count) VALUES (?, ?, ?);
+        INSERT INTO word_counts_per_group (group_id, type_count, token_count) VALUES (?, ?, ?);
     )";
 
     sqlite3_stmt* insertStatement;
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
-    // Start a transaction to speed up batch inserts
-    int exit_code = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
-    if (exit_code != SQLITE_OK) {
-        std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+    // Begin transaction
+    int rc = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
         return;
     }
 
-    // Execute the query and insert the results into the new table
+    // Step through SELECT results and insert into destination table
     while (sqlite3_step(statement) == SQLITE_ROW) {
         int group_id = sqlite3_column_int(statement, 0);
         int type_count = sqlite3_column_int(statement, 1);
         int token_count = sqlite3_column_int(statement, 2);
 
+        std::cout << "Inserting: group_id=" << group_id
+                  << ", type_count=" << type_count
+                  << ", token_count=" << token_count << std::endl;
+
+        // Bind insert values
         if (sqlite3_bind_int(insertStatement, 1, group_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 2, type_count) != SQLITE_OK ||
-            sqlite3_bind_int(insertStatement, 3, token_count) != SQLITE_OK
-        ) {
-            std::cerr << "Error binding values to insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_bind_int(insertStatement, 3, token_count) != SQLITE_OK) {
+            std::cerr << "Error binding values to INSERT: " << sqlite3_errmsg(dbConn) << std::endl;
+            sqlite3_reset(insertStatement);
             continue;
         }
-        if (sqlite3_step(insertStatement) != SQLITE_DONE) {
-            std::cerr << "Error executing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+
+        // Execute insert
+        rc = sqlite3_step(insertStatement);
+        if (rc != SQLITE_DONE) {
+            std::cerr << "Error executing INSERT (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         }
+
         sqlite3_reset(insertStatement);
     }
-    // Commit the transaction
-    if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-        std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+
+    // Commit transaction
+    rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
     }
-    // Finalize the statements
+
+    // Final cleanup
     sqlite3_finalize(statement);
     sqlite3_finalize(insertStatement);
-    return;
 }
 
 void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
@@ -330,6 +360,10 @@ void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
 
 void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
 {
+    // Enable extended error reporting and enforce foreign keys
+    sqlite3_extended_result_codes(dbConn, 1);
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
     sqlite3_stmt* statement;
     const char* sql = R"(
         SELECT
@@ -344,61 +378,65 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
     )";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         return;
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
-        std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error binding corpus_id to SELECT: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
     const char* insertSQL = R"(
-        INSERT INTO words_counts_per_corpus (corpus_id, type_count, token_count) VALUES (?, ?, ?);
+        INSERT INTO word_counts_per_corpus (corpus_id, type_count, token_count) VALUES (?, ?, ?);
     )";
 
     sqlite3_stmt* insertStatement;
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         return;
     }
 
-    // Start a transaction to speed up batch inserts
-    int exit_code = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
-    if (exit_code != SQLITE_OK) {
-        std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+    // Begin transaction
+    int rc = sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
         return;
     }
 
-    // Execute the query and insert the results into the new table
-    while (sqlite3_step(statement) == SQLITE_ROW) {
+    // Execute query and insert
+    if (sqlite3_step(statement) == SQLITE_ROW) {
         int type_count = sqlite3_column_int(statement, 0);
         int token_count = sqlite3_column_int(statement, 1);
 
+        std::cout << "Inserting: corpus_id=" << corpus_id
+                  << ", type_count=" << type_count
+                  << ", token_count=" << token_count << std::endl;
+
         if (sqlite3_bind_int(insertStatement, 1, corpus_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 2, type_count) != SQLITE_OK ||
-            sqlite3_bind_int(insertStatement, 3, token_count) != SQLITE_OK
-        ) {
-            std::cerr << "Error binding values to insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
-            continue;
+            sqlite3_bind_int(insertStatement, 3, token_count) != SQLITE_OK) {
+            std::cerr << "Error binding values to INSERT: " << sqlite3_errmsg(dbConn) << std::endl;
+        } else if (sqlite3_step(insertStatement) != SQLITE_DONE) {
+            std::cerr << "Error executing INSERT (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         }
-        if (sqlite3_step(insertStatement) != SQLITE_DONE) {
-            std::cerr << "Error executing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        }
-        sqlite3_reset(insertStatement);
+    } else {
+        std::cerr << "No data returned from SELECT or error: " << sqlite3_errmsg(dbConn) << std::endl;
     }
-    // Commit the transaction
-    if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-        std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+
+    // Commit transaction
+    rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
     }
-    // Finalize the statements
+
+    // Final cleanup
     sqlite3_finalize(statement);
     sqlite3_finalize(insertStatement);
-    return;
 }
 
 void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
@@ -479,7 +517,7 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
 }
 
 // This function summarizes the entire corpus by calling the other functions.
-void DatabaseSummarizer::summarizeCorpus(const int& corpus_id)
+void DatabaseSummarizer::summarizeCorpusWords(const int& corpus_id)
 {
     countWordsPerFile(corpus_id);
     createWordListPerFile(corpus_id);

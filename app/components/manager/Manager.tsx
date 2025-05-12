@@ -23,7 +23,7 @@ import TextDisplay from './ManagerComponents/TextDisplay'; // Displays the text 
 
 const Manager = () => {
     /**
-     * CONTEXT AND STATTE MANAGEMENT
+     * CONTEXT AND STATE MANAGEMENT
      */
     let corpusMetadata = useCorpusMetaData();
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
