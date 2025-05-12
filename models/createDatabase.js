@@ -353,6 +353,28 @@ class CreateDatabase {
         });
         dbQuery.finalize();
     }
+
+    static createCorpusPreppedStatusTable() {
+        const dbQuery = db.prepare(`
+            CREATE TABLE IF NOT EXISTS corpus_prepped_status (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                corpus_id INTEGER,
+                analysis_type TEXT NOT NULL,
+                up_to_date BOOLEAN NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (corpus_id) REFERENCES corpu(id) ON DELETE CASCADE
+            )
+        `);
+
+        dbQuery.run((error) => {
+            if (error) {
+                console.error('Error creating the corpus_prepped_status table', error.message);
+            } else {
+                console.log('corpus_prepped_status table created or already exists.');
+            }
+        });
+        dbQuery.finalize();
+    }
 }
 
 module.exports = CreateDatabase;
