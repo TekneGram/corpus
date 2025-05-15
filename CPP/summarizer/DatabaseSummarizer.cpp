@@ -54,7 +54,7 @@ SummarizerMetadata::HasFiles DatabaseSummarizer::checkCorpusFilesExist(const int
     if (rowCount > 0) {
         return {corpus_id, true};
     } else {
-        return {corpus_id, true};
+        return {corpus_id, false};
     }
 }
 

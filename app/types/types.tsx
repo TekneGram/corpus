@@ -53,6 +53,12 @@ export type FileText = {
     file_text: string;
 }
 
+// Checking files exist in the corpus
+export type HasFiles = {
+    corpusId: number;
+    hasFiles: boolean;
+}
+
 // Summarizing the corpus
 export type CorpusStatus = {
     analysisType: string | null;

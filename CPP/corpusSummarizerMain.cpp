@@ -45,8 +45,8 @@ int main()
 
         if (command == "checkCorpusFilesExist") {
             int corpus_id = inputData["corpusId"];
-            summarizer.checkCorpusFilesExist(corpus_id);
-            std::cout << "Corpus files checked successfully!" << std::endl;
+            nlohmann::json result = summarizer.checkCorpusFilesExist(corpus_id);
+            std::cout << result.dump() << std::endl;
         }
         
     } catch (const std::exception& e) {

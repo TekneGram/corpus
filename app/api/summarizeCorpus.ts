@@ -1,7 +1,7 @@
-import { CorpusStatus } from "../types/types";
+import { HasFiles, CorpusStatus } from "../types/types";
 
 type CorpusFilesExistResponse = 
-    | { status: "success"; cppOutput: boolean }
+    | { status: "success"; cppOutput: HasFiles }
     | { status: "fail", message: string};
 
 type CorpusStatusResponse =
@@ -19,6 +19,9 @@ export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<Corpu
             credentials: 'include'
         });
         const result: CorpusFilesExistResponse = await response.json();
+        if (result.status === "success") {
+            console.log("Results of corpus file checking is: ", result.cppOutput);
+        }
         return result;
     } catch (error) {
         throw error;
