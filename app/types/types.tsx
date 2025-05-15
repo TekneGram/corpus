@@ -52,3 +52,9 @@ export type FileText = {
     id: number;
     file_text: string;
 }
+
+// Summarizing the corpus
+export type CorpusStatus = {
+    analysisType: string | null;
+    upToDate: boolean | null;
+}

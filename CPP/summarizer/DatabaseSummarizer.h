@@ -3,12 +3,14 @@
 #include <string>
 #include "../lib/json.hpp"
 #include "../CorpusMetadata.h"
+#include "SummarizerMetadata.h"
 
 class DatabaseSummarizer
 {
     public:
         DatabaseSummarizer(sqlite3* db); // constructor
         void summarizeCorpusWords(const int& corpus_id);
+        SummarizerMetadata::HasFiles checkCorpusFilesExist(const int& corpus_id);
 
     private:
         sqlite3* dbConn;

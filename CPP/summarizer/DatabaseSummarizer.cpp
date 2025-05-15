@@ -3,10 +3,59 @@
 #include <iostream>
 #include "../lib/json.hpp"
 #include "../CorpusMetadata.h"
+#include "SummarizerMetadata.h"
 
 DatabaseSummarizer::DatabaseSummarizer(sqlite3* db)
 {
     dbConn = db;
+}
+
+SummarizerMetadata::HasFiles DatabaseSummarizer::checkCorpusFilesExist(const int& corpus_id)
+{
+    // Enable extended result codes for better error diagnostics
+    sqlite3_extended_result_codes(dbConn, 1);
+
+    // Enable foreign key constraints
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT 
+            files.file_name
+        FROM 
+            files
+        JOIN 
+            corpus_group 
+        ON 
+            corpus_group.id = files.group_id
+        WHERE 
+            corpus_group.corpus_id = ?
+        LIMIT 5;
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing the SELECT statement to check for files in the corpus" << sqlite3_errmsg(dbConn) << std::endl;
+        return {corpus_id, false};
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Error binding corpus_id" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return {corpus_id, false};
+    }
+
+    int rowCount = 0;
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        ++rowCount;
+    }
+
+    sqlite3_finalize(statement);
+
+    if (rowCount > 0) {
+        return {corpus_id, true};
+    } else {
+        return {corpus_id, true};
+    }
 }
 
 void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)

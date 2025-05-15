@@ -4,6 +4,9 @@
 import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
+// API
+import { checkCorpusFilesExistInDB } from '@/app/api/summarizeCorpus';
+
 // CSS
 import '@/styles/summarizer.css';
 
@@ -23,53 +26,55 @@ const WordCount = () => {
         // Check that file exist in the database
         const checkFilesAndCorpus = async () => {
             try {
-                // First check: do the files exist in the database?
-                const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/files`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                });
-                const result = await response.json();
-                console.log("This is the file existence data: ", result);
-                if (result.status === "success") {
-                    setFilesExistInDB(true);
+                // First check: do the files exist in the database
+                const result = checkCorpusFilesExistInDB(corpusMetadata.corpus.id);
+                console.log(result);
+                // const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/files`, {
+                //     method: "GET",
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     credentials: 'include'
+                // });
+                // const result = await response.json();
+                // console.log("This is the file existence data: ", result);
+                // if (result.status === "success") {
+                //     setFilesExistInDB(true);
 
-                    // Second check: is the corpus prepped and up to date?
-                    const corpusResponse = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus`, {
-                        method: "GET",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
-                    });
-                    const corpusResult = await corpusResponse.json();
-                    console.log("This is the corpus data: ", corpusResult);
+                //     // Second check: is the corpus prepped and up to date?
+                //     const corpusResponse = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus`, {
+                //         method: "GET",
+                //         headers: {
+                //             'Content-Type': 'application/json'
+                //         },
+                //         credentials: 'include'
+                //     });
+                //     const corpusResult = await corpusResponse.json();
+                //     console.log("This is the corpus data: ", corpusResult);
 
-                    if (corpusResult.data.analysisType === null && corpusResult.data.upToDate === null) {
-                        // In this case, the corpus is up to date but words have not been counted.
-                        // Give the user the option to count the words.
-                        setWordCountDataExistsInDB(false);
-                        setCountsUpToDateInDB(true);
-                    } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === true) {
-                        // In this case, the corpus is up to date and words have been counted.
-                        setWordCountDataExistsInDB(true);
-                        setCountsUpToDateInDB(true);
-                        // We can continue to fetch the word count data from here.
-                        // TODO: Fetch the word count data from the API and display it.
-                    } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === false) {
-                        // In this case, the corpus words have been counted, but the corpus has been updated, so the word count data is not up to date.
-                        // Give the user the option to update the word count data and / or display the current word count data.
-                        setWordCountDataExistsInDB(true);
-                        setCountsUpToDateInDB(false);
-                    }
+                //     if (corpusResult.data.analysisType === null && corpusResult.data.upToDate === null) {
+                //         // In this case, the corpus is up to date but words have not been counted.
+                //         // Give the user the option to count the words.
+                //         setWordCountDataExistsInDB(false);
+                //         setCountsUpToDateInDB(true);
+                //     } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === true) {
+                //         // In this case, the corpus is up to date and words have been counted.
+                //         setWordCountDataExistsInDB(true);
+                //         setCountsUpToDateInDB(true);
+                //         // We can continue to fetch the word count data from here.
+                //         // TODO: Fetch the word count data from the API and display it.
+                //     } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === false) {
+                //         // In this case, the corpus words have been counted, but the corpus has been updated, so the word count data is not up to date.
+                //         // Give the user the option to update the word count data and / or display the current word count data.
+                //         setWordCountDataExistsInDB(true);
+                //         setCountsUpToDateInDB(false);
+                //     }
                     
-                } else {
-                    setFilesExistInDB(false);
-                }  
+                // } else {
+                //     setFilesExistInDB(false);
+                // }  
             } catch (error) {
-                console.error("Error checking file existence: ", error);
+                console.error("Error running the corpus checks: ", error);
             }
         }
         checkFilesAndCorpus();

@@ -42,6 +42,13 @@ int main()
             summarizer.summarizeCorpusWords(corpus_id);
             std::cout << "Corpus words summarized successfully!" << std::endl;
         }
+
+        if (command == "checkCorpusFilesExist") {
+            int corpus_id = inputData["corpusId"];
+            summarizer.checkCorpusFilesExist(corpus_id);
+            std::cout << "Corpus files checked successfully!" << std::endl;
+        }
+        
     } catch (const std::exception& e) {
         handleError(e.what(), db);
     }

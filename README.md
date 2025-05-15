@@ -8,7 +8,7 @@ g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHand
 
 #### corpusSummarizer
 g++ -o ./executables/corpusSummarizer -std=c++11 corpusSummarizerMain.cpp ./summarizer/
-DatabaseSummarizer.cpp JSONConvert.cpp -lsqlite3
+DatabaseSummarizer.cpp ./summarizer/JSONConvert.cpp JSONConvert.cpp -lsqlite3
 
 ## To run
 Install node modules: npm install

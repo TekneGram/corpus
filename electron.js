@@ -40,6 +40,7 @@ const createDatabase = () => {
     CreateDatabase.createWordListPerGroupTable();
     CreateDatabase.createWordCountsPerCorpusTable();
     CreateDatabase.createWordListPerCorpusTable();
+    CreateDatabase.createCorpusPreppedStatusTable();
 }
 
 
