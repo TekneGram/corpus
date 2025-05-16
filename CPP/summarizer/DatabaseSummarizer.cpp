@@ -117,6 +117,58 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::checkCorpusPreppedSt
     return result;
 }
 
+SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type, bool to_be_updated)
+{
+    sqlite3_extended_result_codes(dbConn, 1);
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        UPDATE corpus_prepped_status
+        SET up_to_date = ?
+        WHERE corpus_id = ? AND analysis_type = ?
+    )";
+
+    SummarizerMetadata::CorpusPreppedStatus result;
+    result.corpus_id = corpus_id;
+    result.analysis_type = SummarizerMetadata::AnalysisType::Unknown;
+    result.up_to_date = -1;
+
+    if (sqlite3_prepare_v2(dbConn, sql, 1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing statement to insert into corpusPreppedStatus:" << sqlite3_errmsg(dbConn) << std::endl;
+        return result;
+    }
+
+    if (sqlite3_bind_int(statement, 1, static_cast<int>(to_be_updated)) != SQLITE_OK ||
+        sqlite3_bind_int(statement, 2, corpus_id) != SQLITE_OK ||
+        sqlite3_bind_text(statement, 3, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK
+    ) {
+        std::cerr << "Error binding parameters: " << sqlite3_errmsg(dbConn) << std::endl;
+        return result;
+    }
+
+    int rc = sqlite3_step(statement);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "Error executing UPDATE statement tp corpusPreppedStatus" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return result;
+    }
+
+    // Check that there were changes to the database.
+    int changes = sqlite3_changes(dbConn);
+    if (changes == 0) {
+        std::cerr << "Warning: No rows updated in corpusPreppedStatus table!" << std::endl;
+    }
+
+    // If the update was successful, clean up and send back
+    // the up_to_date status (true or false) and the analysis_type
+    sqlite3_finalize(statement);
+
+    result.analysis_type = SummarizerMetadata::parseAnalysisType(analysis_type.c_str());
+    result.up_to_date = to_be_updated;
+    return result;
+}
+
 void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
 {
     // Enable extended result codes for better error diagnostics
