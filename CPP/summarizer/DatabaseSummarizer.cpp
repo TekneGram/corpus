@@ -126,7 +126,7 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
     const char* sql = R"(
         UPDATE corpus_prepped_status
         SET up_to_date = ?
-        WHERE corpus_id = ? AND analysis_type = ?
+        WHERE corpus_id = ? AND analysis_type = ?;
     )";
 
     SummarizerMetadata::CorpusPreppedStatus result;
@@ -166,6 +166,50 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
 
     result.analysis_type = SummarizerMetadata::parseAnalysisType(analysis_type.c_str());
     result.up_to_date = to_be_updated;
+    return result;
+}
+
+SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type)
+{
+    sqlite3_extended_result_codes(dbConn, 1);
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
+    bool up_to_date = true;
+    const char* sql = R"(
+        INSERT INTO corpus_prepped_status (corpus_id, analysis_type, up_to_date)
+        VALUES (?, ?, ?);
+    )";
+
+    SummarizerMetadata::CorpusPreppedStatus result;
+    result.corpus_id = corpus_id;
+    result.analysis_type = SummarizerMetadata::AnalysisType::Unknown;
+    result.up_to_date = -1;
+
+    sqlite3_stmt* statement;
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing insert for corpusPreppedStatus: " << sqlite3_errmsg(dbConn) << std::endl;
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK ||
+        sqlite3_bind_int(statement, 2, static_cast<int>(up_to_date)) != SQLITE_OK ||
+        sqlite3_bind_text(statement, 3, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK
+    ) {
+        std::cerr << "Error binding parameters: " << sqlite3_errmsg(dbConn) << std::endl;
+        return result;
+    }
+
+    int rc = sqlite3_step(statement);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "Error inserting data into corpusPreppedStatus table: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return result;
+    } else {
+        result.analysis_type = SummarizerMetadata::parseAnalysisType(analysis_type.c_str());
+        result.up_to_date = up_to_date;
+    }
+
+    sqlite3_finalize(statement);
     return result;
 }
 

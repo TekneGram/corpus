@@ -13,6 +13,7 @@ class DatabaseSummarizer
         SummarizerMetadata::HasFiles checkCorpusFilesExist(const int& corpus_id);
         SummarizerMetadata::CorpusPreppedStatus checkCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type);
         SummarizerMetadata::CorpusPreppedStatus updateCorpusPreppedStatus (const int& corpus_id, std::string& analysis_type, bool to_be_updated);
+        SummarizerMetadata::CorpusPreppedStatus insertCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type);
 
     private:
         sqlite3* dbConn;
