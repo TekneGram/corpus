@@ -16,7 +16,7 @@ const checkCorpusFilesExist = async (req, res) => {
     try {
         const cppOutput = await cm.checkCorpusFilesExist(req.params);
         // I HAVE LEARNED SOMETHING NEW HERE
-        // THE JSON SENT BACK FROM CPP MUST BE PARSED IN ORDER TO BE SEND BACK TO FRONT END AS AN OBJECT!
+        // THE JSON SENT BACK FROM CPP MUST BE PARSED IN ORDER TO BE SENT BACK TO FRONT END AS AN OBJECT!
         // IF IT IS NOT PARSED, IT WILL BE SENT BACK AS A SERIALIZED STRING WITHIN A JSON OBJECT AND IT WILL
         // NOT MATCH THE TYPES ON THE FRONT END
         res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
@@ -25,7 +25,18 @@ const checkCorpusFilesExist = async (req, res) => {
     }
 }
 
+const checkCorpusPreppedStatus = async (req, res) => {
+    const cm = new CorpusSummarizer();
+    try {
+        const cppOutput = await cm.checkCorpusPreppedstatus(req.params);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Internal server error in spp process" });
+    }
+}
+
 module.exports = {
     summarizeCorpusWords,
     checkCorpusFilesExist,
+    checkCorpusPreppedStatus,
 }

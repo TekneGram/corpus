@@ -55,6 +55,31 @@ class CorpusSummarizer {
             throw err;
         });
     }
+
+    checkCorpusPreppedStatus(corpusIdAndAnalysisType) {
+        corpusIdAndAnalysisType.corpusId = parseInt(corpusIdAndAnalysisType.corpusId);
+        corpusIdAndAnalysisType["command"] = "checkCorpusPreppedStatus";
+        const corpusIdAndAnalysisTypeString = JSON.stringify(corpusIdAndAnalysisType);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusIdAndAnalysisTypeString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process checking the prepped status of your corpus."));
+                } else {
+                    console.log("Output from C++ process checking the prepped status of your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            throw err;
+        });
+    }
 }
 
 module.exports = CorpusSummarizer;

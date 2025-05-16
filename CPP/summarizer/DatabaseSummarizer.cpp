@@ -4,6 +4,7 @@
 #include "../lib/json.hpp"
 #include "../CorpusMetadata.h"
 #include "SummarizerMetadata.h"
+#include "EnumHelpers.h"
 
 DatabaseSummarizer::DatabaseSummarizer(sqlite3* db)
 {
@@ -56,6 +57,64 @@ SummarizerMetadata::HasFiles DatabaseSummarizer::checkCorpusFilesExist(const int
     } else {
         return {corpus_id, false};
     }
+}
+
+SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::checkCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type)
+{
+    // Enable extended result codes for better error diagnostics
+    sqlite3_extended_result_codes(dbConn, 1);
+
+    // Enable foreign key constraints
+    sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT
+            analysis_type, up_to_date
+        FROM
+            corpus_prepped_status
+        WHERE
+            corpus_id = ? AND analysis_type = ?
+        ;
+    )";
+
+    SummarizerMetadata::CorpusPreppedStatus result;
+    result.corpus_id = corpus_id;
+    result.analysis_type = SummarizerMetadata::AnalysisType::Unknown;
+    result.up_to_date = -1; // -1 = null - will be converted by JSON convert
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Error preparing the SELECT statement to check for files in the corpus" << sqlite3_errmsg(dbConn) << std::endl;
+        return result;
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Error binding corpus_id" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return result;
+    }
+
+    if (sqlite3_bind_text(statement, 2, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK) {
+        std::cerr << "Error binding the analysis_type" << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        return result;
+    }
+
+    int rc = sqlite3_step(statement);
+    if (rc == SQLITE_ROW) {
+        const unsigned char* analysisTypeText = sqlite3_column_text(statement, 0);
+        int upToDateValue = sqlite3_column_type(statement, 1) != SQLITE_NULL
+                            ? sqlite3_column_int(statement, 1)
+                            : -1;
+        result.analysis_type = SummarizerMetadata::parseAnalysisType(reinterpret_cast<const char *>(analysisTypeText));
+        result.up_to_date = upToDateValue;
+    } else if (rc != SQLITE_DONE) {
+        std::cerr << "Error stepping through results of checking the corpus prepped status: " << sqlite3_errmsg(dbConn) << std::endl;
+        return result;
+    }
+
+    sqlite3_finalize(statement);
+    return result;
 }
 
 void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)

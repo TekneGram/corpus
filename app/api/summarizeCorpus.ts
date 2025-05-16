@@ -22,25 +22,29 @@ export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<Corpu
         if (result.status === "success") {
             console.log("Results of corpus file checking is: ", result.cppOutput);
         }
+        // TODO - return only the cppOutput
         return result;
     } catch (error) {
         throw error;
     }
 }
 
-// export const checkCorpusPreppedStatus = async (corpusId: number): Promise<CorpusStatusResponse> => {
-//     try {
-//         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/files`, {
-//             method: "GET",
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             credentials: 'include'
-//         });
-//         const result: CorpusStatusResponse = await response.json();
-//         const projectTitles: ProjectTitle[] = JSON.parse(result);
-//         return projectTitles;
-//     } catch (error) {
-//         throw error;
-//     }
-// }
+export const checkCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result: CorpusStatusResponse = await response.json();
+        if (result.status === "success") {
+            console.log("Results of corpus status checking is: ", result.cppOutput);
+        }
+        // TODO - return only the cppOutput
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

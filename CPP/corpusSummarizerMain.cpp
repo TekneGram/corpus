@@ -48,6 +48,13 @@ int main()
             nlohmann::json result = summarizer.checkCorpusFilesExist(corpus_id);
             std::cout << result.dump() << std::endl;
         }
+
+        if (command == "checkCorpusPreppedStatus") {
+            int corpus_id = inputData["corpusId"];
+            std::string analysis_type = inputData["analysisType"];
+            nlohmann::json result = summarizer.checkCorpusPreppedStatus(corpus_id, analysis_type);
+            std::cout << result.dump() << std::endl;
+        }
         
     } catch (const std::exception& e) {
         handleError(e.what(), db);

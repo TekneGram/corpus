@@ -11,6 +11,7 @@ class DatabaseSummarizer
         DatabaseSummarizer(sqlite3* db); // constructor
         void summarizeCorpusWords(const int& corpus_id);
         SummarizerMetadata::HasFiles checkCorpusFilesExist(const int& corpus_id);
+        SummarizerMetadata::CorpusPreppedStatus checkCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type);
 
     private:
         sqlite3* dbConn;
