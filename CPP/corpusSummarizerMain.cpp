@@ -55,6 +55,21 @@ int main()
             nlohmann::json result = summarizer.checkCorpusPreppedStatus(corpus_id, analysis_type);
             std::cout << result.dump() << std::endl;
         }
+
+        if (command == "updateCorpusPreppedStatus") {
+            int corpus_id = inputData["corpusId"];
+            std::string analysis_type = inputData["analysisType"];
+            bool to_be_updated = inputData["toBeUpdated"];
+            nlohmann::json result = summarizer.updateCorpusPreppedStatus(corpus_id, analysis_type, to_be_updated);
+            std::cout << result.dump() << std::endl;
+        }
+
+        if (command == "insertCorpusPreppedStatus") {
+            int corpus_id = inputData["corpusId"];
+            std::string analysis_type = inputData["analysisType"];
+            nlohmann::json result = summarizer.insertCorpusPreppedStatus(corpus_id, analysis_type);
+            std::cout << result.dump() << std::endl;
+        }
         
     } catch (const std::exception& e) {
         handleError(e.what(), db);

@@ -48,3 +48,43 @@ export const checkCorpusPreppedStatus = async (corpusId: number, analysisType: s
         throw error;
     }
 }
+
+export const updateCorpusPreppedStatus = async (corpusId: number, analysisType: string, toBeUpdated: boolean): Promise<CorpusStatusResponse> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}/${toBeUpdated}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result: CorpusStatusResponse = await response.json();
+        if (result.status === "success") {
+            console.log("Results of corpus status update is: ", result.cppOutput);
+        }
+        // TODO - return only the cppOutput
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result: CorpusStatusResponse = await response.json();
+        if (result.status === "success") {
+            console.log("Results of corpus status insert is: ", result.cppOutput);
+        }
+        // TODO - return only the cppOutput
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

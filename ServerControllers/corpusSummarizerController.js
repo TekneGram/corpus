@@ -31,7 +31,27 @@ const checkCorpusPreppedStatus = async (req, res) => {
         const cppOutput = await cm.checkCorpusPreppedstatus(req.params);
         res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
-        res.status(500).json({ status: "fail", message: "Internal server error in spp process" });
+        res.status(500).json({ status: "fail", message: "Internal server error in cpp process" });
+    }
+}
+
+const updateCorpusPreppedStatus = async (req, res) => {
+    const cm = new CorpusSummarizer();
+    try {
+        const cppOutput = await cm.updateCorpusPreppedStatus(req.params);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Internal server error in cpp process" });
+    }
+}
+
+const insertCorpusPreppedStatus = async (req, res) => {
+    const cm = new CorpusSummarizer();
+    try {
+        const cppOutput = await cm.insertCorpusPreppedStatus(req.params);
+        res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: "Internal server error in cpp process" });
     }
 }
 
@@ -39,4 +59,6 @@ module.exports = {
     summarizeCorpusWords,
     checkCorpusFilesExist,
     checkCorpusPreppedStatus,
+    updateCorpusPreppedStatus,
+    insertCorpusPreppedStatus
 }

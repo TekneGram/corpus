@@ -80,6 +80,56 @@ class CorpusSummarizer {
             throw err;
         });
     }
+
+    updateCorpusPreppedStatus(corpusPreppedStatusData) {
+        corpusPreppedStatusData.corpusId = parseInt(corpusPreppedStatusData.corpusId);
+        corpusPreppedStatusData["command"] = "updateCorpusPreppedStatus";
+        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusDataString);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusPreppedStatusDataString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process updating the prepped status of your corpus."));
+                } else {
+                    console.log("Output from the C++ process updating the prepped status of your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            throw err;
+        });
+    }
+
+    insertCorpusPreppedStatus(corpusPreppedStatusData) {
+        corpusPreppedStatusData.corpusId = parseInt(corpusPreppedStatusData.corpusId);
+        corpusPreppedStatusData["command"] = "insertCorpusPreppedStatus";
+        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusDataString);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusPreppedStatusDataString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process inserting the prepped status of your corpus."));
+                } else {
+                    console.log("Output from the C++ process inserting the prepped status of your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            throw err;
+        });
+    }
 }
 
 module.exports = CorpusSummarizer;
