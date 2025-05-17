@@ -28,7 +28,8 @@ const checkCorpusFilesExist = async (req, res) => {
 const checkCorpusPreppedStatus = async (req, res) => {
     const cm = new CorpusSummarizer();
     try {
-        const cppOutput = await cm.checkCorpusPreppedstatus(req.params);
+        const cppOutput = await cm.checkCorpusPreppedStatus(req.params);
+        console.log("Output from C++ process checking corpus prepped status is: ", cppOutput);
         res.status(200).json({ status: "success", cppOutput: JSON.parse(cppOutput) });
     } catch (error) {
         res.status(500).json({ status: "fail", message: "Internal server error in cpp process" });

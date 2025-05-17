@@ -101,18 +101,22 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::checkCorpusPreppedSt
     }
 
     int rc = sqlite3_step(statement);
+    std::cerr << "This is rc: " << rc << std::endl;
     if (rc == SQLITE_ROW) {
-        const unsigned char* analysisTypeText = sqlite3_column_text(statement, 0);
-        int upToDateValue = sqlite3_column_type(statement, 1) != SQLITE_NULL
-                            ? sqlite3_column_int(statement, 1)
-                            : -1;
-        result.analysis_type = SummarizerMetadata::parseAnalysisType(reinterpret_cast<const char *>(analysisTypeText));
-        result.up_to_date = upToDateValue;
+        //const unsigned char* analysisTypeText = sqlite3_column_text(statement, 0);
+        if (sqlite3_column_type(statement, 0) != SQLITE_NULL) {
+            const unsigned char* analysisTypeText = sqlite3_column_text(statement, 0);
+            std::string typeStr = reinterpret_cast<const char *>(analysisTypeText);
+            result.analysis_type = SummarizerMetadata::parseAnalysisType(typeStr.c_str());
+        }
+        if (sqlite3_column_type(statement, 1) != SQLITE_NULL) {
+            result.up_to_date = sqlite3_column_int(statement, 1);
+        }
     } else if (rc != SQLITE_DONE) {
         std::cerr << "Error stepping through results of checking the corpus prepped status: " << sqlite3_errmsg(dbConn) << std::endl;
         return result;
     }
-
+    
     sqlite3_finalize(statement);
     return result;
 }

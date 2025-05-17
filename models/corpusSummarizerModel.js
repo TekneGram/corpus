@@ -77,6 +77,7 @@ class CorpusSummarizer {
         })
         .catch(err => {
             console.error("Error in C++ process: ", err.message);
+            console.error("Full stderr from C++: ", cppProcess.getProcessErrors());
             throw err;
         });
     }

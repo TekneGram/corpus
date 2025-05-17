@@ -18,8 +18,8 @@ namespace SummarizerMetadata {
         }
         j = nlohmann::json{
             {"corpus_id", corpusPreppedStatus.corpus_id}, 
-            {"analysis_type", analysisStr.empty() ? nullptr : analysisStr}, 
-            {"up_to_date", corpusPreppedStatus.up_to_date == -1 ? nullptr : nlohmann::json(static_cast<bool>(corpusPreppedStatus.up_to_date))}
+            {"analysis_type", analysisStr.empty() ? nlohmann::json(nullptr) : nlohmann::json(analysisStr)}, 
+            {"up_to_date", corpusPreppedStatus.up_to_date == -1 ? nlohmann::json(nullptr) : nlohmann::json(static_cast<bool>(corpusPreppedStatus.up_to_date))}
         };
     }
 }

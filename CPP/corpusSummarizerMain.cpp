@@ -50,10 +50,21 @@ int main()
         }
 
         if (command == "checkCorpusPreppedStatus") {
-            int corpus_id = inputData["corpusId"];
-            std::string analysis_type = inputData["analysisType"];
-            nlohmann::json result = summarizer.checkCorpusPreppedStatus(corpus_id, analysis_type);
-            std::cout << result.dump() << std::endl;
+            try {
+                int corpus_id = inputData["corpusId"];
+                std::string analysis_type = inputData["analysisType"];
+                nlohmann::json result = summarizer.checkCorpusPreppedStatus(corpus_id, analysis_type);
+                try {
+                    std::cout << result.dump() << std::endl;
+                } catch (const std::exception& e) {
+                    std::cerr << "Exception while dumping JSON: " << e.what() << std::endl;
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "Exception caught: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown exception caught." << std::endl;
+            }
+            
         }
 
         if (command == "updateCorpusPreppedStatus") {

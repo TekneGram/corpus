@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // API
-import { checkCorpusFilesExistInDB } from '@/app/api/summarizeCorpus';
+import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus } from '@/app/api/summarizeCorpus';
 
 // CSS
 import '@/styles/summarizer.css';
@@ -27,17 +27,24 @@ const WordCount = () => {
         const checkFilesAndCorpus = async () => {
             try {
                 // First check: do the files exist in the database
-                const result = checkCorpusFilesExistInDB(corpusMetadata.corpus.id);
-                console.log(result);
-                // const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/files`, {
-                //     method: "GET",
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     credentials: 'include'
-                // });
-                // const result = await response.json();
-                // console.log("This is the file existence data: ", result);
+                const filesExistResult = await checkCorpusFilesExistInDB(corpusMetadata.corpus.id);
+                if (filesExistResult.status === "success") {
+                    setFilesExistInDB(filesExistResult.cppOutput.hasFiles);
+                    // Second check: is the corpus prepped and up to date?
+                    const corpusPreppedCheckResult = await checkCorpusPreppedStatus(corpusMetadata.corpus.id, "countWords");
+                    if (corpusPreppedCheckResult.status === "success") {
+
+                        console.log("corpusPreppedStatus: ", corpusPreppedCheckResult);
+
+                    } else {
+                        // TODO
+                        // handle the case when there is an error, e.g., toast message it
+                    }
+                } else {
+                    // TODO
+                    // handle the case when there is an error, e.g., toast message it
+                }
+                
                 // if (result.status === "success") {
                 //     setFilesExistInDB(true);
 
@@ -80,7 +87,6 @@ const WordCount = () => {
         checkFilesAndCorpus();
         
 
-
         // Get the word count data from the API
         
         const fetchWordCountData = async () => {
@@ -96,6 +102,7 @@ const WordCount = () => {
                 console.log("This is the word count data: ", result);
                 if (result.status === "success") {
                     setWordCountData(result.data);
+                    console.log(result.data);
                     setHasWordCountData(true);
                 } else {
                     setHasWordCountData(false);

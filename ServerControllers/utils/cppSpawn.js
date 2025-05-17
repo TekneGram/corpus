@@ -46,7 +46,9 @@ class CPPProcess {
         });
 
         this.cppProcess.stderr.on('data', (data) => {
-            this.cppErrorOutput += data.toString();
+            const str = data.toString();
+            this.cppErrorOutput += str;
+            console.error("stderr:", str);
         });
 
         this.cppProcess.on('close', (code) => {
