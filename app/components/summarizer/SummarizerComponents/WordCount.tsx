@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // API
-import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus } from '@/app/api/summarizeCorpus';
+import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, countWords } from '@/app/api/summarizeCorpus';
 
 // CSS
 import '@/styles/summarizer.css';
@@ -23,63 +23,46 @@ const WordCount = () => {
     const [wordCountData, setWordCountData] = useState(null);
 
     useEffect(() => {
-        // Check that file exist in the database
+        // Check that files exist in the database
         const checkFilesAndCorpus = async () => {
             try {
-                // First check: do the files exist in the database
                 const filesExistResult = await checkCorpusFilesExistInDB(corpusMetadata.corpus.id);
                 if (filesExistResult.status === "success") {
-                    setFilesExistInDB(filesExistResult.cppOutput.hasFiles);
-                    // Second check: is the corpus prepped and up to date?
-                    const corpusPreppedCheckResult = await checkCorpusPreppedStatus(corpusMetadata.corpus.id, "countWords");
-                    if (corpusPreppedCheckResult.status === "success") {
+                    const hasFiles = filesExistResult.cppOutput.has_files;
+                    setFilesExistInDB(hasFiles);
 
-                        console.log("corpusPreppedStatus: ", corpusPreppedCheckResult);
+                    if (hasFiles) {
+                        const corpusPreppedCheckResult = await checkCorpusPreppedStatus(corpusMetadata.corpus.id, "countWords");
+                        if (corpusPreppedCheckResult.status === "success") {
+                            const { analysisType, upToDate } = corpusPreppedCheckResult.cppOutput;
+                            console.log("analysisType: ", analysisType);
 
+                            if (analysisType === undefined && upToDate === undefined) {
+                                setWordCountDataExistsInDB(false);
+                                setCountsUpToDateInDB(true);
+                                setHasWordCountData(false);
+                            } else if (upToDate === true && analysisType === "countWords") {
+                                setWordCountDataExistsInDB(true);
+                                setCountsUpToDateInDB(true);
+                                const wordCountsResults = await fetchWordCountData(corpusMetadata.corpus.id);
+                                if (wordCountsResults.status === "success") {
+                                    setWordCountData(wordCountsResults.cppOutput);
+                                    setHasWordCountData(true);
+                                } else {
+                                    setHasWordCountData(false);
+                                }
+                            } else if (upToDate === false && analysisType === "countWords") {
+                                setWordCountDataExistsInDB(true);
+                                setCountsUpToDateInDB(false);
+                                setHasWordCountData(false);
+                            }
+                        }
                     } else {
-                        // TODO
-                        // handle the case when there is an error, e.g., toast message it
+                        // There was a fail in the status when checking the corpus status
                     }
                 } else {
-                    // TODO
-                    // handle the case when there is an error, e.g., toast message it
+                    // There was a fail in the status when checking whether the corpus has files
                 }
-                
-                // if (result.status === "success") {
-                //     setFilesExistInDB(true);
-
-                //     // Second check: is the corpus prepped and up to date?
-                //     const corpusResponse = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus`, {
-                //         method: "GET",
-                //         headers: {
-                //             'Content-Type': 'application/json'
-                //         },
-                //         credentials: 'include'
-                //     });
-                //     const corpusResult = await corpusResponse.json();
-                //     console.log("This is the corpus data: ", corpusResult);
-
-                //     if (corpusResult.data.analysisType === null && corpusResult.data.upToDate === null) {
-                //         // In this case, the corpus is up to date but words have not been counted.
-                //         // Give the user the option to count the words.
-                //         setWordCountDataExistsInDB(false);
-                //         setCountsUpToDateInDB(true);
-                //     } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === true) {
-                //         // In this case, the corpus is up to date and words have been counted.
-                //         setWordCountDataExistsInDB(true);
-                //         setCountsUpToDateInDB(true);
-                //         // We can continue to fetch the word count data from here.
-                //         // TODO: Fetch the word count data from the API and display it.
-                //     } else if (corpusResult.data.analysisType === "countWords" && corpusResult.data.upToDate === false) {
-                //         // In this case, the corpus words have been counted, but the corpus has been updated, so the word count data is not up to date.
-                //         // Give the user the option to update the word count data and / or display the current word count data.
-                //         setWordCountDataExistsInDB(true);
-                //         setCountsUpToDateInDB(false);
-                //     }
-                    
-                // } else {
-                //     setFilesExistInDB(false);
-                // }  
             } catch (error) {
                 console.error("Error running the corpus checks: ", error);
             }
@@ -89,45 +72,69 @@ const WordCount = () => {
 
         // Get the word count data from the API
         
-        const fetchWordCountData = async () => {
-            try {
-                const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/wordcount`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                });
-                const result = await response.json();
-                console.log("This is the word count data: ", result);
-                if (result.status === "success") {
-                    setWordCountData(result.data);
-                    console.log(result.data);
-                    setHasWordCountData(true);
-                } else {
-                    setHasWordCountData(false);
-                }
-            } catch (error) {
-                console.error("Error fetching word count data: ", error);
-            }
-        }
-        fetchWordCountData
+        // const fetchWordCountData = async () => {
+        //     try {
+        //         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/wordcount`, {
+        //             method: "GET",
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             credentials: 'include'
+        //         });
+        //         const result = await response.json();
+        //         console.log("This is the word count data: ", result);
+        //         if (result.status === "success") {
+        //             setWordCountData(result.data);
+        //             console.log(result.data);
+        //             setHasWordCountData(true);
+        //         } else {
+        //             setHasWordCountData(false);
+        //         }
+        //     } catch (error) {
+        //         console.error("Error fetching word count data: ", error);
+        //     }
+        // }
+        // fetchWordCountData
     }, []);
 
     const handleSummarizeWords = async () => {
         console.log("Counting words...");
-        try {
-            const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusMetadata.corpus.id}/corpus/wordCount`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include'
-            });
-            const result = await response.json();
-            console.log("This is the result of the word count operation: ", result);
-        } catch (error) {
-            console.error("Error counting words: ", error);
+        const wordCounts = await countWords(corpusMetadata.corpus.id);
+        console.log(wordCounts);
+    }
+
+    const handleFetchWordCountData = async () => {
+        console.log("Getting the counted words...");
+        const wordCounts = await fetchWordCountData(corpusMetadata.corpus.id);
+        console.log(wordCounts);
+    }
+
+    const renderWordCountDisplay = () => {
+        console.log(wordCountDataExistsInDB, countsUpToDateInDB);
+        if(wordCountDataExistsInDB === false && countsUpToDateInDB === true) {
+            // Display the button to count the words
+            return (
+                <div className='word-count-operations-header'>
+                    <button className='word-count-start-button' type='button' onClick={handleSummarizeWords}>Count words</button>
+                </div>
+            );
+        }
+
+        if (wordCountDataExistsInDB === true && countsUpToDateInDB === false) {
+            // Give the option to fetch the current data or update the counts.
+            return (
+                <div className='word-count-operations-header'>
+                    <p>Your corpus was recently updated.</p>
+                    <button className='word-count-start-button' type='button' onClick={handleSummarizeWords}>Recount the words</button>
+                    <button className='word-count-fetch-button' type='button' onClick={handleFetchWordCountData}>Fetch data</button>
+                </div>
+            );
+        }
+
+        if (wordCountDataExistsInDB === true && countsUpToDateInDB === true) {
+            return (
+                <p>There will be a word count display component here soon!</p>
+            );
         }
     }
 
@@ -135,9 +142,17 @@ const WordCount = () => {
         <div className='word-count-container'>
             <div className='word-count-title'>Word Counts</div>
             <div className='word-count-operations-container'>
-                <div className='word-count-operations-header'>
-                    <button className='word-count-start-button' type='button' onClick={handleSummarizeWords}>Count words</button>
-                </div>
+                {
+                    filesExistInDB ? (
+                        
+                        renderWordCountDisplay()
+                        
+                    ) : (
+                        // No files exist in the database
+                        <div className='no-files-in-db-message'>There are no files in your corpus. Add them in the Manage tab above.</div>
+                    )
+                }
+                
             </div>
             {/* What displays next should depend on whether counting data exists or not. */}
             {

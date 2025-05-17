@@ -55,8 +55,8 @@ export type FileText = {
 
 // Checking files exist in the corpus
 export type HasFiles = {
-    corpusId: number;
-    hasFiles: boolean;
+    corpus_id: number;
+    has_files: boolean;
 }
 
 // Summarizing the corpus
