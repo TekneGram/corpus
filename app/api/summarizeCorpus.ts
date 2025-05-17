@@ -11,7 +11,7 @@ type CorpusStatusResponse =
 
 export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<CorpusFilesExistResponse> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/files`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/files`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<Corpu
 
 export const checkCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ export const checkCorpusPreppedStatus = async (corpusId: number, analysisType: s
 
 export const updateCorpusPreppedStatus = async (corpusId: number, analysisType: string, toBeUpdated: boolean): Promise<CorpusStatusResponse> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}/${toBeUpdated}`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}/${toBeUpdated}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ export const updateCorpusPreppedStatus = async (corpusId: number, analysisType: 
 
 export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/${analysisType}`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -91,7 +91,7 @@ export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: 
 
 export const fetchWordCountData = async (corpusId: number): Promise<any> => {
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/wordcount`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/wordcount`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
@@ -109,8 +109,9 @@ export const fetchWordCountData = async (corpusId: number): Promise<any> => {
 }
 
 export const countWords = async (corpusId: number): Promise<any> => {
+    console.log("I've gone here!");
     try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/wordcount`, {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/countWords`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -118,6 +119,7 @@ export const countWords = async (corpusId: number): Promise<any> => {
             credentials: 'include'
         });
         const result = await response.json();
+        console.log(result);
         return result;
     } catch (error) {
         throw error;

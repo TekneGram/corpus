@@ -1,16 +1,5 @@
 const CorpusSummarizer = require('../models/corpusSummarizerModel.js');
 
-const summarizeCorpusWords = async (req, res) => {
-    const cm = new CorpusSummarizer();
-    try {
-        const cppOutput = await cm.summarizeCorpusWords(req.params);
-        console.log("This is the CPP outout: ", cppOutput);
-        res.status(200).json(cppOutput);
-    } catch (error) {
-        res.status(500).json({ status: "fail", message: "Internal server error in cpp process." });
-    }
-}
-
 const checkCorpusFilesExist = async (req, res) => {
     const cm = new CorpusSummarizer();
     try {
@@ -56,10 +45,40 @@ const insertCorpusPreppedStatus = async (req, res) => {
     }
 }
 
+const summarizeCorpusWords = async (req, res) => {
+    // Establish the model
+    const cm = new CorpusSummarizer();
+    try {
+        // Call the model to perform the word count algorithm
+        await cm.summarizeCorpusWords(req.params);
+        
+        // Set up params for inserting into corpus_prepped_status
+        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords"}
+
+        // Call the model again to insert the current status into the database.
+        const cppOutputInsert = await cm.insertCorpusPreppedStatus(corpusPreppedStatusParams);
+        console.log("After inserting into corpus_prepped_status: ", cppOutputInsert);
+
+        // Parse result into JSON to send it back to the front end.
+        try {
+            parsedcppOutputInsert = JSON.parse(cppOutputInsert);
+            console.log("after parsing:", parsedcppOutputInsert);
+        } catch (parseErr) {
+            res.status(500).json({ status: "fail", message: `Error parsing JSON in the backend: ${parseErr}` });
+        }
+
+        // Send to front end
+        res.status(200).json({ status: "success", cppOutputInsertResult: parsedcppOutputInsert });
+    } catch (error) {
+        // If there is an error, send it to the front end
+        res.status(500).json({ status: "fail", message: "Internal server error in cpp process." });
+    }
+}
+
 module.exports = {
-    summarizeCorpusWords,
     checkCorpusFilesExist,
     checkCorpusPreppedStatus,
     updateCorpusPreppedStatus,
-    insertCorpusPreppedStatus
+    insertCorpusPreppedStatus,
+    summarizeCorpusWords,
 }

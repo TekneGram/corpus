@@ -59,9 +59,11 @@ const WordCount = () => {
                         }
                     } else {
                         // There was a fail in the status when checking the corpus status
+                        // handle with toast TODO
                     }
                 } else {
                     // There was a fail in the status when checking whether the corpus has files
+                    // handle with toast TODO
                 }
             } catch (error) {
                 console.error("Error running the corpus checks: ", error);
@@ -144,9 +146,8 @@ const WordCount = () => {
             <div className='word-count-operations-container'>
                 {
                     filesExistInDB ? (
-                        
+                        // Files exist in the corpus database, so render counting and count display options
                         renderWordCountDisplay()
-                        
                     ) : (
                         // No files exist in the database
                         <div className='no-files-in-db-message'>There are no files in your corpus. Add them in the Manage tab above.</div>

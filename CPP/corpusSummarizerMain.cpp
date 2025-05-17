@@ -40,7 +40,6 @@ int main()
         if (command == "summarizeCorpusWords") {
             int corpus_id = inputData["corpusId"];
             summarizer.summarizeCorpusWords(corpus_id);
-            std::cout << "Corpus words summarized successfully!" << std::endl;
         }
 
         if (command == "checkCorpusFilesExist") {

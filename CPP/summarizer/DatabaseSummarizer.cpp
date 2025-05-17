@@ -175,6 +175,7 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
 
 SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type)
 {
+    std::cerr << "Error here early" << std::endl;
     sqlite3_extended_result_codes(dbConn, 1);
     sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
 
@@ -190,10 +191,12 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedS
     result.up_to_date = -1;
 
     sqlite3_stmt* statement;
+    std::cerr << "Error here" << std::endl;
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing insert for corpusPreppedStatus: " << sqlite3_errmsg(dbConn) << std::endl;
     }
+    std::cerr << "Error here 2" << std::endl;
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK ||
         sqlite3_bind_int(statement, 2, static_cast<int>(up_to_date)) != SQLITE_OK ||
@@ -202,6 +205,7 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedS
         std::cerr << "Error binding parameters: " << sqlite3_errmsg(dbConn) << std::endl;
         return result;
     }
+    std::cerr << "Error here 3" << std::endl;
 
     int rc = sqlite3_step(statement);
     if (rc != SQLITE_DONE) {
@@ -278,11 +282,6 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
         int file_id = sqlite3_column_int(statement, 1);
         int type_count = sqlite3_column_int(statement, 2);
         int token_count = sqlite3_column_int(statement, 3);
-
-        std::cout << "Inserting: group_id=" << group_id
-                  << ", file_id=" << file_id
-                  << ", type_count=" << type_count
-                  << ", token_count=" << token_count << std::endl;
 
         // Bind values
         if (sqlite3_bind_int(insertStatement, 1, group_id) != SQLITE_OK ||
@@ -455,10 +454,6 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
         int type_count = sqlite3_column_int(statement, 1);
         int token_count = sqlite3_column_int(statement, 2);
 
-        std::cout << "Inserting: group_id=" << group_id
-                  << ", type_count=" << type_count
-                  << ", token_count=" << token_count << std::endl;
-
         // Bind insert values
         if (sqlite3_bind_int(insertStatement, 1, group_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 2, type_count) != SQLITE_OK ||
@@ -620,10 +615,6 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
     if (sqlite3_step(statement) == SQLITE_ROW) {
         int type_count = sqlite3_column_int(statement, 0);
         int token_count = sqlite3_column_int(statement, 1);
-
-        std::cout << "Inserting: corpus_id=" << corpus_id
-                  << ", type_count=" << type_count
-                  << ", token_count=" << token_count << std::endl;
 
         if (sqlite3_bind_int(insertStatement, 1, corpus_id) != SQLITE_OK ||
             sqlite3_bind_int(insertStatement, 2, type_count) != SQLITE_OK ||

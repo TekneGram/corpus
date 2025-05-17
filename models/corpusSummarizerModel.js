@@ -5,32 +5,6 @@ class CorpusSummarizer {
 
     }
 
-    summarizeCorpusWords(corpusId) {
-        console.log("The corpusId is: ", corpusId);
-        corpusId.corpusId = parseInt(corpusId.corpusId);
-        corpusId["command"] = "summarizeCorpusWords";
-        const corpusIdString = JSON.stringify(corpusId);
-        const cppProcess = new CPPProcess('corpusSummarizer');
-        return new Promise((resolve, reject) => {
-            cppProcess.runProcess(corpusIdString, (error, output) => {
-                if (error) {
-                    console.error("Error: ", error.message);
-                    reject(new Error("There was an error running the C++ process summarizing the words in your corpus."));
-                } else {
-                    console.log("Output from C++ process summarizing the words in your corpus: ", output);
-                    resolve(output);
-                }
-            });
-        })
-        .then (output => {
-            return output;
-        })
-        .catch(err => {
-            console.error("Error in C++ process: ", err.message);
-            throw err;
-        });
-    }
-
     checkCorpusFilesExist(corpusId) {
         corpusId.corpusId = parseInt(corpusId.corpusId);
         corpusId["command"] = "checkCorpusFilesExist";
@@ -110,7 +84,7 @@ class CorpusSummarizer {
     insertCorpusPreppedStatus(corpusPreppedStatusData) {
         corpusPreppedStatusData.corpusId = parseInt(corpusPreppedStatusData.corpusId);
         corpusPreppedStatusData["command"] = "insertCorpusPreppedStatus";
-        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusDataString);
+        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusData);
         const cppProcess = new CPPProcess('corpusSummarizer');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(corpusPreppedStatusDataString, (error, output) => {
@@ -119,6 +93,32 @@ class CorpusSummarizer {
                     reject(new Error("There was an error running the C++ process inserting the prepped status of your corpus."));
                 } else {
                     console.log("Output from the C++ process inserting the prepped status of your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            throw err;
+        });
+    }
+
+    summarizeCorpusWords(corpusId) {
+        console.log("The corpusId is: ", corpusId);
+        corpusId.corpusId = parseInt(corpusId.corpusId);
+        corpusId["command"] = "summarizeCorpusWords";
+        const corpusIdString = JSON.stringify(corpusId);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusIdString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process summarizing the words in your corpus."));
+                } else {
+                    console.log("Output from C++ process summarizing the words in your corpus: ", output);
                     resolve(output);
                 }
             });
