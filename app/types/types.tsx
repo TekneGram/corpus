@@ -61,6 +61,6 @@ export type HasFiles = {
 
 // Summarizing the corpus
 export type CorpusStatus = {
-    analysisType: string | null;
-    upToDate: boolean | null;
+    analysis_type: string | null;
+    up_to_date: boolean | null;
 }

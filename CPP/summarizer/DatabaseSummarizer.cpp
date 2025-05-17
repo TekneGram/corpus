@@ -175,7 +175,6 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
 
 SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type)
 {
-    std::cerr << "Error here early" << std::endl;
     sqlite3_extended_result_codes(dbConn, 1);
     sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
 
@@ -187,34 +186,39 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::insertCorpusPreppedS
 
     SummarizerMetadata::CorpusPreppedStatus result;
     result.corpus_id = corpus_id;
-    result.analysis_type = SummarizerMetadata::AnalysisType::Unknown;
-    result.up_to_date = -1;
+    result.analysis_type = SummarizerMetadata::parseAnalysisType(analysis_type.c_str());
+    result.up_to_date = 1; // This is set to "true" since inserting means this is the first time to count the words in the corpus
 
     sqlite3_stmt* statement;
-    std::cerr << "Error here" << std::endl;
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing insert for corpusPreppedStatus: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Prepare failed in corpusPreppedStatus.");
     }
-    std::cerr << "Error here 2" << std::endl;
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK ||
-        sqlite3_bind_int(statement, 2, static_cast<int>(up_to_date)) != SQLITE_OK ||
-        sqlite3_bind_text(statement, 3, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK
+        sqlite3_bind_text(statement, 2, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK ||
+        sqlite3_bind_int(statement, 3, true) != SQLITE_OK
     ) {
         std::cerr << "Error binding parameters: " << sqlite3_errmsg(dbConn) << std::endl;
-        return result;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Bind failed in corpusPreppedStatus.");
     }
-    std::cerr << "Error here 3" << std::endl;
 
     int rc = sqlite3_step(statement);
     if (rc != SQLITE_DONE) {
         std::cerr << "Error inserting data into corpusPreppedStatus table: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return result;
-    } else {
-        result.analysis_type = SummarizerMetadata::parseAnalysisType(analysis_type.c_str());
-        result.up_to_date = up_to_date;
+        throw std::runtime_error("Insert failed in corpusPreppedStatus.");
+    }
+
+    // Check that there were changes to the database.
+    int changes = sqlite3_changes(dbConn);
+    if (changes == 0) {
+        std::cerr << "Warning: No rows updated in corpusPreppedStatus table!" << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Nothing entered into the database table corpus_prepped_status.");
     }
 
     sqlite3_finalize(statement);

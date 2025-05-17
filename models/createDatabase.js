@@ -362,7 +362,7 @@ class CreateDatabase {
                 analysis_type TEXT NOT NULL,
                 up_to_date BOOLEAN NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (corpus_id) REFERENCES corpu(id) ON DELETE CASCADE
+                FOREIGN KEY (corpus_id) REFERENCES corpus(id) ON DELETE CASCADE
             )
         `);
 

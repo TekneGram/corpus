@@ -34,14 +34,14 @@ const WordCount = () => {
                     if (hasFiles) {
                         const corpusPreppedCheckResult = await checkCorpusPreppedStatus(corpusMetadata.corpus.id, "countWords");
                         if (corpusPreppedCheckResult.status === "success") {
-                            const { analysisType, upToDate } = corpusPreppedCheckResult.cppOutput;
-                            console.log("analysisType: ", analysisType);
+                            const { analysis_type, up_to_date } = corpusPreppedCheckResult.cppOutput;
+                            console.log("analysisType: ", analysis_type, "upToDate: ", up_to_date);
 
-                            if (analysisType === undefined && upToDate === undefined) {
+                            if (analysis_type === undefined && up_to_date === undefined) {
                                 setWordCountDataExistsInDB(false);
                                 setCountsUpToDateInDB(true);
                                 setHasWordCountData(false);
-                            } else if (upToDate === true && analysisType === "countWords") {
+                            } else if (up_to_date === true && analysis_type === "countWords") {
                                 setWordCountDataExistsInDB(true);
                                 setCountsUpToDateInDB(true);
                                 const wordCountsResults = await fetchWordCountData(corpusMetadata.corpus.id);
@@ -51,7 +51,7 @@ const WordCount = () => {
                                 } else {
                                     setHasWordCountData(false);
                                 }
-                            } else if (upToDate === false && analysisType === "countWords") {
+                            } else if (up_to_date === false && analysis_type === "countWords") {
                                 setWordCountDataExistsInDB(true);
                                 setCountsUpToDateInDB(false);
                                 setHasWordCountData(false);
@@ -112,7 +112,6 @@ const WordCount = () => {
     }
 
     const renderWordCountDisplay = () => {
-        console.log(wordCountDataExistsInDB, countsUpToDateInDB);
         if(wordCountDataExistsInDB === false && countsUpToDateInDB === true) {
             // Display the button to count the words
             return (
