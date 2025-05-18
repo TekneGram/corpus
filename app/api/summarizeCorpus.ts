@@ -109,7 +109,6 @@ export const fetchWordCountData = async (corpusId: number): Promise<any> => {
 }
 
 export const countWords = async (corpusId: number): Promise<any> => {
-    console.log("I've gone here!");
     try {
         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/countWords`, {
             method: "POST",
@@ -120,6 +119,23 @@ export const countWords = async (corpusId: number): Promise<any> => {
         });
         const result = await response.json();
         console.log(result);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const recountWords = async (corpusId: number): Promise<any> => {
+    console.log("I'm recounting words");
+    try {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/recountWords`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
         return result;
     } catch (error) {
         throw error;

@@ -53,7 +53,7 @@ const summarizeCorpusWords = async (req, res) => {
         await cm.summarizeCorpusWords(req.params);
         
         // Set up params for inserting into corpus_prepped_status
-        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords"}
+        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords" };
 
         // Call the model again to insert the current status into the database.
         const cppOutputInsert = await cm.insertCorpusPreppedStatus(corpusPreppedStatusParams);
@@ -75,10 +75,41 @@ const summarizeCorpusWords = async (req, res) => {
     }
 }
 
+const recountCorpusWords = async (req, res) => {
+    // Establish the model
+    const cm = new CorpusSummarizer();
+    try {
+        // Call the model to perform the recount algorithm
+        await cm.recountCorpusWords(req.params);
+
+        // Set up params for inserting into corpus_prepped_status
+        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords" };
+
+        // Call the model again to insert the current status into the database
+        const cppOutputInsert = await cm.insertCorpusPreppedStatus(corpusPreppedStatusParams);
+        console.log("After inserting into corpus_prepped_status after recounting: ", cppOutputInsert);
+
+        // Parse result into JSON to send it back to the front end.
+        try {
+            parsedcppOutputInsert = JSON.parse(cppOutputInsert);
+            console.log("After parsing: ", parsedcppOutputInsert);
+        } catch (parseErr) {
+            res.status(500).json({ status: "fail", message: `Error parsing JSON in the backend: ${parseErr}` });
+        }
+
+        // Send to front end
+        res.status(200).json({ status: "success", cppOutputInsertResult: parsedcppOutputInsert });
+    } catch (error) {
+        // If there is an error, send it to the front end
+        res.status(500).json({ status: "fail", message: "Internal server error in cpp process." });
+    }
+}
+
 module.exports = {
     checkCorpusFilesExist,
     checkCorpusPreppedStatus,
     updateCorpusPreppedStatus,
     insertCorpusPreppedStatus,
     summarizeCorpusWords,
+    recountCorpusWords,
 }

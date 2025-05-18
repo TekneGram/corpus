@@ -5,6 +5,7 @@ const {
     updateCorpusPreppedStatus,
     insertCorpusPreppedStatus,
     summarizeCorpusWords,
+    recountCorpusWords,
 } = require('../ServerControllers/corpusSummarizerController.js');
 
 const router = express.Router();
@@ -16,5 +17,5 @@ router.patch('/project/:corpusId/corpus/status/:analysisType/:toBeUpdated', upda
 router.post('/project/:corpusId/corpus/status/:analysisType', insertCorpusPreppedStatus); // insert the status of the corpus - this is done when a corpus is analyzed for the first time.
 
 router.post('/project/:corpusId/corpus/summarize/countWords', summarizeCorpusWords); // summarize the corpus word counts for a given corpus id. The corpus id is in the URL.
-
+router.post('project/:corpusId/corpus/summarize/recountWords', recountCorpusWords); // summarize the corpus word counts for a given corpus id by first deleting the current summary
 module.exports = router;
