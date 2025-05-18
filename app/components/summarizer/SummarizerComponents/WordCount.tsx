@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // API
-import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, countWords } from '@/app/api/summarizeCorpus';
+import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, countWords, recountWords } from '@/app/api/summarizeCorpus';
 
 // CSS
 import '@/styles/summarizer.css';
@@ -102,6 +102,12 @@ const WordCount = () => {
     const handleSummarizeWords = async () => {
         console.log("Counting words...");
         const wordCounts = await countWords(corpusMetadata.corpus.id);
+        console.log(wordCounts);
+    }
+
+    const handleRecountWords = async () => {
+        console.log("Recounting the words...");
+        const wordCounts = await recountWords(corpusMetadata.corpus.id);
         console.log(wordCounts);
     }
 

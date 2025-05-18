@@ -9,11 +9,12 @@ class DatabaseSummarizer
 {
     public:
         DatabaseSummarizer(sqlite3* db); // constructor
-        void summarizeCorpusWords(const int& corpus_id);
         SummarizerMetadata::HasFiles checkCorpusFilesExist(const int& corpus_id);
         SummarizerMetadata::CorpusPreppedStatus checkCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type);
         SummarizerMetadata::CorpusPreppedStatus updateCorpusPreppedStatus (const int& corpus_id, std::string& analysis_type, bool to_be_updated);
         SummarizerMetadata::CorpusPreppedStatus insertCorpusPreppedStatus(const int& corpus_id, std::string& analysis_type);
+        void summarizeCorpusWords(const int& corpus_id);
+        void recountCorpusWords(const int& corpus_id);
 
     private:
         sqlite3* dbConn;
@@ -23,4 +24,11 @@ class DatabaseSummarizer
         void createWordListPerGroup(const int& corpus_id);
         void countWordsPerCorpus(const int& corpus_id);
         void createWordListPerCorpus(const int& corpus_id);
+        
+        void deleteWordsPerFile(const int& corpus_id);
+        void deleteWordListPerFile(const int& corpus_id);
+        void deleteWordsPerGroup(const int& corpus_id);
+        void deleteWordListPerGroup(const int& corpus_id);
+        void deleteWordsPerCorpus(const int& corpus_id);
+        void deleteWordListPerCorpus(const int& corpus_id);
 };

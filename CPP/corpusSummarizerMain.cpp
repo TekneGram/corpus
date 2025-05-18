@@ -37,10 +37,6 @@ int main()
     DatabaseSummarizer summarizer(db);
 
     try {
-        if (command == "summarizeCorpusWords") {
-            int corpus_id = inputData["corpusId"];
-            summarizer.summarizeCorpusWords(corpus_id);
-        }
 
         if (command == "checkCorpusFilesExist") {
             int corpus_id = inputData["corpusId"];
@@ -79,6 +75,16 @@ int main()
             std::string analysis_type = inputData["analysisType"];
             nlohmann::json result = summarizer.insertCorpusPreppedStatus(corpus_id, analysis_type);
             std::cout << result.dump() << std::endl;
+        }
+
+        if (command == "summarizeCorpusWords") {
+            int corpus_id = inputData["corpusId"];
+            summarizer.summarizeCorpusWords(corpus_id);
+        }
+
+        if (command == "recountCorpusWords") {
+            int corpus_id = inputData["corpusId"];
+            summarizer.recountCorpusWords(corpus_id);
         }
         
     } catch (const std::exception& e) {

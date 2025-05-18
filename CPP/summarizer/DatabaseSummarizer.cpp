@@ -723,6 +723,189 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
     return;
 }
 
+// This function deletes the word counts per file for the given corpus_id
+void DatabaseSummarizer::deleteWordsPerFile(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_counts_per_file
+        WHERE
+            group_id IN (
+                SELECT id FROM corpus_group WHERE corpus_id = ?
+            )
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting words per file: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordsPerFile.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordsPerFile.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordsPerFile: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordsPerFile.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
+void DatabaseSummarizer::deleteWordListPerFile(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_list_per_file
+        WHERE
+            group_id IN (
+                SELECT id FROM corpus_group WHERE corpus_id = ?
+            )
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting word list per file: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordListPerFile.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordListPerFile.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordListPerFile: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordListPerFile.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
+void DatabaseSummarizer::deleteWordsPerGroup(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_counts_per_group
+        WHERE
+            group_id IN (
+                SELECT id FROM corpus_group WHERE corpus_id = ?
+            )
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting word counts per group: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordsPerGroup.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordsPerGroup.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordsPerGroup: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordsPerGroup.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
+void DatabaseSummarizer::deleteWordListPerGroup(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_list_per_group
+        WHERE
+            group_id IN (
+                SELECT id FROM corpus_group WHERE corpus_id = ?
+            )
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting word list per group: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordListPerGroup.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordListPerGroup.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordListPerGroup: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordListPerGroup.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
+void DatabaseSummarizer::deleteWordsPerCorpus(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_counts_per_corpus
+        WHERE
+            corpus_id = ?
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting word counts per corpus: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordsPerCorpus.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordsPerCorpus.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordsPerCorpus: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordsPerCorpus.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
+void DatabaseSummarizer::deleteWordListPerCorpus(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        DELETE FROM 
+            word_list_per_corpus
+        WHERE
+            corpus_id = ?
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare DELETE statement for deleting word list per corpus: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare delete statement in deleteWordListPerCorpus.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in deleteWordsPerCorpus.");
+    }
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        std::cerr << "Failed to execute delete in deleteWordsPerCorpus: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to execute the delete in deleteWordsPerCorpus.");
+    }
+
+    sqlite3_finalize(statement);
+
+}
+
 // This function summarizes the entire corpus by calling the other functions.
 void DatabaseSummarizer::summarizeCorpusWords(const int& corpus_id)
 {
@@ -732,4 +915,35 @@ void DatabaseSummarizer::summarizeCorpusWords(const int& corpus_id)
     createWordListPerGroup(corpus_id);
     countWordsPerCorpus(corpus_id);
     createWordListPerCorpus(corpus_id);
+}
+
+void DatabaseSummarizer::recountCorpusWords(const int& corpus_id)
+{
+    // Delete all the current words counts associated with the corpus
+    if (sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+        std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Could not start the transaction to delete word counts from the database tables.");
+    }
+    try {
+        deleteWordsPerFile(corpus_id);
+        deleteWordListPerFile(corpus_id);
+        deleteWordsPerCorpus(corpus_id);
+        deleteWordListPerGroup(corpus_id);
+        deleteWordsPerCorpus(corpus_id);
+        deleteWordListPerCorpus(corpus_id);
+
+        if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+            std::cerr << "Error commiting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+            throw std::runtime_error("Transaction commit failed");
+        }
+
+    } catch (const std::exception& err) {
+        std::cerr << "Transaction failed, rolling back: " << err.what() << std::endl;
+        sqlite3_exec(dbConn, "ROLLBACK;", nullptr, nullptr, nullptr);
+        throw; //rethrow so the caller knows it failed.
+    }
+
+    // Now count the words again using the method from above.
+    DatabaseSummarizer::summarizeCorpusWords(corpus_id);
+    
 }
