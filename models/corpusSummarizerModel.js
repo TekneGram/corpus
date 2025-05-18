@@ -133,6 +133,31 @@ class CorpusSummarizer {
             throw err;
         });
     }
+
+    recountCorpusWords(corpusId) {
+        console.log("The corpusId is: ", corpusId);
+        corpusId["comamand"] = "recountCorpusWords";
+        const corpusIdString = JSON.stringify(corpusId);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusIdString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process recounting the words in your corpus."));
+                } else {
+                    console.log("Output from the C++ process recounting the words in your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            return { error: err, message: err.message };
+        })
+    }
 }
 
 module.exports = CorpusSummarizer;
