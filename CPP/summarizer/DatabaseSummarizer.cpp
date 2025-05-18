@@ -125,6 +125,9 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
 {
     sqlite3_extended_result_codes(dbConn, 1);
     sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+    std::cerr << "This is the to_be_updated value: " << to_be_updated << std::endl;
+    std::cerr << "This is the corpus_id value: " << corpus_id << std::endl;
+    std::cerr << "This is the analysis_type value: " << analysis_type << std::endl;
 
     sqlite3_stmt* statement;
     const char* sql = R"(
@@ -138,9 +141,9 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
     result.analysis_type = SummarizerMetadata::AnalysisType::Unknown;
     result.up_to_date = -1;
 
-    if (sqlite3_prepare_v2(dbConn, sql, 1, &statement, nullptr) != SQLITE_OK) {
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing statement to insert into corpusPreppedStatus:" << sqlite3_errmsg(dbConn) << std::endl;
-        return result;
+        throw std::runtime_error("Update failed at preparing sqlite3 statement."); 
     }
 
     if (sqlite3_bind_int(statement, 1, static_cast<int>(to_be_updated)) != SQLITE_OK ||
@@ -148,20 +151,21 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
         sqlite3_bind_text(statement, 3, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK
     ) {
         std::cerr << "Error binding parameters: " << sqlite3_errmsg(dbConn) << std::endl;
-        return result;
+        throw std::runtime_error("Update failed at binding sqlite3 parameters.");
     }
 
     int rc = sqlite3_step(statement);
     if (rc != SQLITE_DONE) {
         std::cerr << "Error executing UPDATE statement tp corpusPreppedStatus" << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return result;
+        throw std::runtime_error("Update failed at sqlite3 execution.");
     }
 
     // Check that there were changes to the database.
     int changes = sqlite3_changes(dbConn);
     if (changes == 0) {
         std::cerr << "Warning: No rows updated in corpusPreppedStatus table!" << std::endl;
+        throw std::runtime_error("There must have been a silent fail somewhere because the database was not updated");
     }
 
     // If the update was successful, clean up and send back

@@ -11,7 +11,7 @@ import '@/manager.css';
 import { CorpusFile, CorpusFilesPerSubCorpus, EmptyCPPOutput, SubCorpus } from '@/app/types/types';
 
 // APIs
-import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus } from '@/app/api/manageCorpus';
+import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus, updateCorpusPreppedStatus } from '@/app/api/manageCorpus';
 
 // Context and State Management
 import { useState, useEffect } from 'react';
@@ -170,6 +170,7 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
         }
         if (errorMessages === "") {
             toast.success("All files were successfully uploaded");
+            updateCorpusPreppedStatus(corpusMetadata.corpus.id);
         } else {
             toast.warning("The following error messages were received: \n" + errorMessages);
         }

@@ -146,7 +146,8 @@ const updateCorpusPreppedStatus = async (req, res) => {
     try {
         // First check the prepped status of the corpus
         const cppOutputWords = await cs.checkCorpusPreppedStatus(wordCountParams);
-        console.log("I have just check the prepped status for word counts: ", cppOutputWords);
+        const cppOutputWordsParsed = JSON.parse(cppOutputWords);
+        console.log("I have just check the prepped status for word counts: ", cppOutputWordsParsed);
 
         const cppOutputCollocations = await cs.checkCorpusPreppedStatus(collCountParams);
         console.log("I have just checked the prepped status for collocation counts: ", cppOutputCollocations);
@@ -159,21 +160,25 @@ const updateCorpusPreppedStatus = async (req, res) => {
 
         // If the corpus counts are up to date then set them to no longer be up to date
         // since we have just added new files so recounting will be necessary.
-        if (cppOutputWords.up_to_date === true) {
+        if (cppOutputWordsParsed.up_to_date === true) {
+            console.log("HELLO!");
             const resultWords = cs.updateCorpusPreppedStatus({ ...wordCountParams, toBeUpdated: false });
-            console.log("The result of updating the corpus prepped status is: ", result);
+            console.log("The result of updating the corpus prepped status is: ", resultWords);
         }
 
         if (cppOutputCollocations.up_to_date === true) {
             const resultColls = cs.updateCorpusPreppedStatus({ ...collCountParams, toBeUpdated: false });
+            console.log("The result of updating the corpus prepped status is: ", resultColls);
         }
 
         if (cppOutputThreeBundles.up_to_date === true) {
             const resultThreeBuns = cs.updateCorpusPreppedStatus({ ...threeBunCountParams, toBeUpdated: false });
+            console.log("The result of updating the corpus prepped status is: ", resultThreeBuns);
         }
 
         if (cppOutputFourBundles.up_to_date === true) {
             const resultFourBuns = cs.updateCorpusPreppedStatus({ ...fourBunCountParams, toBeUpdated: false });
+            console.log("The result of updating the corpus prepped status is: ", resultFourBuns);
         }
 
     } catch (error) {

@@ -59,7 +59,8 @@ class CorpusSummarizer {
     updateCorpusPreppedStatus(corpusPreppedStatusData) {
         corpusPreppedStatusData.corpusId = parseInt(corpusPreppedStatusData.corpusId);
         corpusPreppedStatusData["command"] = "updateCorpusPreppedStatus";
-        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusDataString);
+        const corpusPreppedStatusDataString = JSON.stringify(corpusPreppedStatusData);
+        console.log("This is my data string: ", corpusPreppedStatusDataString);
         const cppProcess = new CPPProcess('corpusSummarizer');
         return new Promise((resolve, reject) => {
             cppProcess.runProcess(corpusPreppedStatusDataString, (error, output) => {
@@ -77,6 +78,7 @@ class CorpusSummarizer {
         })
         .catch(err => {
             console.error("Error in C++ process: ", err.message);
+            return { error: err, message: err.message };
             throw err;
         });
     }
