@@ -1,4 +1,4 @@
-import { HasFiles, CorpusStatus } from "../types/types";
+import { HasFiles, CorpusStatus, WordCounts } from "../types/types";
 
 type CorpusFilesExistResponse = 
     | { status: "success"; cppOutput: HasFiles }
@@ -6,7 +6,11 @@ type CorpusFilesExistResponse =
 
 type CorpusStatusResponse =
     | { status: "success"; cppOutput: CorpusStatus }
-    | { status: "fail"; message: string}
+    | { status: "fail"; message: string }
+
+type WordCountsResponse = 
+    | { status: "success"; cppOutput: WordCounts }
+    | { status: "fail"; message: string }
 
 
 export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<CorpusFilesExistResponse> => {
@@ -89,7 +93,7 @@ export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: 
     }
 }
 
-export const fetchWordCountData = async (corpusId: number): Promise<any> => {
+export const fetchWordCountData = async (corpusId: number): Promise<WordCountsResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/wordcount`, {
             method: "GET",
@@ -98,7 +102,7 @@ export const fetchWordCountData = async (corpusId: number): Promise<any> => {
             },
             credentials: 'include'
         });
-        const result = await response.json();
+        const result: WordCountsResponse = await response.json();
         if(result.status === "success") {
             console.log("Results of the word count is: ", result.cppOutput);
         }

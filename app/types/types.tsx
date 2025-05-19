@@ -1,4 +1,6 @@
-
+/**
+ * Managing projects and corpora
+ */
 export type SelectableProjectTitle = {
     id: number;
     project_name: string;
@@ -47,12 +49,19 @@ export type EmptyCPPOutput = {
     message: string;
 }
 
+/**
+ * Viewing files
+ */
+
 // Text from the database
 export type FileText = {
     id: number;
     file_text: string;
 }
 
+/**
+ * Monitoring the status of the corpus in the database
+ */
 // Checking files exist in the corpus
 export type HasFiles = {
     corpus_id: number;
@@ -63,4 +72,52 @@ export type HasFiles = {
 export type CorpusStatus = {
     analysis_type: string | null;
     up_to_date: boolean | null;
+}
+
+export type CurrentCorpusStatus = {
+    hasFiles: HasFiles;
+    corpusStatus: CorpusStatus;
+}
+
+/**
+ * Managing word count and word list data
+ */
+
+// Word counts in the corpus
+export type WordCountsPerCorpus = {
+    corpusId: number;
+    typeCount: number;
+    tokenCount: number;
+}
+
+// Word counts in the group (subcorpus)
+export type GroupWordCounts = {
+    groupId: number;
+    typeCount: number;
+    tokenCount: number;
+}
+
+export type WordCountsPerGroup = {
+    corpusId: number;
+    groupWordCounts: GroupWordCounts[];
+}
+
+// Word counts in the individual files
+export type FileWordCounts = {
+    fileId: number;
+    groupId: number;
+    typeCount: number;
+    tokenCount: number;
+}
+
+export type WordCountsPerFile = {
+    corpusId: number;
+    fileWordCounts: FileWordCounts[];
+}
+
+// All data collated together
+export type WordCounts = {
+    wordCountsPerCorpus: WordCountsPerCorpus;
+    wordCountsPerGroup: WordCountsPerGroup;
+    wordCountsPerFile: WordCountsPerFile;
 }

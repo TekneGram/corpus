@@ -1,4 +1,6 @@
 "use client"
+// Types
+import { WordCounts } from '@/app/types/types';
 
 // State management and context
 import { useState, useEffect } from 'react';
@@ -20,7 +22,7 @@ const WordCount = () => {
     const [wordCountDataExistsInDB, setWordCountDataExistsInDB] = useState(false);
     const [countsUpToDateInDB, setCountsUpToDateInDB] = useState(false);
     const [hasWordCountData, setHasWordCountData] = useState(false);
-    const [wordCountData, setWordCountData] = useState(null);
+    const [wordCountData, setWordCountData] = useState<WordCounts | null>(null);
 
     useEffect(() => {
         // Check that files exist in the database
