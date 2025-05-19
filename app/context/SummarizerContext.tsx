@@ -32,7 +32,7 @@ const initialSummaryMetaData: SummaryMetaData = {
     }
 };
 
-// Create context
+// Create context for the metadata
 // TEMP: Using 'any' to avoid errors while scaffolding
 const SummaryContext = createContext<{
     summaryMetaData: SummaryMetaData;
@@ -42,10 +42,18 @@ const SummaryContext = createContext<{
     dispatch: () => {} // No-op dispatch for placeholder.
 });
 
+// Create context for the dispatch to the reducer
+const noop = () => {
+    throw new Error ("Summary dispatch function must be used within a summary context provider")
+}
+const SummaryDispatch = createContext<Dispatch<SummaryMetaDataActions>>(noop);
+
+// Interface
 interface SummaryProviderProps {
     children: ReactNode;
 }
 
+// Provider
 export const SummaryProvider: React.FC<SummaryProviderProps> = ({ children }) => {
     const [summaryMetaData, dispatch] = useReducer<React.Reducer<SummaryMetaData, SummaryMetaDataActions>>(
         summaryMetaDataReducer,
@@ -54,12 +62,18 @@ export const SummaryProvider: React.FC<SummaryProviderProps> = ({ children }) =>
 
     return (
         <SummaryContext.Provider value={{summaryMetaData, dispatch}}>
-            {children}
+            <SummaryDispatch.Provider value={dispatch}>
+                {children}
+            </SummaryDispatch.Provider>
         </SummaryContext.Provider>
     )
 }
 
-// Custom hook for convenience
+// Custom hooks for convenience
 export function useSummaryContext() {
     return useContext(SummaryContext);
+}
+
+export function useSummaryDispatch() {
+    return useContext(SummaryDispatch);
 }
