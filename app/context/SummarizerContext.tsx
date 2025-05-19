@@ -38,7 +38,7 @@ const SummaryContext = createContext<{
     summaryMetaData: SummaryMetaData;
     dispatch: Dispatch<any>
 }>({
-    summaryMetaData: initialSummaryMetaData, // Initial state
+    summaryMetaData: initialSummaryMetaData, // Initial state defined above
     dispatch: () => {} // No-op dispatch for placeholder.
 });
 

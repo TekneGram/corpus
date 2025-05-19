@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { ProjectTitlesProvider } from './context/ProjectsContext';
 import { CorpusProvider } from './context/CorpusContext';
+import { SummaryProvider } from "./context/SummarizerContext";
 
 // Child components
 import OperationsSidebar from "./components/layouts/OperationsSidebar";
@@ -36,6 +37,7 @@ export default function RootLayout({
   return (
     <CorpusProvider>
       <ProjectTitlesProvider>
+        <SummaryProvider>
           <html lang="en">
             <head>
               <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -69,6 +71,7 @@ export default function RootLayout({
               
             </body>
           </html>
+        </SummaryProvider>
       </ProjectTitlesProvider>
     </CorpusProvider>
     
