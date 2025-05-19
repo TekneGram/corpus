@@ -121,3 +121,12 @@ export type WordCounts = {
     wordCountsPerGroup: WordCountsPerGroup;
     wordCountsPerFile: WordCountsPerFile;
 }
+
+/**
+ * All summary metadata collated
+ */
+
+export type SummaryMetaData = {
+    currentCorpusStatus: CurrentCorpusStatus;
+    wordCounts: WordCounts;
+}
