@@ -5,7 +5,7 @@ import { WordCounts } from '@/app/types/types';
 // State management and context
 import { useState, useEffect } from 'react';
 import { useCorpusMetaData } from '@/app/context/CorpusContext';
-import { useSummaryContext } from '@/app/context/SummarizerContext';
+import { useSummaryContext, useSummaryDispatch } from '@/app/context/SummarizerContext';
 
 // API
 import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, fetchWordListData, countWords, recountWords } from '@/app/api/summarizeCorpus';
@@ -17,6 +17,7 @@ const WordCount = () => {
 
     const corpusMetadata = useCorpusMetaData();
     const summaryMetadata = useSummaryContext();
+    const summaryDispatch = useSummaryDispatch();
 
     
     const [filesExistInDB, setFilesExistInDB] = useState(false);
