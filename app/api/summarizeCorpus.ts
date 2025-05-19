@@ -108,6 +108,25 @@ export const fetchWordCountData = async (corpusId: number): Promise<any> => {
     }
 }
 
+export const fetchWordListData = async (corpusId: number): Promise<any> => {
+    try {
+        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/wordlists`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        const result = await response.json();
+        if(result.status === "success") {
+            console.log("Results of the word count is: ", result.cppOutput);
+        }
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const countWords = async (corpusId: number): Promise<any> => {
     try {
         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/countWords`, {

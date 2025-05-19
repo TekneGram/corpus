@@ -7,6 +7,7 @@ const {
     summarizeCorpusWords,
     recountCorpusWords,
     fetchWordCounts,
+    fetchWordLists,
 } = require('../ServerControllers/corpusSummarizerController.js');
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.post('/project/:corpusId/corpus/summarize/countWords', summarizeCorpusWor
 router.post('/project/:corpusId/corpus/summarize/recountWords', recountCorpusWords); // summarize the corpus word counts for a given corpus id by first deleting the current summary
 
 router.get('/project/:corpusId/corpus/summarize/wordcount', fetchWordCounts); // get the word count data from the database.
+router.get('/project/:corpusId/corpus/summarize/wordlists', fetchWordLists); // get the word count data from the database.
 
 module.exports = router;

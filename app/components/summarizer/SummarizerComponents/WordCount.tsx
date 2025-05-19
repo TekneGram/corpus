@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useCorpusMetaData, useCorpusDispatch } from '@/app/context/CorpusContext';
 
 // API
-import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, countWords, recountWords } from '@/app/api/summarizeCorpus';
+import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData, fetchWordListData, countWords, recountWords } from '@/app/api/summarizeCorpus';
 
 // CSS
 import '@/styles/summarizer.css';
@@ -95,6 +95,11 @@ const WordCount = () => {
         console.log(wordCounts);
     }
 
+    const handleFetchWordListData = async () => {
+        console.log("Getting the word list data");
+        const wordLists = await fetchWordListData(corpusMetadata.corpus.id);
+    }
+
     const renderWordCountDisplay = () => {
         if(wordCountDataExistsInDB === false && countsUpToDateInDB === true) {
             // Display the button to count the words
@@ -119,7 +124,11 @@ const WordCount = () => {
         if (wordCountDataExistsInDB === true && countsUpToDateInDB === true) {
             if (hasWordCountData === true) {
                 return (
-                    <p>There will be a word count display component here soon!</p>
+                    <>
+                        <p>There will be a word count display component here soon!</p>
+                        <p>Call the word lists if you like!</p>
+                        <button className='word-list-fetch-button' type='button' onClick={handleFetchWordListData}>Get Word Lists</button>
+                    </>
                 );
             } else {
                 return (

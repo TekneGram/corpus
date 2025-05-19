@@ -184,6 +184,31 @@ class CorpusSummarizer {
             return { error: err, message: err.message };
         });
     }
+
+    fetchWordLists(corpusId) {
+        corpusId.corpusId = parseInt(corpusId.corpusId);
+        corpusId["command"] = "fetchWordLists";
+        const corpusIdString = JSON.stringify(corpusId);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusIdString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process fetching the word list data for your corpus."));
+                } else {
+                    console.log("Output from the C++ process fetching the word lists for your corpus: ", output);
+                    resolve(output);
+                }
+            });
+        })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            return { error: err, message: err.message };
+        });
+    }
 }
 
 module.exports = CorpusSummarizer;

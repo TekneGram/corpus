@@ -127,6 +127,28 @@ const fetchWordCounts = async (req, res) => {
     }
 }
 
+const fetchWordLists = async (req, res) => {
+    const cs = new CorpusSummarizer();
+    try {
+        // Call the model to fetch the word counts
+        const result = await cs.fetchWordLists(req.params);
+
+        // Parse the results into JSON to send back to the front end.
+        try {
+            parsedResult = JSON.parse(result);
+        } catch (parseErr) {
+            res.status(500).json({ status: "fail", message: `Error parsing JSON in the backend: ${parseErr}` });
+        }
+
+        // Send to the front end
+        console.log("These are the word list data: ", parsedResult);
+        res.status(200).json({ status: "success", cppOutput: parsedResult });
+        
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: `Internal server error in the cpp process: ${error}` });
+    }
+}
+
 module.exports = {
     checkCorpusFilesExist,
     checkCorpusPreppedStatus,
@@ -135,4 +157,5 @@ module.exports = {
     summarizeCorpusWords,
     recountCorpusWords,
     fetchWordCounts,
+    fetchWordLists,
 }
