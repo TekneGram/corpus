@@ -945,6 +945,10 @@ void DatabaseSummarizer::recountCorpusWords(const int& corpus_id)
     
 }
 
+/**
+ * Retrieve WORD COUNTS
+ */
+
 SummarizerMetadata::WordCountsPerCorpus DatabaseSummarizer::fetchWordCountsPerCorpus(const int& corpus_id)
 {
     sqlite3_stmt* statement;
@@ -1085,7 +1089,6 @@ SummarizerMetadata::WordCounts DatabaseSummarizer::fetchWordCounts(const int& co
         SummarizerMetadata::WordCountsPerGroup wordCountsPerGroup =  fetchWordCountsPerGroup(corpus_id);
         SummarizerMetadata::WordCountsPerFile wordCountsPerFile =  fetchWordCountsPerFile(corpus_id);
 
-        
         wordCounts.word_counts_per_corpus = wordCountsPerCorpus;
         wordCounts.word_counts_per_group = wordCountsPerGroup;
         wordCounts.word_counts_per_file = wordCountsPerFile;
@@ -1102,4 +1105,162 @@ SummarizerMetadata::WordCounts DatabaseSummarizer::fetchWordCounts(const int& co
     }
 
     return wordCounts;
+}
+
+/**
+ * Retrieve WORD LISTS
+ */
+
+ SummarizerMetadata::WordListPerCorpus DatabaseSummarizer::fetchWordListPerCorpus(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT id, word, count
+        FROM word_list_per_corpus
+        WHERE corpus_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare SELECT statement for word_list_per_corpus: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare statement for fetchWordListPerCorpus.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to bind corpus id in fetchWordListPerCorpus.");
+    }
+
+    SummarizerMetadata::WordListPerCorpus result;
+    result.corpus_id = corpus_id;
+
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        SummarizerMetadata::WordDataCorpus wordData;
+        wordData.id    = sqlite3_column_int(statement, 0);
+        wordData.word  = reinterpret_cast<const char*>(sqlite3_column_text(statement, 1));
+        wordData.count = sqlite3_column_int(statement, 2);
+
+        result.word.push_back(wordData);
+    }
+
+    sqlite3_finalize(statement);
+    return result;
+}
+
+SummarizerMetadata::WordListPerGroup DatabaseSummarizer::fetchWordListPerGroup(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT word_list_per_group.id, word_list_per_group.group_id, word_list_per_group.word, word_list_per_group.count
+        FROM word_list_per_group
+        JOIN corpus_group ON corpus_group.id = word_list_per_group.group_id
+        WHERE corpus_group.corpus_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare SELECT statement for word_list_per_group: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare statement for fetchWordListPerGroup.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to bind corpus id in fetchWordListPerGroup.");
+    }
+
+    SummarizerMetadata::WordListPerGroup result;
+    result.corpus_id = corpus_id;
+
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        SummarizerMetadata::WordDataGroup wordData;
+        wordData.id       = sqlite3_column_int(statement, 0);
+        wordData.group_id = sqlite3_column_int(statement, 1);
+        wordData.word     = reinterpret_cast<const char*>(sqlite3_column_text(statement, 2));
+        wordData.count    = sqlite3_column_int(statement, 3);
+
+        result.word.push_back(wordData);
+    }
+
+    sqlite3_finalize(statement);
+    return result;
+}
+
+SummarizerMetadata::WordListPerFile DatabaseSummarizer::fetchWordListPerFile(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT word_list_per_file.id, word_list_per_file.group_id, word_list_per_file.file_id,
+               word_list_per_file.word, word_list_per_file.count
+        FROM word_list_per_file
+        JOIN corpus_group ON corpus_group.id = word_list_per_file.group_id
+        WHERE corpus_group.corpus_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare SELECT statement for word_list_per_file: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare statement for fetchWordListPerFile.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id: "
+                  << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to bind corpus id in fetchWordListPerFile.");
+    }
+
+    SummarizerMetadata::WordListPerFile result;
+    result.corpus_id = corpus_id;
+
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        SummarizerMetadata::WordDataFile wordData;
+        wordData.id       = sqlite3_column_int(statement, 0);
+        wordData.group_id = sqlite3_column_int(statement, 1);
+        wordData.file_id  = sqlite3_column_int(statement, 2);
+        wordData.word     = reinterpret_cast<const char*>(sqlite3_column_text(statement, 3));
+        wordData.count    = sqlite3_column_int(statement, 4);
+
+        result.word.push_back(wordData);
+    }
+
+    sqlite3_finalize(statement);
+    return result;
+}
+
+SummarizerMetadata::WordLists DatabaseSummarizer::fetchWordLists(const int& corpus_id)
+{
+    // Get all current word counts associated with the current corpus.
+    if (sqlite3_exec(dbConn, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+        std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Could not start the transaction to fetch word lists from the database tables.");
+    }
+
+    // Declare the variable to be returned
+    SummarizerMetadata::WordLists wordLists;
+
+    try {
+        SummarizerMetadata::WordListPerCorpus wordListPerCorpus = fetchWordListPerCorpus(corpus_id);
+        SummarizerMetadata::WordListPerGroup wordListPerGroup =  fetchWordListPerGroup(corpus_id);
+        SummarizerMetadata::WordListPerFile wordListPerFile =  fetchWordListPerFile(corpus_id);
+
+        wordLists.word_list_per_corpus = wordListPerCorpus;
+        wordLists.word_list_per_group = wordListPerGroup;
+        wordLists.word_list_per_file = wordListPerFile;
+
+        if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+            std::cerr << "Error commiting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+            throw std::runtime_error("Transaction commit failed");
+        }
+
+    } catch (const std::exception& err) {
+        std::cerr << "Transaction failed, rolling back: " << err.what() << std::endl;
+        sqlite3_exec(dbConn, "ROLLBACK;", nullptr, nullptr, nullptr);
+        throw; //rethrow so the caller knows it failed.
+    }
+
+    return wordLists;
 }
