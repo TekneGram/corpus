@@ -36,13 +36,13 @@ SummarizerMetadata::HasFiles DatabaseSummarizer::checkCorpusFilesExist(const int
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing the SELECT statement to check for files in the corpus" << sqlite3_errmsg(dbConn) << std::endl;
-        return {corpus_id, false};
+        throw std::runtime_error("Error: could not prepare select statement when checking for files in the corpus.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus_id" << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return {corpus_id, false};
+        throw std::runtime_error("Error: could not bind parameters in checkCorpusFilesExist.");
     }
 
     int rowCount = 0;
@@ -85,19 +85,19 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::checkCorpusPreppedSt
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing the SELECT statement to check for files in the corpus" << sqlite3_errmsg(dbConn) << std::endl;
-        return result;
+        throw std::runtime_error("Error: could not prepare statement in checkCorpusPreppedStatus.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus_id" << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return result;
+        throw std::runtime_error("Error: could not bind parameters in checkCorpusPreppedStatus.");
     }
 
     if (sqlite3_bind_text(statement, 2, analysis_type.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK) {
         std::cerr << "Error binding the analysis_type" << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return result;
+        throw std::runtime_error("Error: could not bind parameters in checkCorpusPreppedStatus.");
     }
 
     int rc = sqlite3_step(statement);
@@ -114,7 +114,7 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::checkCorpusPreppedSt
         }
     } else if (rc != SQLITE_DONE) {
         std::cerr << "Error stepping through results of checking the corpus prepped status: " << sqlite3_errmsg(dbConn) << std::endl;
-        return result;
+        throw std::runtime_error("Error: could not step through results in checkCorpusPreppedStatus.");
     }
     
     sqlite3_finalize(statement);
@@ -253,13 +253,13 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in countWordsPerFile.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus_id: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not bind parameters in countWordsPerFile.");
     }
 
     const char* insertSQL = R"(
@@ -270,7 +270,7 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in countWordsPerFile.");
     }
 
     // Begin transaction
@@ -279,7 +279,7 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
         std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not complete transaction in countWordsPerFile.");
     }
 
     while (sqlite3_step(statement) == SQLITE_ROW) {
@@ -311,6 +311,7 @@ void DatabaseSummarizer::countWordsPerFile(const int& corpus_id)
     rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
     if (rc != SQLITE_OK) {
         std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transition in countWordsPerFile");
     }
 
     // Final cleanup
@@ -339,13 +340,13 @@ void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in createWordListPerFile.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not bind parameter in createWordListPerFile.");
     }
 
     const char* insertSQL = R"(
@@ -356,7 +357,7 @@ void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in createWordListPerFile.");
     }
 
     // Start a transaction to speed up batch inserts
@@ -365,7 +366,7 @@ void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
         std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not begin transaction in createWordListPerFile.");
     }
 
     // Execute the query and insert the results into the new table
@@ -391,6 +392,7 @@ void DatabaseSummarizer::createWordListPerFile(const int& corpus_id)
     // Commit the transaction
     if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
         std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transaction in createWordListPerFile.");
     }
     // Finalize the statements
     sqlite3_finalize(statement);
@@ -424,13 +426,13 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in countWordsPerGroup.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus_id to SELECT: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not bind paramter in countWordsPerGroup.");
     }
 
     const char* insertSQL = R"(
@@ -441,7 +443,7 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in countWordsPerGroup.");
     }
 
     // Begin transaction
@@ -450,7 +452,7 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
         std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not begin transaction in countWordsPerGroup.");
     }
 
     // Step through SELECT results and insert into destination table
@@ -481,6 +483,7 @@ void DatabaseSummarizer::countWordsPerGroup(const int& corpus_id)
     rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
     if (rc != SQLITE_OK) {
         std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transaction in countWordsPerGroup.");
     }
 
     // Final cleanup
@@ -508,13 +511,13 @@ void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in createWordListPerGroup.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not bind parameters in createWordListPerGroup.");
     }
 
     const char* insertSQL = R"(
@@ -525,7 +528,7 @@ void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in createWordListPerGroup.");
     }
 
     // Start a transaction to speed up batch inserts
@@ -534,7 +537,7 @@ void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
         std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not begin transaction in createWordListPerGroup.");
     }
 
     // Execute the query and insert the results into the new table
@@ -559,6 +562,7 @@ void DatabaseSummarizer::createWordListPerGroup(const int& corpus_id)
     // Commit the transaction
     if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
         std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transaction in createWordListPerGroup.");
     }
     // Finalize the statements
     sqlite3_finalize(statement);
@@ -587,13 +591,13 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in countWordsPerCorpus.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus_id to SELECT: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not binding parameters in countWordsPerCorpus.");
     }
 
     const char* insertSQL = R"(
@@ -604,7 +608,7 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing INSERT statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in countWordsPerCorpus.");
     }
 
     // Begin transaction
@@ -613,7 +617,7 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
         std::cerr << "Error starting transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not start transaction in countWordsPerCorpus.");
     }
 
     // Execute query and insert
@@ -636,6 +640,7 @@ void DatabaseSummarizer::countWordsPerCorpus(const int& corpus_id)
     rc = sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr);
     if (rc != SQLITE_OK) {
         std::cerr << "Error committing transaction (code " << rc << "): " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transaction in countWordsPerCorpus.");
     }
 
     // Final cleanup
@@ -662,13 +667,13 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing statement: " << sqlite3_errmsg(dbConn) << std::endl;
-        return;
+        throw std::runtime_error("Error: could not prepare statement in createWordListPerCorpus.");
     }
 
     if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
         std::cerr << "Error binding corpus id data to statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not bind parameters in createWordListPerCorpus.");
     }
 
     const char* insertSQL = R"(
@@ -679,7 +684,7 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
     if (sqlite3_prepare_v2(dbConn, insertSQL, -1, &insertStatement, nullptr) != SQLITE_OK) {
         std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
-        return;
+        throw std::runtime_error("Error: could not prepare insert statement in createWordListPerCorpus.");
     }
 
     // Start a transaction to speed up batch inserts
@@ -688,7 +693,7 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
         std::cerr << "Error starting transaction: " << sqlite3_errmsg(dbConn) << std::endl;
         sqlite3_finalize(statement);
         sqlite3_finalize(insertStatement);
-        return;
+        throw std::runtime_error("Error: could not begin transaction in createWordListPerCorpus.");
     }
 
     // Execute the query and insert the results into the new table
@@ -713,6 +718,7 @@ void DatabaseSummarizer::createWordListPerCorpus(const int& corpus_id)
     // Commit the transaction
     if (sqlite3_exec(dbConn, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
         std::cerr << "Error committing transaction: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Error: could not commit transaction in createWordListPerCorpus.");
     }
     // Finalize the statements
     sqlite3_finalize(statement);
