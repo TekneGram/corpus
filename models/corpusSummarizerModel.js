@@ -172,7 +172,7 @@ class CorpusSummarizer {
                     reject(new Error("There was an error running the C++ process fetching the word count data for your corpus."));
                 } else {
                     console.log("Output from the C++ process fetching the word counts for your corpus: ", output);
-                    resolve(ouput);
+                    resolve(output);
                 }
             });
         })

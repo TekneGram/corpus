@@ -90,6 +90,7 @@ int main()
         if (command == "fetchWordCounts") {
             int corpus_id = inputData["corpusId"];
             nlohmann::json result = summarizer.fetchWordCounts(corpus_id);
+            std::cout << result.dump() << std::endl;
         }
         
     } catch (const std::exception& e) {

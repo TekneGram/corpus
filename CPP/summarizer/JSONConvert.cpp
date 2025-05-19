@@ -50,7 +50,7 @@ namespace SummarizerMetadata {
     }
 
 
-    void to_json(nlohmann::json& j, const WordCounts wordCounts)
+    void to_json(nlohmann::json& j, const WordCounts& wordCounts)
     {
         j = nlohmann::json{{"wordCountsPerCorpus", wordCounts.word_counts_per_corpus}, {"wordCountsPerGroup", wordCounts.word_counts_per_group}, {"wordCountsPerFile", wordCounts.word_counts_per_file}};
     }

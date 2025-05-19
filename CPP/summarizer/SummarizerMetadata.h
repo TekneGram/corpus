@@ -66,7 +66,7 @@ namespace SummarizerMetadata {
         WordCountsPerFile word_counts_per_file;
     };
 
-    // JSON conversion function
+    // JSON conversion functions
     void to_json(nlohmann::json& j, const HasFiles& hasFiles);
     void to_json(nlohmann::json& j, const CorpusPreppedStatus& corpusPreppedStatus);
     

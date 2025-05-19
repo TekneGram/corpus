@@ -20,6 +20,6 @@ router.post('/project/:corpusId/corpus/status/:analysisType', insertCorpusPreppe
 router.post('/project/:corpusId/corpus/summarize/countWords', summarizeCorpusWords); // summarize the corpus word counts for a given corpus id. The corpus id is in the URL.
 router.post('/project/:corpusId/corpus/summarize/recountWords', recountCorpusWords); // summarize the corpus word counts for a given corpus id by first deleting the current summary
 
-router.get('project/${corpusId}/corpus/summarize/wordcount', fetchWordCounts); // get the word count data from the database.
+router.get('/project/:corpusId/corpus/summarize/wordcount', fetchWordCounts); // get the word count data from the database.
 
 module.exports = router;

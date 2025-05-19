@@ -119,6 +119,7 @@ const fetchWordCounts = async (req, res) => {
         }
 
         // Send to the front end
+        console.log("These are the word count data: ", parsedResult);
         res.status(200).json({ status: "success", cppOutput: parsedResult });
         
     } catch (error) {
