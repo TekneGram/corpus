@@ -135,8 +135,9 @@ class CorpusSummarizer {
     }
 
     recountCorpusWords(corpusId) {
-        console.log("The corpusId is: ", corpusId);
-        corpusId["comamand"] = "recountCorpusWords";
+        corpusId.corpusId = parseInt(corpusId.corpusId);
+        corpusId["command"] = "recountCorpusWords";
+        console.log("The corpusId is in recountCorpusWords: ", corpusId);
         const corpusIdString = JSON.stringify(corpusId);
         const cppProcess = new CPPProcess('corpusSummarizer');
         return new Promise((resolve, reject) => {
@@ -156,7 +157,32 @@ class CorpusSummarizer {
         .catch(err => {
             console.error("Error in C++ process: ", err.message);
             return { error: err, message: err.message };
+        });
+    }
+
+    fetchWordCounts(corpusId) {
+        corpusId.corpusId = parseInt(corpusId.corpusId);
+        corpusId["command"] = "fetchWordCounts";
+        const corpusIdString = JSON.stringify(corpusId);
+        const cppProcess = new CPPProcess('corpusSummarizer');
+        return new Promise((resolve, reject) => {
+            cppProcess.runProcess(corpusIdString, (error, output) => {
+                if (error) {
+                    console.error("Error: ", error.message);
+                    reject(new Error("There was an error running the C++ process fetching the word count data for your corpus."));
+                } else {
+                    console.log("Output from the C++ process fetching the word counts for your corpus: ", output);
+                    resolve(ouput);
+                }
+            });
         })
+        .then (output => {
+            return output;
+        })
+        .catch(err => {
+            console.error("Error in C++ process: ", err.message);
+            return { error: err, message: err.message };
+        });
     }
 }
 

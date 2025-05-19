@@ -83,10 +83,10 @@ const recountCorpusWords = async (req, res) => {
         await cm.recountCorpusWords(req.params);
 
         // Set up params for inserting into corpus_prepped_status
-        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords" };
+        corpusPreppedStatusParams = { corpusId: req.params.corpusId, analysisType: "countWords", toBeUpdated: true };
 
         // Call the model again to insert the current status into the database
-        const cppOutputInsert = await cm.insertCorpusPreppedStatus(corpusPreppedStatusParams);
+        const cppOutputInsert = await cm.updateCorpusPreppedStatus(corpusPreppedStatusParams);
         console.log("After inserting into corpus_prepped_status after recounting: ", cppOutputInsert);
 
         // Parse result into JSON to send it back to the front end.
@@ -105,6 +105,27 @@ const recountCorpusWords = async (req, res) => {
     }
 }
 
+const fetchWordCounts = async (req, res) => {
+    const cs = new CorpusSummarizer();
+    try {
+        // Call the model to fetch the word counts
+        const result = await cs.fetchWordCounts(req.params);
+
+        // Parse the results into JSON to send back to the front end.
+        try {
+            parsedResult = JSON.parse(result);
+        } catch (parseErr) {
+            res.status(500).json({ status: "fail", message: `Error parsing JSON in the backend: ${parseErr}` });
+        }
+
+        // Send to the front end
+        res.status(200).json({ status: "success", cppOutput: parsedResult });
+        
+    } catch (error) {
+        res.status(500).json({ status: "fail", message: `Internal server error in the cpp process: ${error}` });
+    }
+}
+
 module.exports = {
     checkCorpusFilesExist,
     checkCorpusPreppedStatus,
@@ -112,4 +133,5 @@ module.exports = {
     insertCorpusPreppedStatus,
     summarizeCorpusWords,
     recountCorpusWords,
+    fetchWordCounts,
 }

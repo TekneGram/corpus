@@ -22,4 +22,19 @@ namespace SummarizerMetadata {
             {"up_to_date", corpusPreppedStatus.up_to_date == -1 ? nlohmann::json(nullptr) : nlohmann::json(static_cast<bool>(corpusPreppedStatus.up_to_date))}
         };
     }
+
+    void to_json(nlohmann::json& j, const WordCountsPerCorpus& wordCountsPerCorpus)
+    {
+        j = nlohmann::json{{"corpusId", wordCountsPerCorpus.corpus_id}, {"tokenCount", wordCountsPerCorpus.token_count}, {"typeCount", wordCountsPerCorpus.type_count}};
+    }
+
+    void to_json(nlohmann::json& j, const GroupWordCounts& groupWordCounts)
+    {
+        j = nlohmann::json{{"groupId", groupWordCounts.group_id}, {"tokenCount", groupWordCounts.token_count}, {"typeCount", groupWordCounts.type_count}};
+    }
+
+    void to_json(nlohmann::json& j, const WordCountsPerGroup& wordCountsPerGroup)
+    {
+        j = nlohmann::json{{"corpusId", wordCountsPerGroup.corpus_id}, {"groupWordCounts", wordCountsPerGroup.group_word_counts}};
+    }
 }

@@ -26,9 +26,29 @@ namespace SummarizerMetadata {
         int up_to_date; // -1 = null, 0 = false, 1 = true
     };
 
+    struct WordCountsPerCorpus {
+        int corpus_id;
+        int type_count;
+        int token_count;
+    };
+
+    struct GroupWordCounts {
+        int group_id;
+        int type_count;
+        int token_count;
+    };
+
+    struct WordCountsPerGroup {
+        int corpus_id;
+        std::vector<GroupWordCounts> group_word_counts;
+    };
+
     // JSON conversion function
     void to_json(nlohmann::json& j, const HasFiles& hasFiles);
     void to_json(nlohmann::json& j, const CorpusPreppedStatus& corpusPreppedStatus);
+    void to_json(nlohmann::json& j, const WordCountsPerCorpus& wordCountsPerCorpus);
+    void to_json(nlohmann::json& j, const GroupWordCounts& groupWordCounts);
+    void to_json(nlohmann::json& j, const WordCountsPerGroup& wordCountsPerGroup);
 
 } // namespace SummarizeMatadata
 

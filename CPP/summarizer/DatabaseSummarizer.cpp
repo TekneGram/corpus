@@ -125,9 +125,6 @@ SummarizerMetadata::CorpusPreppedStatus DatabaseSummarizer::updateCorpusPreppedS
 {
     sqlite3_extended_result_codes(dbConn, 1);
     sqlite3_exec(dbConn, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
-    std::cerr << "This is the to_be_updated value: " << to_be_updated << std::endl;
-    std::cerr << "This is the corpus_id value: " << corpus_id << std::endl;
-    std::cerr << "This is the analysis_type value: " << analysis_type << std::endl;
 
     sqlite3_stmt* statement;
     const char* sql = R"(
@@ -732,7 +729,7 @@ void DatabaseSummarizer::deleteWordsPerFile(const int& corpus_id)
             word_counts_per_file
         WHERE
             group_id IN (
-                SELECT id FROM corpus_group WHERE corpus_id = ?
+                SELECT id FROM corpus_group WHERE corpus_id = ?;
             )
     )";
 
@@ -763,7 +760,7 @@ void DatabaseSummarizer::deleteWordListPerFile(const int& corpus_id)
             word_list_per_file
         WHERE
             group_id IN (
-                SELECT id FROM corpus_group WHERE corpus_id = ?
+                SELECT id FROM corpus_group WHERE corpus_id = ?;
             )
     )";
 
@@ -794,7 +791,7 @@ void DatabaseSummarizer::deleteWordsPerGroup(const int& corpus_id)
             word_counts_per_group
         WHERE
             group_id IN (
-                SELECT id FROM corpus_group WHERE corpus_id = ?
+                SELECT id FROM corpus_group WHERE corpus_id = ?;
             )
     )";
 
@@ -825,7 +822,7 @@ void DatabaseSummarizer::deleteWordListPerGroup(const int& corpus_id)
             word_list_per_group
         WHERE
             group_id IN (
-                SELECT id FROM corpus_group WHERE corpus_id = ?
+                SELECT id FROM corpus_group WHERE corpus_id = ?;
             )
     )";
 
@@ -855,7 +852,7 @@ void DatabaseSummarizer::deleteWordsPerCorpus(const int& corpus_id)
         DELETE FROM 
             word_counts_per_corpus
         WHERE
-            corpus_id = ?
+            corpus_id = ?;
     )";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
@@ -884,7 +881,7 @@ void DatabaseSummarizer::deleteWordListPerCorpus(const int& corpus_id)
         DELETE FROM 
             word_list_per_corpus
         WHERE
-            corpus_id = ?
+            corpus_id = ?;
     )";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
@@ -945,5 +942,48 @@ void DatabaseSummarizer::recountCorpusWords(const int& corpus_id)
 
     // Now count the words again using the method from above.
     DatabaseSummarizer::summarizeCorpusWords(corpus_id);
+    
+}
+
+SummarizerMetadata::WordCountsPerCorpus DatabaseSummarizer::fetchWordCountsPerCorpus(const int& corpus_id)
+{
+    sqlite3_stmt* statement;
+    const char* sql = R"(
+        SELECT corpus_id, type_count, token_count
+        FROM word_counts_per_corpus
+        WHERE corpus_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare SELECT statement for fetching word counts per corpus: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to prepare statement for fetching word counts per corpus.");
+    }
+
+    if (sqlite3_bind_int(statement, 1, corpus_id) != SQLITE_OK) {
+        std::cerr << "Failed to bind corpus id to the statement: " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error("Failed to bind corpus id to the statement in fetchWordCountsPerCorpus.");
+    }
+
+    SummarizerMetadata::WordCountsPerCorpus result;
+    int stepResult = sqlite3_step(statement);
+    if (stepResult == SQLITE_ROW) {
+        result.corpus_id = sqlite3_column_int(statement, 0);
+        result.type_count = sqlite3_column_int(statement, 1);
+        result.token_count = sqlite3_column_int(statement, 2);
+    } else if (stepResult == SQLITE_DONE) {
+        sqlite3_finalize(statement);
+        throw std::runtime_error("No data found for the given corpus_id in fetchWordCountsPerCorpus.");
+    } else {
+        std::cerr << "Failed to step through the result: " << sqlite3_errmsg(dbConn) << std::endl;
+        sqlite3_finalize(statement);
+        throw std::runtime_error("Failed to step through the results in fetchWordCountsPerCorpus.");
+    }
+
+    sqlite3_finalize(statement);
+    return result;
+}
+
+void DatabaseSummarizer::fetchWordCounts(const int& corpus_id)
+{
     
 }

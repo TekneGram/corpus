@@ -86,6 +86,11 @@ int main()
             int corpus_id = inputData["corpusId"];
             summarizer.recountCorpusWords(corpus_id);
         }
+
+        if (command == "fetchWordCounts") {
+            int corpus_id = inputData["corpusId"];
+            nlohmann::json result = summarizer.fetchWordCounts(corpus_id);
+        }
         
     } catch (const std::exception& e) {
         handleError(e.what(), db);

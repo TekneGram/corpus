@@ -102,12 +102,16 @@ const WordCount = () => {
     const handleSummarizeWords = async () => {
         console.log("Counting words...");
         const wordCounts = await countWords(corpusMetadata.corpus.id);
+        setCountsUpToDateInDB(wordCounts.up_to_date);
+        setWordCountDataExistsInDB(true);
         console.log(wordCounts);
     }
 
     const handleRecountWords = async () => {
         console.log("Recounting the words...");
         const wordCounts = await recountWords(corpusMetadata.corpus.id);
+        setCountsUpToDateInDB(wordCounts.up_to_date);
+        setWordCountDataExistsInDB(true);
         console.log(wordCounts);
     }
 
@@ -132,7 +136,7 @@ const WordCount = () => {
             return (
                 <div className='word-count-operations-header'>
                     <p>Your corpus was recently updated.</p>
-                    <button className='word-count-start-button' type='button' onClick={handleSummarizeWords}>Recount the words</button>
+                    <button className='word-count-start-button' type='button' onClick={handleRecountWords}>Recount the words</button>
                     <button className='word-count-fetch-button' type='button' onClick={handleFetchWordCountData}>Fetch data</button>
                 </div>
             );
