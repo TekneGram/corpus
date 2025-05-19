@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
 import { SummaryMetaData } from '@/app/types/types';
-// import { SummaryMetaDataActions } from './contextTypes/contextTypes';
+import { SummaryMetaDataActions } from './contextTypes/contextTypes';
 import { summaryMetaDataReducer } from './reducers/summaryMetadataReducer';
 
 // Set an initial value for the summaryMetaData state which is what gets updated through the reducer
-const initialSummaryMetaData = {
+const initialSummaryMetaData: SummaryMetaData = {
     currentCorpusStatus: {
         hasFiles: {
             corpus_id: 0,
@@ -47,7 +47,10 @@ interface SummaryProviderProps {
 }
 
 export const SummaryProvider: React.FC<SummaryProviderProps> = ({ children }) => {
-    const [summaryMetaData, dispatch] = useReducer(summaryMetaDataReducer, []);
+    const [summaryMetaData, dispatch] = useReducer<React.Reducer<SummaryMetaData, SummaryMetaDataActions>>(
+        summaryMetaDataReducer,
+        initialSummaryMetaData
+    );
 
     return (
         <SummaryContext.Provider value={{summaryMetaData, dispatch}}>

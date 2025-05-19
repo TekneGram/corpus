@@ -1,7 +1,7 @@
 // Types
-// import { SummaryMetaData } from '@/app/types/types';
-// import { SummaryMetaDataActions } from '../contextTypes/contextTypes';
+import { SummaryMetaData } from '@/app/types/types';
+import { SummaryMetaDataActions } from '../contextTypes/contextTypes';
 
-export const summaryMetaDataReducer = (state: any, action: any) => {
+export const summaryMetaDataReducer = (state: SummaryMetaData, action: SummaryMetaDataActions) => {
     return state;
 }
