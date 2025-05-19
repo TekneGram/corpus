@@ -26,7 +26,10 @@ namespace SummarizerMetadata {
         int up_to_date; // -1 = null, 0 = false, 1 = true
     };
 
-    // Word counts
+    /**
+     * Word Counts
+     */
+
     // Word counts in the corpus
     struct WordCountsPerCorpus {
         int corpus_id;
@@ -66,10 +69,64 @@ namespace SummarizerMetadata {
         WordCountsPerFile word_counts_per_file;
     };
 
-    // JSON conversion functions
+    /**
+     * Word Lists
+     */
+
+     // Word list for the whole corpus
+     struct WordDataCorpus {
+        int id;
+        std::string word;
+        int count;
+     };
+
+     struct WordListPerCorpus {
+        int corpus_id;
+        std::vector<WordDataCorpus> word;
+     };
+
+     // Word lists per group
+     struct WordDataGroup {
+        int id;
+        int group_id;
+        std::string word;
+        int count;
+     };
+
+     struct WordListPerGroup {
+        int corpus_id;
+        std::vector<WordDataGroup> word;
+     };
+
+     // Word lists per file
+     struct WordDataFile {
+        int id;
+        int group_id;
+        int file_id;
+        std::string word;
+        int count;
+     };
+
+     struct WordListPerFile {
+        int corpus_id;
+        std::vector<WordDataFile> word;
+     };
+
+     // All word list data
+     struct WordLists {
+        WordListPerCorpus word_list_per_corpus;
+        WordListPerGroup word_list_per_group;
+        WordListPerFile word_list_per_file;
+     };
+
+    /**
+     * JSON conversion function declarations:
+     */
+
     void to_json(nlohmann::json& j, const HasFiles& hasFiles);
     void to_json(nlohmann::json& j, const CorpusPreppedStatus& corpusPreppedStatus);
     
+    // Word counts
     void to_json(nlohmann::json& j, const WordCountsPerCorpus& wordCountsPerCorpus);
     
     void to_json(nlohmann::json& j, const GroupWordCounts& groupWordCounts);
@@ -79,6 +136,19 @@ namespace SummarizerMetadata {
     void to_json(nlohmann::json& j, const WordCountsPerFile& wordCountsPerFile);
 
     void to_json(nlohmann::json& j, const WordCounts& wordCounts);
+
+    // Word lists
+    void to_json(nlohmann::json& j, const WordDataCorpus& wordDataCorpus);
+    void to_json(nlohmann::json& j, const WordListPerCorpus& wordListPerCorpus);
+
+    void to_json(nlohmann::json& j, const WordDataGroup& wordDataGroup);
+    void to_json(nlohmann::json& j, const WordListPerGroup& wordListPerGroup);
+
+    void to_json(nlohmann::json& j, const WordDataFile& wordDataFile);
+    void to_json(nlohmann::json& j, const WordListPerFile& wordListPerFile);
+
+    void to_json(nlohmann::json& j, const WordLists& wordLists);
+
 
 } // namespace SummarizeMatadata
 

@@ -54,4 +54,68 @@ namespace SummarizerMetadata {
     {
         j = nlohmann::json{{"wordCountsPerCorpus", wordCounts.word_counts_per_corpus}, {"wordCountsPerGroup", wordCounts.word_counts_per_group}, {"wordCountsPerFile", wordCounts.word_counts_per_file}};
     }
+
+    void to_json(nlohmann::json& j, const WordDataCorpus& wordDataCorpus)
+    {
+        j = nlohmann::json{
+            {"id", wordDataCorpus.id},
+            {"word", wordDataCorpus.word},
+            {"count", wordDataCorpus.count}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordListPerCorpus& wordListPerCorpus)
+    {
+        j = nlohmann::json{
+            {"corpusId", wordListPerCorpus.corpus_id},
+            {"word", wordListPerCorpus.word}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordDataGroup& wordDataGroup)
+    {
+        j = nlohmann::json{
+            {"id", wordDataGroup.id},
+            {"groupId", wordDataGroup.group_id},
+            {"word", wordDataGroup.word},
+            {"count", wordDataGroup.count}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordListPerGroup& wordListPerGroup)
+    {
+        j = nlohmann::json{
+            {"corpusId", wordListPerGroup.corpus_id},
+            {"word", wordListPerGroup.word}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordDataFile& wordDataFile)
+    {
+        j = nlohmann::json{
+            {"id", wordDataFile.id},
+            {"groupId", wordDataFile.group_id},
+            {"fileId", wordDataFile.file_id},
+            {"word", wordDataFile.word},
+            {"count", wordDataFile.count}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordListPerFile& wordListPerFile)
+    {
+        j = nlohmann::json{
+            {"corpusId", wordListPerFile.corpus_id},
+            {"word", wordListPerFile.word}
+        };
+    }
+
+    void to_json(nlohmann::json& j, const WordLists& wordLists)
+    {
+        j = nlohmann::json{
+            {"wordListPerCorpus", wordLists.word_list_per_corpus},
+            {"wordListPerGroup", wordLists.word_list_per_group},
+            {"wordListPerFile", wordLists.word_list_per_file}
+        };
+    }
+
 }
