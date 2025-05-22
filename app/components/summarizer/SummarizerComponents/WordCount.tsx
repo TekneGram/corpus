@@ -13,6 +13,11 @@ import { checkCorpusFilesExistInDB, checkCorpusPreppedStatus, fetchWordCountData
 // CSS
 import '@/styles/summarizer.css';
 
+// Components
+import WordCountsPerFile from './WordCountComponents/WordCountsPerFile';
+import WordCountsPerGroupDisplay from './WordCountComponents/WordCountsPerGroupDisplay';
+import WordCountsPerCorpusDisplay from './WordCountComponents/WordCountsPerCorpusDisplay';
+
 const WordCount = () => {
 
     const corpusMetadata = useCorpusMetaData();
@@ -133,7 +138,8 @@ const WordCount = () => {
             if (hasWordCountData === true) {
                 return (
                     <>
-                        <p>There will be a word count display component here soon!</p>
+                        <WordCountsPerCorpusDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerCorpus} />
+                        <WordCountsPerGroupDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup} />
                         <p>Call the word lists if you like!</p>
                         <button className='word-list-fetch-button' type='button' onClick={handleFetchWordListData}>Get Word Lists</button>
                     </>

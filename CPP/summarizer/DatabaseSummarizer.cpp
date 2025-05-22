@@ -1020,8 +1020,9 @@ SummarizerMetadata::WordCountsPerGroup DatabaseSummarizer::fetchWordCountsPerGro
     while (sqlite3_step(statement) == SQLITE_ROW) {
         SummarizerMetadata::GroupWordCounts groupData;
         groupData.group_id = sqlite3_column_int(statement, 0);
-        groupData.type_count = sqlite3_column_int(statement, 1);
-        groupData.token_count = sqlite3_column_int(statement, 2);
+        groupData.group_name = reinterpret_cast<const char*>(sqlite3_column_text(statement, 1));
+        groupData.type_count = sqlite3_column_int(statement, 2);
+        groupData.token_count = sqlite3_column_int(statement, 3);
 
         result.group_word_counts.push_back(groupData);
     }
@@ -1070,8 +1071,9 @@ SummarizerMetadata::WordCountsPerFile DatabaseSummarizer::fetchWordCountsPerFile
         SummarizerMetadata::FileWordCounts fileData;
         fileData.file_id     = sqlite3_column_int(statement, 0);
         fileData.group_id    = sqlite3_column_int(statement, 1);
-        fileData.type_count  = sqlite3_column_int(statement, 2);
-        fileData.token_count = sqlite3_column_int(statement, 3);
+        fileData.file_name   = reinterpret_cast<const char*>(sqlite3_column_text(statement, 2));
+        fileData.type_count  = sqlite3_column_int(statement, 3);
+        fileData.token_count = sqlite3_column_int(statement, 4);
 
         result.file_word_counts.push_back(fileData);
     }
