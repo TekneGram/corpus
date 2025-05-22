@@ -1041,10 +1041,12 @@ SummarizerMetadata::WordCountsPerFile DatabaseSummarizer::fetchWordCountsPerFile
 {
     sqlite3_stmt* statement;
     const char* sql = R"(
-        SELECT file_id, group_id, type_count, token_count
+        SELECT file_id, files.group_id, file_name, type_count, token_count
         FROM word_counts_per_file
         JOIN corpus_group
         ON corpus_group.id = word_counts_per_file.group_id
+        JOIN files
+        ON files.id = word_counts_per_file.file_id
         WHERE corpus_id = ?;
     )";
 

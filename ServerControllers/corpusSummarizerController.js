@@ -68,7 +68,7 @@ const summarizeCorpusWords = async (req, res) => {
         }
 
         // Send to front end
-        res.status(200).json({ status: "success", cppOutputInsertResult: parsedcppOutputInsert });
+        res.status(200).json({ status: "success", cppOutput: parsedcppOutputInsert });
     } catch (error) {
         // If there is an error, send it to the front end
         res.status(500).json({ status: "fail", message: "Internal server error in cpp process." });

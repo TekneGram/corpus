@@ -1,4 +1,4 @@
-import { HasFiles, CorpusStatus, WordCounts } from "../types/types";
+import { HasFiles, CorpusStatus, WordCounts, CorpusPreppedStatus } from "../types/types";
 
 type CorpusFilesExistResponse = 
     | { status: "success"; cppOutput: HasFiles }
@@ -6,10 +6,14 @@ type CorpusFilesExistResponse =
 
 type CorpusStatusResponse =
     | { status: "success"; cppOutput: CorpusStatus }
-    | { status: "fail"; message: string }
+    | { status: "fail"; message: string };
 
 type WordCountsResponse = 
     | { status: "success"; cppOutput: WordCounts }
+    | { status: "fail"; message: string };
+
+type SummarizeWordsResponse = 
+    | { status: "success"; cppOutput: CorpusPreppedStatus}
     | { status: "fail"; message: string }
 
 
@@ -131,7 +135,7 @@ export const fetchWordListData = async (corpusId: number): Promise<any> => {
     }
 }
 
-export const countWords = async (corpusId: number): Promise<any> => {
+export const countWords = async (corpusId: number): Promise<SummarizeWordsResponse> => {
     try {
         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/countWords`, {
             method: "POST",
@@ -140,7 +144,7 @@ export const countWords = async (corpusId: number): Promise<any> => {
             },
             credentials: 'include'
         });
-        const result = await response.json();
+        const result: SummarizeWordsResponse = await response.json();
         console.log(result);
         return result;
     } catch (error) {

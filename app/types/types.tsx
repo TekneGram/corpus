@@ -74,6 +74,12 @@ export type CorpusStatus = {
     up_to_date: boolean | null;
 }
 
+export type CorpusPreppedStatus = {
+    corpus_id: number;
+    analysis_type: string | null;
+    up_to_date: boolean | null;
+}
+
 export type CurrentCorpusStatus = {
     hasFiles: HasFiles;
     corpusStatus: CorpusStatus;

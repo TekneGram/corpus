@@ -21,10 +21,9 @@ const WordCount = () => {
 
     
     const [filesExistInDB, setFilesExistInDB] = useState(false);
-    const [wordCountDataExistsInDB, setWordCountDataExistsInDB] = useState(false);
-    const [countsUpToDateInDB, setCountsUpToDateInDB] = useState(false);
+    const [wordCountDataExistsInDB, setWordCountDataExistsInDB] = useState<boolean>(false);
+    const [countsUpToDateInDB, setCountsUpToDateInDB] = useState<boolean | null>(false);
     const [hasWordCountData, setHasWordCountData] = useState(false);
-    const [wordCountData, setWordCountData] = useState<WordCounts | null>(null);
 
     useEffect(() => {
         // Check that files exist in the database
@@ -41,7 +40,7 @@ const WordCount = () => {
                             const { analysis_type, up_to_date } = corpusPreppedCheckResult.cppOutput;
                             console.log("analysisType: ", analysis_type, "upToDate: ", up_to_date);
 
-                            if (analysis_type === undefined && up_to_date === undefined) {
+                            if (analysis_type === null && up_to_date === null) {
                                 setWordCountDataExistsInDB(false);
                                 setCountsUpToDateInDB(true);
                                 setHasWordCountData(false);
@@ -49,8 +48,9 @@ const WordCount = () => {
                                 setWordCountDataExistsInDB(true);
                                 setCountsUpToDateInDB(true);
                                 const wordCountsResults = await fetchWordCountData(corpusMetadata.corpus.id);
+                                
                                 if (wordCountsResults.status === "success") {
-                                    setWordCountData(wordCountsResults.cppOutput);
+                                    summaryDispatch({type: 'update-word-counts', wordCounts: wordCountsResults.cppOutput });
                                     setHasWordCountData(true);
                                 } else {
                                     setHasWordCountData(false);
@@ -75,12 +75,15 @@ const WordCount = () => {
         }
         checkFilesAndCorpus();
         
-    }, []);
+    }, [corpusMetadata]);
 
     const handleSummarizeWords = async () => {
         console.log("Counting words...");
         const wordCounts = await countWords(corpusMetadata.corpus.id);
-        setCountsUpToDateInDB(wordCounts.up_to_date);
+        if (wordCounts.status === "success") {
+            setCountsUpToDateInDB(wordCounts.cppOutput.up_to_date);
+            setHasWordCountData(true);
+        }
         setWordCountDataExistsInDB(true);
         console.log(wordCounts);
     }
@@ -105,6 +108,7 @@ const WordCount = () => {
     }
 
     const renderWordCountDisplay = () => {
+        console.log("wordCountDataExistsInDB: ", wordCountDataExistsInDB, "countsUpToDateInDB:", countsUpToDateInDB);
         if(wordCountDataExistsInDB === false && countsUpToDateInDB === true) {
             // Display the button to count the words
             return (
