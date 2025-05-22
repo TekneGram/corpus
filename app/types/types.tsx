@@ -99,6 +99,7 @@ export type WordCountsPerCorpus = {
 // Word counts in the group (subcorpus)
 export type GroupWordCounts = {
     groupId: number;
+    groupName: string;
     typeCount: number;
     tokenCount: number;
 }
@@ -112,6 +113,7 @@ export type WordCountsPerGroup = {
 export type FileWordCounts = {
     fileId: number;
     groupId: number;
+    fileName: string;
     typeCount: number;
     tokenCount: number;
 }
