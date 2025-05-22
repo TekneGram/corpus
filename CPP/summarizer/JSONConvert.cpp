@@ -25,34 +25,58 @@ namespace SummarizerMetadata {
 
     void to_json(nlohmann::json& j, const WordCountsPerCorpus& wordCountsPerCorpus)
     {
-        j = nlohmann::json{{"corpusId", wordCountsPerCorpus.corpus_id}, {"tokenCount", wordCountsPerCorpus.token_count}, {"typeCount", wordCountsPerCorpus.type_count}};
+        j = nlohmann::json{
+            {"corpusId", wordCountsPerCorpus.corpus_id}, 
+            {"tokenCount", wordCountsPerCorpus.token_count},
+            {"typeCount", wordCountsPerCorpus.type_count}
+        };
     }
 
     void to_json(nlohmann::json& j, const GroupWordCounts& groupWordCounts)
     {
-        j = nlohmann::json{{"groupId", groupWordCounts.group_id}, {"tokenCount", groupWordCounts.token_count}, {"typeCount", groupWordCounts.type_count}};
+        j = nlohmann::json{
+            {"groupId", groupWordCounts.group_id},
+            {"groupName", groupWordCounts.group_name}, 
+            {"tokenCount", groupWordCounts.token_count}, 
+            {"typeCount", groupWordCounts.type_count}
+        };
     }
 
     void to_json(nlohmann::json& j, const WordCountsPerGroup& wordCountsPerGroup)
     {
-        j = nlohmann::json{{"corpusId", wordCountsPerGroup.corpus_id}, {"groupWordCounts", wordCountsPerGroup.group_word_counts}};
+        j = nlohmann::json{
+            {"corpusId", wordCountsPerGroup.corpus_id},
+            {"groupWordCounts", wordCountsPerGroup.group_word_counts}
+        };
     }
 
     void to_json(nlohmann::json& j, const FileWordCounts& fileWordCounts)
     {
-        j = nlohmann::json{{"fileId", fileWordCounts.file_id}, {"groupId", fileWordCounts.group_id}, {"typeCount", fileWordCounts.type_count}, {"tokenCount", fileWordCounts.token_count}};
+        j = nlohmann::json{
+            {"fileId", fileWordCounts.file_id}, 
+            {"groupId", fileWordCounts.group_id}, 
+            {"fileName", fileWordCounts.file_name},
+            {"typeCount", fileWordCounts.type_count}, 
+            {"tokenCount", fileWordCounts.token_count}
+        };
     }
 
 
     void to_json(nlohmann::json& j, const WordCountsPerFile& wordCountsPerFile)
     {
-        j = nlohmann::json{{"corpusId", wordCountsPerFile.corpus_id}, {"fileGroupWordCounts", wordCountsPerFile.file_word_counts}};
+        j = nlohmann::json{
+            {"corpusId", wordCountsPerFile.corpus_id},
+            {"fileGroupWordCounts", wordCountsPerFile.file_word_counts}};
     }
 
 
     void to_json(nlohmann::json& j, const WordCounts& wordCounts)
     {
-        j = nlohmann::json{{"wordCountsPerCorpus", wordCounts.word_counts_per_corpus}, {"wordCountsPerGroup", wordCounts.word_counts_per_group}, {"wordCountsPerFile", wordCounts.word_counts_per_file}};
+        j = nlohmann::json{
+            {"wordCountsPerCorpus", wordCounts.word_counts_per_corpus}, 
+            {"wordCountsPerGroup", wordCounts.word_counts_per_group}, 
+            {"wordCountsPerFile", wordCounts.word_counts_per_file}
+        };
     }
 
     void to_json(nlohmann::json& j, const WordDataCorpus& wordDataCorpus)

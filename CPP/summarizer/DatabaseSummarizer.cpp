@@ -997,7 +997,7 @@ SummarizerMetadata::WordCountsPerGroup DatabaseSummarizer::fetchWordCountsPerGro
 {
     sqlite3_stmt* statement;
     const char* sql = R"(
-        SELECT group_id, type_count, token_count
+        SELECT group_id, group_name, type_count, token_count
         FROM word_counts_per_group
         JOIN corpus_group
         ON corpus_group.id = word_counts_per_group.group_id

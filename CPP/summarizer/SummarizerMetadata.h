@@ -40,6 +40,7 @@ namespace SummarizerMetadata {
     // Word counts in the group
     struct GroupWordCounts {
         int group_id;
+        std::string group_name;
         int type_count;
         int token_count;
     };
@@ -53,6 +54,7 @@ namespace SummarizerMetadata {
     struct FileWordCounts {
         int file_id;
         int group_id;
+        std::string file_name;
         int type_count;
         int token_count;
     };
