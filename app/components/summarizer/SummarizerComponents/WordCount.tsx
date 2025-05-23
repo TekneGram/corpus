@@ -137,14 +137,20 @@ const WordCount = () => {
         if (wordCountDataExistsInDB === true && countsUpToDateInDB === true) {
             if (hasWordCountData === true) {
                 return (
-                    <>
-                        <WordCountsPerCorpusDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerCorpus} />
-                        <WordCountsPerGroupDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup} />
-                        <WordCountsPerFileDisplay wordCountsPerFile={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerFile} wordCountsPerGroup={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup}/>
-                        
+                    <div className='word-count-dashboard'>
+                        <div className='to-word-lists'>
+                            <button className='word-list-fetch-button' type='button' onClick={handleFetchWordListData}>Word Lists ➡</button>
+                        </div>
+                        <div className='word-count-corpus-subcorpus-container'>
+                            <WordCountsPerCorpusDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerCorpus} />
+                            <WordCountsPerGroupDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup} />
+                        </div>
+                        <div className='word-count-files-container'>
+                            <WordCountsPerFileDisplay wordCountsPerFile={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerFile} wordCountsPerGroup={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup}/>
+                        </div>
                         <p>Call the word lists if you like!</p>
-                        <button className='word-list-fetch-button' type='button' onClick={handleFetchWordListData}>Get Word Lists</button>
-                    </>
+                        
+                    </div>
                 );
             } else {
                 return (
@@ -157,7 +163,7 @@ const WordCount = () => {
 
     return (
         <div className='word-count-container'>
-            <div className='word-count-title'>Word Counts</div>
+            <div className='word-count-title'></div>
             <div className='word-count-operations-container'>
                 {
                     filesExistInDB ? (

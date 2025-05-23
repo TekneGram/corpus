@@ -38,7 +38,7 @@ const WordCountsPerFileDisplay: React.FC<WordCountsPerFilesDisplayProps> = ({ wo
     const visibleRows = showAll ? updatedFileWordCounts : updatedFileWordCounts.slice(0, 5);
 
     return (
-        <div className="word-counts-per-group-table-container">
+        <div className="word-counts-per-file-table-container">
             <h2 className="table-heading">Word counts per file</h2>
             <div className="table-wrapper">
                 <table className='word-counts-table'>

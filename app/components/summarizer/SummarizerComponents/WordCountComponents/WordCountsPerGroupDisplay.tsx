@@ -22,7 +22,7 @@ const WordCountsPerGroupDisplay: React.FC<WordCountsPerGroupDisplayProps> = ({ w
 
     return (
         <div className="word-counts-per-group-table-container">
-            <h2 className="table-heading">Word counts per subcorpus group</h2>
+            <h2 className="table-heading">Subcorpora</h2>
             <div className="table-wrapper">
                 <table className="word-counts-table">
                     <thead>

@@ -19,7 +19,7 @@ const WordCountsPerCorpusDisplay: React.FC<WordCountsPerCorpusDisplayProps> = ({
 
     return (
         <div className="word-counts-per-corpus-table-container">
-            <h2 className="table-heading">Word counts for the whole corpus</h2>
+            <h2 className="table-heading">Corpus</h2>
             <div className="table-wrapper">
                 <table className="word-counts-table">
                     <thead>
