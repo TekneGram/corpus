@@ -66,7 +66,7 @@ namespace SummarizerMetadata {
     {
         j = nlohmann::json{
             {"corpusId", wordCountsPerFile.corpus_id},
-            {"fileGroupWordCounts", wordCountsPerFile.file_word_counts}};
+            {"fileWordCounts", wordCountsPerFile.file_word_counts}};
     }
 
 
