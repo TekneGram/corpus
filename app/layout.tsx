@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { ProjectTitlesProvider } from './context/ProjectsContext';
 import { CorpusProvider } from './context/CorpusContext';
+import { SummaryProvider } from "./context/SummarizerContext";
 
 // Child components
 import OperationsSidebar from "./components/layouts/OperationsSidebar";
@@ -36,39 +37,41 @@ export default function RootLayout({
   return (
     <CorpusProvider>
       <ProjectTitlesProvider>
-        <html lang="en">
-          <head>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-            <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet" />
-          </head>
-          <body
-            className={`screen`}
-          >
-            <ToastContainer />
-            
-            <Header />
+        <SummaryProvider>
+          <html lang="en">
+            <head>
+              <link rel="preconnect" href="https://fonts.googleapis.com" />
+              <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+              <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet" />
+            </head>
+            <body
+              className={`screen`}
+            >
+              <ToastContainer />
+              
+              <Header />
 
-            <div className='screen-body'>
+              <div className='screen-body'>
 
-              <OperationsSidebar 
-                handleStartingNewProject={setIsStartingNewProject} 
-              />
+                <OperationsSidebar 
+                  handleStartingNewProject={setIsStartingNewProject} 
+                />
 
-              <ProjectsSidebar 
-                startingNewProject={isStartingNewProject}
-                handleStartingNewProject={setIsStartingNewProject}
-              />
+                <ProjectsSidebar 
+                  startingNewProject={isStartingNewProject}
+                  handleStartingNewProject={setIsStartingNewProject}
+                />
 
-              <main className='main-area'>
-                {children}
-              </main>
+                <main className='main-area'>
+                  {children}
+                </main>
 
-            </div>
+              </div>
 
-            
-          </body>
-        </html>
+              
+            </body>
+          </html>
+        </SummaryProvider>
       </ProjectTitlesProvider>
     </CorpusProvider>
     

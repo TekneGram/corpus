@@ -5,7 +5,7 @@ import '@/manager.css';
 import { CorpusFile } from '@/app/types/types';
 
 // APIs
-import { postGroupName, uploadFileContent } from '@/app/api/manageCorpus';
+import { postGroupName, uploadFileContent, updateCorpusPreppedStatus } from '@/app/api/manageCorpus';
 
 // Context and state management
 import { useEffect, useState} from 'react';
@@ -73,12 +73,14 @@ const FileUpload:React.FC<FileUploadProps> = ({ cancelAddNewSubcorpus }) => {
                     errorMessages = errorMessages + result.cppOutput + "\n";
                 }
                 // Update the context
-                corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusId, corpusFile: result.cppOutput as CorpusFile })
+                corpusDispatch({ type: 'add-corpus-file', subCorpusId: subCorpusId, corpusFile: result.cppOutput as CorpusFile });
             }
 
             if (errorMessages === "") {
                 toast.success("All files were successfully uploaded");
                 cancelAddNewSubcorpus();
+                // Update the status of the corpus
+                updateCorpusPreppedStatus(corpusMetadata.corpus.id);
             } else {
                 toast.warning("The following error messages were received: \n" + errorMessages);
                 cancelAddNewSubcorpus();

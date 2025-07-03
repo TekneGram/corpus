@@ -3,7 +3,11 @@
 ## To compile CPP programs into executables
 Inside corpus/CPP directory:
 
+#### corpusManager
 g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHandler.cpp CorpusAnalyzer.cpp JSONConvert.cpp -lsqlite3
+
+#### corpusSummarizer
+g++ -o ./executables/corpusSummarizer -std=c++11 corpusSummarizerMain.cpp ./summarizer/DatabaseSummarizer.cpp ./summarizer/JSONConvert.cpp JSONConvert.cpp ./summarizer/EnumHelpers.cpp -lsqlite3
 
 ## To run
 Install node modules: npm install
