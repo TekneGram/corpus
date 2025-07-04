@@ -18,6 +18,9 @@ import WordCountsPerFileDisplay from './WordCountComponents/WordCountsPerFileDis
 import WordCountsPerGroupDisplay from './WordCountComponents/WordCountsPerGroupDisplay';
 import WordCountsPerCorpusDisplay from './WordCountComponents/WordCountsPerCorpusDisplay';
 
+// WordList area
+import WordList from './WordList';
+
 const WordCount = () => {
 
     const corpusMetadata = useCorpusMetaData();
@@ -25,10 +28,12 @@ const WordCount = () => {
     const summaryDispatch = useSummaryDispatch();
 
     
-    const [filesExistInDB, setFilesExistInDB] = useState(false);
+    const [filesExistInDB, setFilesExistInDB] = useState<boolean>(false);
     const [wordCountDataExistsInDB, setWordCountDataExistsInDB] = useState<boolean>(false);
     const [countsUpToDateInDB, setCountsUpToDateInDB] = useState<boolean | null>(false);
-    const [hasWordCountData, setHasWordCountData] = useState(false);
+    const [hasWordCountData, setHasWordCountData] = useState<boolean>(false);
+
+    const [showWordList, setShowWordList] = useState<boolean>(false);
 
     useEffect(() => {
         // Check that files exist in the database
