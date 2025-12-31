@@ -1121,6 +1121,18 @@ SummarizerMetadata::WordCounts DatabaseSummarizer::fetchWordCounts(const int& co
  * Retrieve WORD LISTS
  */
 
+ /**
+  * Algorithm for standard deviation measure.
+  * 1. Find the total count of all the words in each subcorpus by summing the counts of all words grouped by subcorpus in the word_list_per_group table.
+  * 2. Create a new column called the relative_frequency in the word_list_per_group data structure (Need a new data structure for this).
+  * 3. Relative frequency should be calculated as either per 1000, per 10,000, per 100,000 or per 1,000,000 words depending on the average counts of words in the subcorpora.
+  * 4. For each word, calculate the relative frequency within each subcorpus.
+  * 5. Now group by each word (e.g., one word might occur in each subcorpus) and calculate the mean relative frequency across all subcorpora. Will need a column for this in the data structure.
+  * 6. Then, calculate the difference between the relative frequency of each word in each subcorpus and the mean relative frequency. Will need a column for this in the data structure.
+  * 7. Finally, group by word and calculate the standard deviation of the relative frequencies across all subcorpora for each word. Will need a column for this in the data structure.
+  * 8. Finally, filter by column to keep the word and its standard deviation, relative frequency and mean relative frequency.
+  */
+
  SummarizerMetadata::WordListPerCorpus DatabaseSummarizer::fetchWordListPerCorpus(const int& corpus_id)
 {
     sqlite3_stmt* statement;
