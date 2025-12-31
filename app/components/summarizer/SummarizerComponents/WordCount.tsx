@@ -18,6 +18,9 @@ import WordCountsPerFileDisplay from './WordCountComponents/WordCountsPerFileDis
 import WordCountsPerGroupDisplay from './WordCountComponents/WordCountsPerGroupDisplay';
 import WordCountsPerCorpusDisplay from './WordCountComponents/WordCountsPerCorpusDisplay';
 
+// WordList area
+import WordList from './WordList';
+
 const WordCount = () => {
 
     const corpusMetadata = useCorpusMetaData();
@@ -25,10 +28,12 @@ const WordCount = () => {
     const summaryDispatch = useSummaryDispatch();
 
     
-    const [filesExistInDB, setFilesExistInDB] = useState(false);
+    const [filesExistInDB, setFilesExistInDB] = useState<boolean>(false);
     const [wordCountDataExistsInDB, setWordCountDataExistsInDB] = useState<boolean>(false);
     const [countsUpToDateInDB, setCountsUpToDateInDB] = useState<boolean | null>(false);
-    const [hasWordCountData, setHasWordCountData] = useState(false);
+    const [hasWordCountData, setHasWordCountData] = useState<boolean>(false);
+
+    const [showWordList, setShowWordList] = useState<boolean>(false);
 
     useEffect(() => {
         // Check that files exist in the database
@@ -107,9 +112,16 @@ const WordCount = () => {
         console.log(wordCounts);
     }
 
+    /**
+     * TODO: Can maybe remove this and put it in the useEffect in WordList.tsx
+     */
     const handleFetchWordListData = async () => {
         console.log("Getting the word list data");
         const wordLists = await fetchWordListData(corpusMetadata.corpus.id);
+    }
+
+    const handleSwitchView = () => {
+        setShowWordList(!showWordList);
     }
 
     const renderWordCountDisplay = () => {
@@ -139,7 +151,7 @@ const WordCount = () => {
                 return (
                     <div className='word-count-dashboard'>
                         <div className='to-word-lists'>
-                            <button className='word-list-fetch-button' type='button' onClick={handleFetchWordListData}>Word Lists ➡</button>
+                            <button className='word-list-fetch-button' type='button' onClick={handleSwitchView}>Word Lists ➡</button>
                         </div>
                         <div className='word-count-corpus-subcorpus-container'>
                             <WordCountsPerCorpusDisplay wordCounts={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerCorpus} />
@@ -148,7 +160,6 @@ const WordCount = () => {
                         <div className='word-count-files-container'>
                             <WordCountsPerFileDisplay wordCountsPerFile={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerFile} wordCountsPerGroup={summaryMetadata.summaryMetaData.wordCounts.wordCountsPerGroup}/>
                         </div>
-                        <p>Call the word lists if you like!</p>
                         
                     </div>
                 );
@@ -162,23 +173,38 @@ const WordCount = () => {
     }
 
     return (
-        <div className='word-count-container'>
-            <div className='word-count-title'></div>
-            <div className='word-count-operations-container'>
-                {
-                    filesExistInDB ? (
-                        // Files exist in the corpus database, so render counting and count display options
-                        renderWordCountDisplay()
-                    ) : (
-                        // No files exist in the database
-                        <div className='no-files-in-db-message'>There are no files in your corpus. Add them in the Manage tab above.</div>
-                    )
-                }
-                
-            </div>
-            
-            
+        <div className="word-count-container overflow-hidden">
+            <div
+                className={`flex transition-transform duration-500 ease-in-out`}
+                style={{
+                    width: "200%",
+                    transform: showWordList ? "translateX(-50%)" : "translateX(0%)",
+                }}
+            >
+                {/* Word Count View */}
+                <div className="word-count-view">
+                    <div className="word-count-title">Word Count View</div>
+                    <div className="word-count-operations-container">
+                        {filesExistInDB ? (
+                            renderWordCountDisplay()
+                        ) : (
+                            <div className="no-files-in-db-message">
+                                There are no files in your corpus. Add them in the Manage tab above.
+                            </div>
+                        )}
+                    </div>
+                </div>
 
+                {/* Word List View */}
+                <div className="word-count-view">
+                    <div className="word-count-title">Word List View</div>
+                    <div className='to-word-count'>
+                            <button className='to-word-count-button' type='button' onClick={handleSwitchView}>🔙 Word Counts</button>
+                        </div>
+                <WordList />
+                </div>
+            
+            </div>
         </div>
     );
 };

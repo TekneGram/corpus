@@ -64,3 +64,23 @@ These are contained within the `<Manager />` component. The `<FileDisplay />` co
 Overall design of the software follows an MVC approach. The front end uses React's context provider and reducer to manage the state of the app. The flow chart below shows the case for one component. As the user interacts with the component, an update is dispatched to the reducer to perform changes to the context. Information is sent to the server where, depending on the action, a route is chosen (using Express). A controller calls a model, which in turn spawns a CPP or an R process, interacting with the database and processing data. This is sent back up through the route to the reducer. The reducer then updates the context provider and finalizes the view for the user.
 
 ![Alt text](Flowchart.png))
+
+# Definitions
+## Token
+* A token is defined as a single word with a space between it.
+* A hyphenated word, such as three-year is counted as two words.
+* If a word has punctuation, its punctuation is stripped and that is counted as one word, such as the final word of a sentence.
+* A contraction is considered to be two words, e.g., hasn't is two words: "has" and "n't".
+* An abbreviation is one word, e.g., U.N. for United Nations is treated as one word
+* Expressions like e.g., and i.e., are counted as one word.
+
+## Type
+* This is a unique word form in the corpus. Any token that occurs one or more times is counted once as a type.
+
+## Lemma
+* Grammatical forms of a word. For example, I like going to town and I liked the many towns yesterday. In that sentence we have "like" and "liked" which are morphological variations of a word with the same meaning "like". Similarly, the singular and plural "town" and "towns" are both lemmas of "town".
+* In other words, a lemma is the group of all inflectional forms.
+
+## Lexeme
+* The example "During my time at high school I won volleyball matches 8 times and lost only 1 time." contains the lemma "time" in the plural and singular forms, so we have 1 lemma for time. However, we have 2 lexemes for time. Here the first "time" refers to a period, or range of time. The second and third "time" refer to frequency, or how often. Since these have two different meanings, we say that there are 2 lexemes of time.
+* A lexeme is like the different entries in a dictionary when defining a single word. Each word can have more than one meaning.
