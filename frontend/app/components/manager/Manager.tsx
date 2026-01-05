@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react';
 
 // Child Components
 import CorpusEdit from "./ManagerComponents/CorpusEdit"; // Edits the corpus name
-import FileUpload from "./ManagerComponents/FileUpload"; // Uploads files to a subcorpus
+import CreateSubcorpus from "./ManagerComponents/CreateSubcorpus"; // Uploads files to a subcorpus
 import FileDisplay from "./ManagerComponents/FileDisplay"; // Displays the file names in a subcorpus
 import TextDisplay from './ManagerComponents/TextDisplay'; // Displays the text of a selected corpus file
 import { toast } from 'react-toastify';
@@ -86,7 +86,7 @@ const Manager = () => {
                             type='button'
                             onClick={handleAddGroup}
                         >
-                            <div>Add group</div>
+                            <div>Add Subcorpus</div>
                             <div className="add-group-button-icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </div>
@@ -111,7 +111,7 @@ const Manager = () => {
                     addingGroup === true &&
                     <>
                         <div className='file-upload-area'>
-                            <FileUpload cancelAddNewSubcorpus={cancelAddNewSubcorpus} />
+                            <CreateSubcorpus cancelAddNewSubcorpus={cancelAddNewSubcorpus} />
                         </div>
                     </>
                 }
