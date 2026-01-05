@@ -28,7 +28,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
     showTextWithFileID
 }) =>  {
 
-    const { setSubcorpusName, subcorpusName, isValid, startEditing, cancelEditing, commitEditing } = useSubcorpusNameEditing(subCorpusFiles.subCorpus.group_name);
+    const { setSubcorpusName, subcorpusName, isValid, cancelEditing, commitEditing } = useSubcorpusNameEditing(subCorpusFiles.subCorpus.group_name);
     const corpusDispatch = useCorpusDispatch();
 
     const handleNameChangeSubmit = async () => {

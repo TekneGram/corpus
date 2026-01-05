@@ -6,10 +6,6 @@ export const useSubcorpusNameEditing = (initialName: string) => {
 
     const isValid = subcorpusName.trim().length > 3;
 
-    const startEditing = () => {
-        setOriginalName(subcorpusName);
-    }
-
     const cancelEditing = () => {
         setSubcorpusName(originalName);
     }
@@ -22,7 +18,6 @@ export const useSubcorpusNameEditing = (initialName: string) => {
         setSubcorpusName, 
         subcorpusName, 
         isValid,
-        startEditing,
         cancelEditing,
         commitEditing
     };
