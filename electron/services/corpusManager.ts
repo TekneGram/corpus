@@ -86,7 +86,7 @@ class CorpusManager {
         });
     }
 
-    updateProjectTitleInDatabase(projectTitle: ProjectTitle): Promise<string> {
+    updateProjectTitleInDatabase(projectTitle: ProjectTitle): Promise<ProjectTitle> {
         const titleJSON: ProjectTitleWithCommand = {
             ...projectTitle,
             command: "updateProjectTitle"
@@ -95,30 +95,34 @@ class CorpusManager {
         const projectTitleString: string = JSON.stringify(titleJSON);
         const cppProcess = new CPPProcess("corpusManager");
 
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<ProjectTitle>((resolve, reject) => {
             cppProcess.runProcess(
-            projectTitleString,
-            (error: Error | null, output: string | null) => {
-                if (error) {
-                console.error("Error: ", error.message);
-                reject(
-                    new Error(
-                    "There was an error running the C++ process to update the project title: "
-                    )
-                );
-                } else {
-                console.log(
-                    "Output from C++ process updating the project title is: ",
-                    output
-                );
-                resolve(output as string);
+                projectTitleString,
+                (error: Error | null, output: string | null) => {
+                    if (error) {
+                        console.error("Error: ", error.message);
+                        reject(
+                            new Error(
+                                "There was an error running the C++ process to update the project title: "
+                            )
+                        );
+                    } else {
+                        try {
+                            const parsed = JSON.parse(output);
+                            if(!isProjectTitle(parsed)) {
+                                throw new Error("Data returned from c++ process is not of type ProjectTitle");
+                            }
+                            resolve(parsed);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }
                 }
-            }
-        );
-    })
-    .catch((err: Error) => {
-        console.error("Error handling the project title update: ", err.message);
-        throw err;
+            );
+        })
+        .catch((err: Error) => {
+            console.error("Error handling the project title update: ", err.message);
+            throw err;
         });
     }
 

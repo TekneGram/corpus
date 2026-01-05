@@ -21,19 +21,8 @@ export const saveProjectTitleToDatabase = async (title: string): Promise<Project
 export const updateProjectTitleInDatabase = async (projectId: number, title: string): Promise<any> => {
     // Create object type for passing.
     const projectTitle: ProjectTitle = {id: projectId, project_name: title}
-    
-    try {
-        const raw = await window.api.updateProjectTitleInDatabase(projectTitle);
-
-        const text = typeof raw === "string" ? raw : String(raw);
-        const trimmed = text.trim();
-        if (!trimmed) return null;
-
-        return JSON.parse(trimmed);
-    } catch (error) {
-        throw error;
-        // Can I return something here to the user so that they know the update failed?
-    }
+    const result = await window.api.updateProjectTitleInDatabase(projectTitle);
+    return result;
 }
 
 export const loadProjectMetadata = async (projectId: number): Promise<CorpusMetaData> => {

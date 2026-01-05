@@ -7,10 +7,10 @@ const api = {
     loadAllProjectTitles: (): Promise<ProjectTitle[]> =>
         ipcRenderer.invoke("corpusManager:loadAllProjectTitles"),
 
-    saveProjectTitleToDatabase: (projectTitle: ProjectTitle): Promise<string> =>
+    saveProjectTitleToDatabase: (projectTitle: ProjectTitle): Promise<ProjectTitle> =>
         ipcRenderer.invoke("corpusManager:saveProjectTitleToDatabase", projectTitle),
 
-    updateProjectTitleInDatabase: (projectTitle: ProjectTitle) =>
+    updateProjectTitleInDatabase: (projectTitle: ProjectTitle): Promise<ProjectTitle> =>
         ipcRenderer.invoke("corpusManager:updateProjectTitleInDatabase", projectTitle),
 
     loadProjectMetadata: (projectId: ProjectId): Promise<CorpusMetaData> =>
