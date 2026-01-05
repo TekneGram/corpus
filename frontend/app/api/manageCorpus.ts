@@ -11,17 +11,11 @@ export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
     return projectTitles;
 }
 
-export const saveProjectTitleToDatabase = async (title: string): Promise<string> => {
+export const saveProjectTitleToDatabase = async (title: string): Promise<ProjectTitle> => {
     // Create object type for passing
     const projectTitle: ProjectTitle = {project_name: title, id: -1}; // Hard code the id because a new id will be created on the database.
-    
-    try {
-        const raw = await window.api.saveProjectTitleToDatabase(projectTitle);
-        console.log(raw);
-        return raw;
-    } catch (error) {
-        throw error;
-    }
+    const result = await window.api.saveProjectTitleToDatabase(projectTitle);
+    return result;
 }
 
 export const updateProjectTitleInDatabase = async (projectId: number, title: string): Promise<any> => {

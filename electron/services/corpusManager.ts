@@ -45,7 +45,7 @@ class CorpusManager {
         });
     }
 
-    saveProjectTitleToDatabase(projectTitle: ProjectTitle): Promise<string> {
+    saveProjectTitleToDatabase(projectTitle: ProjectTitle): Promise<ProjectTitle> {
         const titleJSON: ProjectTitleWithCommand = {
             ...projectTitle,
             command: "startNewProject"
@@ -55,7 +55,7 @@ class CorpusManager {
         const projectTitleString: string = JSON.stringify(titleJSON);
         const cppProcess = new CPPProcess("corpusManager");
 
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<ProjectTitle>((resolve, reject) => {
             cppProcess.runProcess(
                 projectTitleString,
                 (error: Error | null, output: string | null) => {
@@ -67,9 +67,15 @@ class CorpusManager {
                             )
                         );
                     } else {
-                        // This whole process needs updating because we have
-                        // no idea whether the database succeeded or not
-                        resolve(output as string);
+                        try {
+                            const parsed = JSON.parse(output);
+                            if(!isProjectTitle(parsed)) {
+                                throw new Error("c++ failed to return data of type ProjectTitle");
+                            }
+                            resolve(parsed)
+                        } catch (err) {
+                            reject(err);
+                        }
                     }
                 }
             );

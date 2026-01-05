@@ -17,8 +17,8 @@ export const useProjectCreation = (stopCreating: () => void) => {
     }
 
     try {
-      await saveProjectTitleToDatabase(trimmed);
-      toast.success("Project created: " + trimmed);
+      const result = await saveProjectTitleToDatabase(trimmed);
+      toast.success("Project created: " + result.project_name);
       setTitle("");
       stopCreating();
       setSaved(true);

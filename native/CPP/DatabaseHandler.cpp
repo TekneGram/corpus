@@ -10,22 +10,56 @@ DatabaseHandler::DatabaseHandler(sqlite3* db)
     dbConn = db;
 }
 
-void DatabaseHandler::startNewProject(const std::string& project_title)
+CorpusMetadata::ProjectTitle DatabaseHandler::startNewProject(const std::string& project_title)
 {
-    sqlite3_stmt* statement;
+    sqlite3_stmt* statement = nullptr;
     const char* sql = "INSERT INTO project (project_name) VALUES (?);";
     if (sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr) != SQLITE_OK) {
-        std::cerr << "Error preparing statement " << sqlite3_errmsg(dbConn) << std::endl;
+        throw std::runtime_error(
+            std::string("Prepare failed: ") + sqlite3_errmsg(dbConn)
+        );
     }
-    sqlite3_bind_text(statement, 1, project_title.c_str(), -1, SQLITE_STATIC);
 
-    int exit_code = sqlite3_step(statement);
-    if (exit_code != SQLITE_DONE) {
-        std::cerr << "Error inserting data: " << sqlite3_errmsg(dbConn);
+    if (sqlite3_bind_text(
+        statement,
+        1,
+        project_title.c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    ) != SQLITE_OK) {
         sqlite3_finalize(statement);
+        throw std::runtime_error(
+            std::string("Bind failed: ") + sqlite3_errmsg(dbConn)
+        );
     }
-    std::cout << "Project successfully created!\n";
+
+    int rc = sqlite3_step(statement);
+    if (rc != SQLITE_DONE) {
+        sqlite3_finalize(statement);
+        throw std::runtime_error(
+            std::string("Insert failed: ") + sqlite3_errmsg(dbConn)
+        );
+    }
+
     sqlite3_finalize(statement);
+
+    // Retrieve auto-generated ID
+    int project_id = static_cast<int>(sqlite3_last_insert_rowid(dbConn));
+
+    return CorpusMetadata::ProjectTitle{
+        project_id,
+        project_title
+    };
+
+    // sqlite3_bind_text(statement, 1, project_title.c_str(), -1, SQLITE_STATIC);
+
+    // int exit_code = sqlite3_step(statement);
+    // if (exit_code != SQLITE_DONE) {
+    //     std::cerr << "Error inserting data: " << sqlite3_errmsg(dbConn);
+    //     sqlite3_finalize(statement);
+    // }
+    // std::cout << "Project successfully created!\n";
+    // sqlite3_finalize(statement);
 }
 
 nlohmann::json DatabaseHandler::updateProjectTitle(const int& project_id, const std::string& project_title)

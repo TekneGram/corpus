@@ -47,8 +47,14 @@ void handleError(const std::string& message, sqlite3* db = nullptr)
 
 int main(int argc, char* argv[])
 {
-    std::string text;
-    std::getline(std::cin, text);
+    std::string text(
+        (std::istreambuf_iterator<char>(std::cin)),
+        std::istreambuf_iterator<char>()
+    );
+
+    if (text.empty()) {
+        handleError("Empty input received");
+    }
 
     // Parse the JSON input
     nlohmann::json inputData;
@@ -57,9 +63,6 @@ int main(int argc, char* argv[])
     } catch (const nlohmann::json::parse_error& e) {
         handleError("Invalid JSON input");
     }
-
-    // Extract the command
-    std::string command = inputData["command"];
 
     // Get database and open it
     const std::string dbPath = getDbPath(argc, argv);
@@ -86,55 +89,114 @@ int main(int argc, char* argv[])
 
     DatabaseHandler handler(db);
 
+    // Extract the command
+    if (!inputData.contains("command") || !inputData["command"].is_string()) {
+        handleError("Missing or invalid command to run C++", db);
+    }
+    std::string command = inputData["command"].get<std::string>();
+
     try {
         if (command == "startNewProject") {
-            std::string project_title = inputData["project_name"];
-            handler.startNewProject(project_title);
-            std::cout << "Project successfully created!" << std::endl;
+            if (!inputData.contains("project_name") || !inputData["project_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid project_name");
+            }
+            std::string project_title = inputData["project_name"].get<std::string>();
+            nlohmann::json result = handler.startNewProject(project_title);
+            std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "updateProjectTitle") {
-            std::string project_title = inputData["project_name"];
-            int project_id = inputData["id"];
+            if (!inputData.contains("project_name") || !inputData["project_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid project_name");
+            }
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            std::string project_title = inputData["project_name"].get<std::string>();
+            int project_id = inputData["id"].get<int>();
             nlohmann::json result = handler.updateProjectTitle(project_id, project_title);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "getProjectTitles") {
             nlohmann::json result = handler.getProjectTitles();
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "patchCorpusName") {
-            std::string corpus_name { inputData["corpus_name"] };
-            int corpus_id { inputData["id"] };
+            if (!inputData.contains("corpus_name") || !inputData["corpus_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid corpus_name");
+            }
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            std::string corpus_name { inputData["corpus_name"].get<std::string>() };
+            int corpus_id { inputData["id"].get<int>() };
             nlohmann::json result = handler.updateCorpusName(corpus_id, corpus_name);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "postCorpusName") {
-            std::string corpus_name { inputData["corpus_name"] };
-            int project_id { inputData["project_id"] };
+            if (!inputData.contains("corpus_name") || !inputData["corpus_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid corpus_name");
+            }
+            if (!inputData.contains("project_id") || !inputData["project_id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            std::string corpus_name { inputData["corpus_name"].get<std::string>() };
+            int project_id { inputData["project_id"].get<int>() };
             nlohmann::json result = handler.createCorpusName(project_id, corpus_name);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "getProjectMetadata") {
-            int project_id { inputData["id"] };
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            int project_id { inputData["id"].get<int>() };
             nlohmann::json result = handler.getProjectMetadata(project_id);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "createCorpusGroup") {
-            std::string group_name { inputData["groupName"] };
-            int corpus_id { inputData["corpus_id"] };
+            if (!inputData.contains("groupName") || !inputData["groupName"].is_string()) {
+                throw std::runtime_error("Missing or invalid groupName");
+            }
+            if (!inputData.contains("corpus_id") || !inputData["corpus_id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid corpus_id");
+            }
+            std::string group_name { inputData["groupName"].get<std::string>() };
+            int corpus_id { inputData["corpus_id"].get<int>() };
             nlohmann::json result = handler.createCorpusGroup(corpus_id, group_name);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "uploadFileContent") {
-            int group_id { inputData["group_id"] };
-            std::string file_content { inputData["file_content"] };
-            std::string file_name { inputData["file_name"] };
+            if (!inputData.contains("file_content") || !inputData["file_content"].is_string()) {
+                throw std::runtime_error("Missing or invalid file_content");
+            }
+            if (!inputData.contains("file_name") || !inputData["file_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid file_name");
+            }
+            if (!inputData.contains("group_id") || !inputData["group_id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid group_id");
+            }
+            int group_id { inputData["group_id"].get<int>() };
+            std::string file_content { inputData["file_content"].get<std::string>() };
+            std::string file_name { inputData["file_name"].get<std::string>() };
             nlohmann::json result = handler.uploadFileContent(group_id, file_content, file_name);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "patchCorpusGroup") {
-            int group_id { inputData["id"] };
-            std::string group_name { inputData["group_name"] };
+            if (!inputData.contains("group_name") || !inputData["group_name"].is_string()) {
+                throw std::runtime_error("Missing or invalid group_name");
+            }
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            int group_id { inputData["id"].get<int>() };
+            std::string group_name { inputData["group_name"].get<std::string>() };
             nlohmann::json result = handler.updateCorpusGroupName(group_id, group_name);
             std::cout << result.dump() << std::endl;
 
