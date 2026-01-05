@@ -1,5 +1,8 @@
 # TekneGram
 
+# Current Bugs Found
+- Update project name - when changing the name, each keystroke causes a call to the database to download the information.
+
 ## To compile CPP programs into executables
 Inside corpus/CPP directory:
 

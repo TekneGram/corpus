@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .scrollbar-none {
+      scrollbar-width: none /* Firefox */
+    }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Edge */
+    }
+  }
+
+.manager-container {
+    @apply w-[99.5%];
+}
+
+.manage-group-area {
+    @apply grid gap-3 grid-cols-3;
+}
+
+.corpus-edit-area {
+    @apply w-full flex flex-col h-full bg-slate-200 rounded-2xl;
+}
+
+.corpus-title-area {
+    @apply text-center text-slate-600 mt-3 mb-3;
+}
+
+.editing-corpus-name-area {
+    @apply flex flex-col;
+}
+
+.corpus-name-input {
+    @apply font-light text-black w-11/12 text-2xl p-1 rounded drop-shadow-md text-center focus:outline-none;
+}
+
+.corpus-name-update-button {
+    @apply p-1 text-2xl text-blue-400 disabled:text-transparent;
+}
+
+.corpus-name-cancel-button {
+    @apply p-1 text-2xl text-red-400;
+}
+
+.corpus-title {
+    @apply font-extralight text-2xl;
+}
+
+.group-input-area {
+    @apply w-full flex flex-col;
+}
+
+.add-group-area {
+    @apply text-center;
+}
+
+.file-upload-area {
+    
+}
+
+.add-group-button {
+    @apply flex flex-row justify-self-center justify-center
+    border-blue-400 border-2 rounded-lg p-1 mb-3 text-blue-400
+    font-normal text-sm hover:text-white hover:bg-blue-400
+    w-[90%];
+}
+
+.add-group-button-icon {
+    @apply pl-2;
+}
+
+.group-name-input {
+    @apply border-b-2 border-black
+    outline-none bg-slate-200 rounded-t-xl p-2
+    text-2xl font-extralight;
+}
+
+.group-name-display {
+    @apply border-b-2 border-black outline-none bg-teal-600 rounded-t-xl p-2
+    text-2xl font-extralight text-center text-white;
+}
+
+.group-name-display-file-number {
+    @apply text-sm font-extralight text-center text-white flex flex-row justify-between;
+}
+
+.file-chooser-button {
+    @apply 
+    file:mr-5 file:rounded-lg file:border-blue-400 file:border-0
+    file:text-sm file:bg-sky-600 file:text-white mt-3;
+}
+
+.file-uploader-button {
+    @apply
+    border-blue-400 border-2 rounded-lg p-1
+    font-extralight text-sm hover:text-white hover:bg-blue-400
+    mt-2;
+}
+
+.file-uploader-button-disabled {
+    @apply
+    border-gray-400 border-2 rounded-lg p-1
+    font-extralight text-sm hover:text-white hover:bg-gray-400
+    mt-2;
+}
+
+.file-display-container {
+    @apply border-gray-400 border-2 border-t-0 rounded-b-lg p-1
+    font-extralight text-xs h-24 overflow-y-scroll overflow-x-hidden scrollbar-none;
+}
+
+.file-selected {
+    @apply h-5 bg-slate-200;
+}
+
+.file-not-selected {
+    @apply h-5;
+}
+
+.file-name {
+    @apply flex flex-row justify-between;
+}
+
+.file-adder-button {
+    @apply 
+    file:mr-5 file:rounded-lg file:border-blue-400 file:border-0
+    file:text-sm file:bg-sky-600 file:text-white mt-3
+    text-sm
+}
+
+.text-display-container {
+    @apply mt-3
+}
+
+.text-display-area {
+    @apply flex flex-col
+    border-gray-400 border-2 rounded-lg p-1
+    h-48 overflow-y-scroll overflow-x-hidden scrollbar-none;
+}
+
+.text-display-header {
+    @apply flex flex-row justify-between
+    mb-3
+    font-normal text-lg text-slate-600
+}
+
+.text-display-editor-area {
+    
+}
+
+.text-edit-button {
+    @apply text-blue-600 mr-1
+}
+
+.text-hide-button {
+    @apply text-red-600 mr-1
+}
+
+.text-display-body {
+
+}
+
+.text-display-text {
+    @apply font-light text-sm
+}
