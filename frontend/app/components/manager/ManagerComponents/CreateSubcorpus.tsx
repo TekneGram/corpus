@@ -1,10 +1,10 @@
 import '@styles/manager.css';
 
 // views
-import { CreateSubcorpusView } from './createSubcorpus/CreateSubcorpusView';
+import { CreateSubcorpusView } from './createAndEditSubcorpus/CreateSubcorpusView';
 
 // hooks
-import { useSubcorpusNameEditing } from './createSubcorpus/useSubcorpusNameEditing';
+import { useSubcorpusNameEditing } from './createAndEditSubcorpus/useSubcorpusNameEditing';
 import { useFileUpload } from './fileHandlers/useFileUpload';
 
 // context
@@ -24,7 +24,7 @@ const CreateSubcorpus:React.FC<CreateSubcorpusProps> = ({
     cancelAddNewSubcorpus
 }) => {
 
-    const { setSubcorpusName, subcorpusName, isValid } = useSubcorpusNameEditing();
+    const { setSubcorpusName, subcorpusName, isValid } = useSubcorpusNameEditing('');
     const { files, isUploading, onFileChange, uploadFiles, resetFiles } = useFileUpload();
 
     const corpusMetadata = useCorpusMetaData();

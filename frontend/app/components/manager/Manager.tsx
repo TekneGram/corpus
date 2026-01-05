@@ -17,7 +17,7 @@ import { useState, useEffect } from 'react';
 // Child Components
 import CorpusEdit from "./ManagerComponents/CorpusEdit"; // Edits the corpus name
 import CreateSubcorpus from "./ManagerComponents/CreateSubcorpus"; // Uploads files to a subcorpus
-import FileDisplay from "./ManagerComponents/FileDisplay"; // Displays the file names in a subcorpus
+import SubcorpusDisplay from "./ManagerComponents/SubcorpusDisplayNew"; // Displays the file names in a subcorpus
 import TextDisplay from './ManagerComponents/TextDisplay'; // Displays the text of a selected corpus file
 import { toast } from 'react-toastify';
 
@@ -101,7 +101,7 @@ const Manager = () => {
                         {
                             corpusMetadata.files.map((files) => (
                                 <div className='file-upload-area' key={files.subCorpus.id}>
-                                    <FileDisplay subCorpusFiles={files} showTextWithFileID={showTextWithFileID} />
+                                    <SubcorpusDisplay subCorpusFiles={files} showTextWithFileID={showTextWithFileID} />
                                 </div>
                             ))
                         }

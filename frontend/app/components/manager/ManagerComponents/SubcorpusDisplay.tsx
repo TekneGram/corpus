@@ -19,7 +19,7 @@ import { useCorpusMetaData, useCorpusDispatch } from '@context/corpusMetadata/us
 import { toast } from "react-toastify";
 
 // FileDisplayProps
-interface FileDisplayProps {
+interface SubcorpusDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
     showTextWithFileID: (fileId: number) => void; // Function to show text with file ID
 }
@@ -30,7 +30,7 @@ type FileSelected = {
 }
 
 
-const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFileID }) => {
+const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({ subCorpusFiles, showTextWithFileID }) => {
 
     const [files, setFiles] = useState<File[]>([]); // State for storing files
     const [showAddNewFileSelector, setShowAddNewFileSelector] = useState<boolean>(false);
@@ -316,4 +316,4 @@ const FileDisplay:React.FC<FileDisplayProps> = ({ subCorpusFiles, showTextWithFi
     );
 };
 
-export default FileDisplay;
+export default SubcorpusDisplay;
