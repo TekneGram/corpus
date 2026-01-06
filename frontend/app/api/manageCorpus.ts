@@ -1,4 +1,4 @@
-import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent } from "@shared/types/manageCorpusTypes"
+import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent, DeleteFileResult } from "@shared/types/manageCorpusTypes"
 
 type ApiResponse =
     | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
@@ -67,25 +67,15 @@ export const uploadFileContent = async (fileContent: string, group_id: number, f
     return result;
 }
 
-export const deleteFile = async (file_id: number): Promise<ApiResponse> => {
+export const deleteFileFromDatabase = async (file_id: number): Promise<DeleteFileResult> => {
     // TO DO - get the file name in here, too!
     const corpusFile: CorpusFile = {
         id: file_id,
         file_name: ""
     };
-    try {
-        const raw = await window.api.deleteFile(corpusFile);
 
-        if (typeof raw === "string") {
-            const trimmed = raw.trim();
-            if (!trimmed) return { status: "fail", cppOutput: "Empty IPC response in deleteFile" };
-            return JSON.parse(trimmed) as ApiResponse;
-        }
-
-        return raw as ApiResponse;
-    } catch (error) {
-        throw error;
-    }
+    const result = await window.api.deleteFile(corpusFile);
+    return result;
 }
 
 export const deleteSubcorpus = async (group_id: number): Promise<any> => {

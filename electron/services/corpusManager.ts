@@ -1,6 +1,6 @@
 import CPPProcess from './cppSpawn'
-import type { ProjectTitle, ProjectTitleWithCommand, ProjectId, ProjectIdWithCommand, CorpusProjectRelation, CorpusProjectRelationWithCommand, Corpus, CorpusWithCommand, PostGroupNameWithCommand, SubCorpus, SubCorpusWithCommand, CorpusFileContent, CorpusFileContentWithCommand, CorpusFile, CorpusFileWithCommand, CorpusMetaData, FileText } from '@shared/types/manageCorpusTypes';
-import { isProjectTitle, isSubCorpus, isCorpusFile, isCorpusMetaData, isCorpus, isFileText } from '../typeguards/manageCorpusGuards'
+import type { ProjectTitle, ProjectTitleWithCommand, ProjectId, ProjectIdWithCommand, CorpusProjectRelation, CorpusProjectRelationWithCommand, Corpus, CorpusWithCommand, PostGroupNameWithCommand, SubCorpus, SubCorpusWithCommand, CorpusFileContent, CorpusFileContentWithCommand, CorpusFile, CorpusFileWithCommand, CorpusMetaData, FileText, DeleteFileResult } from '@shared/types/manageCorpusTypes';
+import { isProjectTitle, isSubCorpus, isCorpusFile, isCorpusMetaData, isCorpus, isFileText, isDeleteFileResult } from '../typeguards/manageCorpusGuards'
 
 
 class CorpusManager {
@@ -380,7 +380,7 @@ class CorpusManager {
         });
     }
 
-    deleteFile(corpusFile: CorpusFile): Promise<string> {
+    deleteFile(corpusFile: CorpusFile): Promise<DeleteFileResult> {
         const corpusFileWithCommand: CorpusFileWithCommand = {
             ...corpusFile,
             command: "deleteAFile"
@@ -389,7 +389,7 @@ class CorpusManager {
         const fileInfoString: string = JSON.stringify(corpusFileWithCommand);
         const cppProcess = new CPPProcess("corpusManager");
 
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<DeleteFileResult>((resolve, reject) => {
             cppProcess.runProcess(
                 fileInfoString,
                 (error: Error | null, output: string | null) => {
@@ -402,8 +402,16 @@ class CorpusManager {
                             )
                         );
                     } else {
-                        console.log("Output from the cpp process deleting a single file: ", output);
-                        resolve(output as string);
+                        try {
+                            const parsed = JSON.parse(output);
+                            // ADD A TYPEGUARD and throw an error
+                            if(!isDeleteFileResult(parsed)) {
+                                throw new Error("Invalid C++ from the deleteFile function - returned value is not of type DeleteFileResult.");
+                            }
+                            resolve(parsed);
+                        } catch (err) {
+                            reject(err);
+                        }
                     }
                 }
             );

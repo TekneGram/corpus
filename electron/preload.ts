@@ -1,4 +1,4 @@
-import type { Corpus, CorpusFile, CorpusFileContent, CorpusMetaData, CorpusProjectRelation, ProjectId, ProjectTitle, SubCorpus, FileText } from '@shared/types/manageCorpusTypes';
+import type { Corpus, CorpusFile, CorpusFileContent, CorpusMetaData, CorpusProjectRelation, ProjectId, ProjectTitle, SubCorpus, FileText, DeleteFileResult } from '@shared/types/manageCorpusTypes';
 import { contextBridge, ipcRenderer } from "electron"
 
 console.log("[preload] LOADED", new Date().toISOString());
@@ -31,7 +31,7 @@ const api = {
     uploadFileContent: (corpusFileContent: CorpusFileContent): Promise<CorpusFile> =>
         ipcRenderer.invoke("corpusManager:uploadFileContent", corpusFileContent),
 
-    deleteFile: (corpusFile: CorpusFile) =>
+    deleteFile: (corpusFile: CorpusFile): Promise<DeleteFileResult> =>
         ipcRenderer.invoke("corpusManager:deleteFile", corpusFile),
 
     deleteSubcorpus: (subCorpus: SubCorpus) =>

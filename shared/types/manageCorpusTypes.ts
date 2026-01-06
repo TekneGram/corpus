@@ -88,6 +88,15 @@ export type CorpusFileWithCommand = CorpusFile & {
     command: string;
 }
 
+// Database Returns
+export type DeleteFileResult = {
+    success: boolean;
+    fileDeleted: boolean;
+    groupDeleted: boolean;
+    groupId: number;
+    message: string;
+}
+
 // For handling empty cppOutput returns
 export type EmptyCPPOutput = {
     id: number;
@@ -97,6 +106,15 @@ export type EmptyCPPOutput = {
 /**
  * Viewing files
  */
+
+export type FileUploadResult = {
+    successFiles: CorpusFile[];
+    failedFiles: string[];
+}
+
+export type FileUploadError = 
+    | { type: 'partial'; failedFiles: string[] }
+    | { type: 'unexpected'; message: string};
 
 // Text from the database
 export type FileText = {

@@ -539,10 +539,10 @@ CorpusMetadata::SubCorpus DatabaseHandler::updateCorpusGroupName(const int& grou
 
 // Deletes the file with a given file_id
 // If it is the last file in the subcorpus, the subcorpus is also deleted.
-void DatabaseHandler::deleteAFile(const int& file_id)
+CorpusMetadata::DeleteFileResult DatabaseHandler::deleteAFile(const int& file_id)
 {
-    sqlite3_stmt* statement;
-    int groupId = -1;
+    sqlite3_stmt* statement = nullptr;
+    CorpusMetadata::DeleteFileResult result;
 
     try {
         // Step 1: Begin transaction to ensure atomicity
@@ -559,7 +559,7 @@ void DatabaseHandler::deleteAFile(const int& file_id)
         sqlite3_bind_int(statement, 1, file_id);
 
         if (sqlite3_step(statement) == SQLITE_ROW) {
-            groupId = sqlite3_column_int(statement, 0);
+            result.groupId = sqlite3_column_int(statement, 0);
         } else {
             throw std::runtime_error("file not found in the database");
         }
@@ -578,6 +578,8 @@ void DatabaseHandler::deleteAFile(const int& file_id)
             throw std::runtime_error("Failed to delete file: " + std::string(sqlite3_errmsg(dbConn)));
         }
 
+        result.fileDeleted = true;
+
         sqlite3_finalize(statement);
 
         // Step 4: Check if the group has any remaining files
@@ -585,13 +587,14 @@ void DatabaseHandler::deleteAFile(const int& file_id)
         if (sqlite3_prepare_v2(dbConn, checkGroupQuery, -1, &statement, nullptr) != SQLITE_OK) {
             throw std::runtime_error("Failed to prepare query to check group files: " + std::string(sqlite3_errmsg(dbConn)));
         }
-        sqlite3_bind_int(statement, 1, groupId);
+        sqlite3_bind_int(statement, 1, result.groupId);
 
         int fileCount = 0;
         if (sqlite3_step(statement) == SQLITE_ROW) {
             fileCount = sqlite3_column_int(statement, 0);
         }
         sqlite3_finalize(statement);
+        statement = nullptr;
 
         // Step 5: Delete the group if no files remain
         if (fileCount == 0) {
@@ -600,17 +603,15 @@ void DatabaseHandler::deleteAFile(const int& file_id)
                 throw std::runtime_error("Failed to prepare query to delete group: " + std::string(sqlite3_errmsg(dbConn)));
             }
 
-            sqlite3_bind_int(statement, 1, groupId);
+            sqlite3_bind_int(statement, 1, result.groupId);
 
             if (sqlite3_step(statement) != SQLITE_DONE) {
                 throw std::runtime_error("Failed to delete group: " + std::string(sqlite3_errmsg(dbConn)));
             }
 
+            result.groupDeleted = true;
             sqlite3_finalize(statement);
-
-            std::cout << "Group with ID " << groupId << " deleted successfully." << std::endl;
-        } else {
-            std::cout << "Group with ID " <<  groupId << " still has files; no deletion on the subcorpus itself was performed." << std::endl;
+            statement = nullptr;
         }
 
         // Step 6: Commit the transaction
@@ -618,39 +619,18 @@ void DatabaseHandler::deleteAFile(const int& file_id)
             throw std::runtime_error("Failed to commit transaction: " + std::string(sqlite3_errmsg(dbConn)));
         }
 
+        result.success = true;
+        result.message = result.groupDeleted ? "File deleted and subcorpus removed because it became empty." : "File deleted successfully.";
+
+        return result;
+
     } catch (const std::exception& ex) {
         sqlite3_exec(dbConn, "ROLLBACK;", nullptr, nullptr, nullptr);
         if (statement) sqlite3_finalize(statement);
-        std::cerr << "Error: " << ex.what() << std::endl; // handle the error here
-        //throw; // Throw the exception for the caller to handle.
+        result.success = false;
+        result.message = ex.what();
+        return result;
     }
-
-    return ;
-
-    // const char* sql = "DELETE FROM files WHERE id = ?;";
-    // int exit_code = sqlite3_prepare_v2(dbConn, sql, -1, &statement, nullptr);
-    // if (exit_code != SQLITE_OK) {
-    //     std::cerr << "Error preparing delete statement: " << sqlite3_errmsg(dbConn) << std::endl;
-    //     return;
-    // }
-
-    // // Bind the file_id parameter
-    // exit_code = sqlite3_bind_int(statement, 1, file_id);
-    // if (exit_code != SQLITE_OK) {
-    //     std::cerr << "Error binding file_id " << sqlite3_errmsg(dbConn) << std::endl;
-    //     sqlite3_finalize(statement);
-    //     return;
-    // }
-
-    // // Execute the query
-    // exit_code = sqlite3_step(statement);
-    // if (exit_code != SQLITE_DONE) {
-    //     std::cerr << "Error deleting file: " << sqlite3_errmsg(dbConn) << std::endl;
-    // } else {
-    //     std::cout << "File with ID " << file_id << " and related data deleted successfully." << std::endl;
-    // }
-
-    // sqlite3_finalize(statement);
 }
 
 void DatabaseHandler::deleteSubcorpus(const int& group_id)

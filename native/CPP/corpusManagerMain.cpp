@@ -199,19 +199,30 @@ int main(int argc, char* argv[])
             std::string group_name { inputData["group_name"].get<std::string>() };
             nlohmann::json result = handler.updateCorpusGroupName(group_id, group_name);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
 
         } else if (command == "deleteAFile") {
-            int file_id { inputData["id"] };
-            handler.deleteAFile(file_id);
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            int file_id { inputData["id"].get<int>() };
+            nlohmann::json result = handler.deleteAFile(file_id);
+            std::cout << result.dump() << std::endl;
+            std::cout.flush();
             
         } else if (command == "deleteSubcorpus") {
             int group_id { inputData["id"] };
             handler.deleteSubcorpus(group_id);
 
         } else if (command == "getFileText") {
-            int file_id { inputData["id"] };
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            int file_id { inputData["id"].get<int>() };
             nlohmann::json result = handler.getFileText(file_id);
             std::cout << result.dump() << std::endl;
+            std::cout.flush();
+
         } else {
             handleError("Unknown command: " + command, db);
         }
