@@ -1,4 +1,4 @@
-import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText } from "@shared/types/manageCorpusTypes";
+import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText, DeleteFileResult } from "@shared/types/manageCorpusTypes";
 
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
@@ -66,5 +66,18 @@ export function isFileText(
         isObject(value) &&
         typeof value.id === "number" &&
         typeof value.file_text === "string"
-    )
+    );
+}
+
+export function isDeleteFileResult(
+    value: unknown
+): value is DeleteFileResult {
+    return (
+        isObject(value) &&
+        typeof value.success === "boolean" &&
+        typeof value.fileDeleted === "boolean" &&
+        typeof value.groupDeleted === "boolean" &&
+        typeof value.groupId === "number" &&
+        typeof value.message === "string"
+    );
 }

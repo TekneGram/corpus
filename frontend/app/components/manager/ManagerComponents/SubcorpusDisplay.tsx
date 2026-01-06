@@ -9,7 +9,7 @@ import '@styles/manager.css';
 import { CorpusFile, CorpusFilesPerSubCorpus, EmptyCPPOutput, SubCorpus } from '@shared/types/manageCorpusTypes';
 
 // APIs
-import { uploadFileContent, patchGroupName, deleteFile, deleteSubcorpus, updateCorpusPreppedStatus } from '@app-api/manageCorpus';
+import { uploadFileContent, patchGroupName, deleteSubcorpus, updateCorpusPreppedStatus, deleteFileFromDatabase } from '@app-api/manageCorpus';
 
 // Context and State Management
 import { useState, useEffect } from 'react';
@@ -188,7 +188,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({ subCorpusFiles, show
      */
     const handleDeleteFile = async (file_id: number) => {
         alert("This file will be deleted!");
-        const result = await deleteFile(file_id);
+        const result = await deleteFileFromDatabase(file_id);
         if (result.status === 'success') {
             corpusDispatch({ type: 'delete-file', subCorpusId: subCorpusFiles.subCorpus.id, fileId: file_id });
             toast.success((result.cppOutput as EmptyCPPOutput).message);

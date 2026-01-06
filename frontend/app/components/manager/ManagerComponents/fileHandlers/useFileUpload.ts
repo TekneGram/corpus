@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 // types
-import { CorpusFile, FileUploadResult, FileUploadError } from '@shared/types/manageCorpusTypes';
+import { CorpusFile, FileUploadResult, FileUploadError, DeleteFileResult } from '@shared/types/manageCorpusTypes';
 
 // api
-import { uploadFileContent } from '@/api/manageCorpus';
+import { uploadFileContent, deleteFileFromDatabase } from '@/api/manageCorpus';
 
 export const useFileUpload = () => {
     const [files, setFiles] = useState<File[]>([])
@@ -78,16 +78,16 @@ export const useFileUpload = () => {
         } finally {
             setIsUploading(false);
         }
-        
+
         return { successFiles, failedFiles }
     };
 
     /**
      * UPDATE PROMISE
      */
-    const deleteFiles = async (fileId: number): Promise<any> => {
-        
-        
+    const deleteFile = async (fileId: number): Promise<DeleteFileResult> => {
+        const result = await deleteFileFromDatabase(fileId);
+        return result;
     }
 
     const resetFiles = () => {
@@ -101,6 +101,7 @@ export const useFileUpload = () => {
         error,
         onFileChange,
         uploadFiles,
-        resetFiles
+        resetFiles,
+        deleteFile
     }
 }

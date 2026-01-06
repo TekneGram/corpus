@@ -23,7 +23,7 @@ interface SubcorpusDisplayViewProps {
     onSubmitFiles: () => void;
     selectedFileID: number | null;
     setSelectedFile: (fileId: number) => void;
-    onSubmitDeleteFile: () => void;
+    onSubmitDeleteFile: (fileId: number) => void;
 }
 
 export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
@@ -82,8 +82,8 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
     /**
      * Handle delete file
      */
-    const handleDeleteFile = (corpusId: number) => {
-        onSubmitDeleteFile()
+    const handleDeleteFile = (fileId: number) => {
+        onSubmitDeleteFile(fileId);
     }
     
 

@@ -34,7 +34,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
 }) =>  {
 
     const { setSubcorpusName, subcorpusName, isValid, cancelEditing, commitEditing } = useSubcorpusNameEditing(subCorpusFiles.subCorpus.group_name);
-    const { files, isUploading, error: fileError, onFileChange, uploadFiles, resetFiles } = useFileUpload();
+    const { files, isUploading, error: fileError, onFileChange, uploadFiles, resetFiles, deleteFile } = useFileUpload();
     const corpusDispatch = useCorpusDispatch();
     const corpusMetadata = useCorpusMetaData();
 
@@ -91,8 +91,20 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
         resetFiles();
     }
 
-    const handleSubmitDeleteFile = async () => {
-
+    const handleSubmitDeleteFile = async (fileId) => {
+        const result = await deleteFile(fileId);
+        if (result.success === true) {
+            toast.success(result.message);
+            corpusDispatch({
+                type: 'delete-file',
+                subCorpusId: subCorpusFiles.subCorpus.id,
+                fileId: fileId
+            });
+            updateCorpusPreppedStatus(corpusMetadata.corpus.id);
+            showTextWithFileID(null);
+        } else {
+            toast.error(result.message);
+        }
     }
 
     return (

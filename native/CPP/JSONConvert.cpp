@@ -37,6 +37,11 @@ namespace CorpusMetadata {
         j = nlohmann::json{{"id", corpusFileText.file_id}, {"file_text", corpusFileText.file_text}};
     }
 
+    void to_json(nlohmann::json& j, const DeleteFileResult& deleteFileResult)
+    {
+        j = nlohmann::json{{"success", deleteFileResult.success}, {"fileDeleted", deleteFileResult.fileDeleted}, {"groupDeleted", deleteFileResult.groupDeleted}, {"groupId", deleteFileResult.groupId}, {"message", deleteFileResult.message}};
+    }
+
 
 
 }

@@ -55,7 +55,10 @@ const Manager = () => {
     useEffect(() => {
         // Keep track of changes in the file ID.
 
-        if (selectedFileID === null) return;
+        if (selectedFileID === null) {
+            setShowTextDisplay(false);
+            return;
+        }
 
         const fetchFileText = async () => {
             try {
