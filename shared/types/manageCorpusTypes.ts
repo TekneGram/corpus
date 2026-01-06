@@ -98,6 +98,11 @@ export type EmptyCPPOutput = {
  * Viewing files
  */
 
+export type FileUploadResult = {
+    successFiles: CorpusFile[];
+    failedFiles: string[];
+}
+
 // Text from the database
 export type FileText = {
     id: number;

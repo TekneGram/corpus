@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // types
-import { CorpusFile } from '@shared/types/manageCorpusTypes';
+import { CorpusFile, FileUploadResult } from '@shared/types/manageCorpusTypes';
 
 // api
 import { uploadFileContent } from '@/api/manageCorpus';
@@ -38,7 +38,7 @@ export const useFileUpload = () => {
     /**
      * CHANGE THE PROMISE TYPE!!!
      */
-    const uploadFiles = async (subCorpusId: number): Promise<any> => {
+    const uploadFiles = async (subCorpusId: number): Promise<FileUploadResult> => {
         setIsUploading(true);
 
         const successFiles: CorpusFile[] = [];
@@ -64,6 +64,14 @@ export const useFileUpload = () => {
         setIsUploading(false);
         return { successFiles, failedFiles }
     };
+
+    /**
+     * UPDATE PROMISE
+     */
+    const deleteFiles = async (fileId: number): Promise<any> => {
+        
+        
+    }
 
     const resetFiles = () => setFiles([]);
 
