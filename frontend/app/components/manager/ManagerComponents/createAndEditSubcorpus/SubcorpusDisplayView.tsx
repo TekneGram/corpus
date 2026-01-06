@@ -18,6 +18,11 @@ interface SubcorpusDisplayViewProps {
     canSubmitNameChange: boolean;
     onSubmitNameChange: () => void;
     onCancelNameChange: () => void;
+    onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    canSubmitFiles: boolean;
+    onSubmitFiles: () => void;
+    selectedFileID: number | null;
+    setSelectedFile: (fileId: number) => void;
 }
 
 export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
@@ -26,9 +31,17 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
     onNameChange,
     canSubmitNameChange,
     onSubmitNameChange,
-    onCancelNameChange
+    onCancelNameChange,
+    onFileChange,
+    canSubmitFiles,
+    onSubmitFiles,
+    selectedFileID,
+    setSelectedFile
 }) => {
 
+    /**
+     * Handle local state for changing subcorpus name
+     */
     const [editingSubcorpusName, setEditingSubcorpusName] = useState<boolean>(false);
 
     const handleChangeName = () => {
@@ -43,6 +56,40 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
     const cancelChangeName = () => {
         setEditingSubcorpusName(false);
         onCancelNameChange();
+    }
+
+    /**
+     * Handle local state for adding files to the subcorpus
+     */
+    const [isAddingFiles, setIsAddingFiles] = useState<boolean>(false);
+    const handleAddFiles = () => {
+        setIsAddingFiles(true);
+    }
+
+    const handleCancelAddNewFiles = () => {
+        setIsAddingFiles(false);
+    }
+
+    /**
+     * Handle selection of file names
+     */
+    const selectFile = (corpusId: number) => {
+        setSelectedFile(corpusId);
+    }
+
+    /**
+     * Handle delete file
+     */
+    const handleDeleteFile = (corpusId: number) => {
+        console.log("Will delete this file");
+    }
+    
+
+    /**
+     * Handle local state for deleting a whole subcorpus
+     */
+    const handleDeleteSubcorpus = () => {
+
     }
 
     return (
@@ -83,7 +130,67 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
                         :
                             <div onClick={handleChangeName}>{subCorpusFiles.subCorpus.group_name}</div>
                     }
+                    <div className='group-name-display-file-number'>
+                        {/* Area for adding files and deleting the whole subcorpus */}
+                        <div>{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
+                        <div onClick={handleAddFiles}>Add files</div>
+                        <div onClick={handleDeleteSubcorpus}>Delete All</div>
+                    </div>
+                    
+                    {
+                        isAddingFiles &&
+                            <div className='group-input-area'>
+                                <input 
+                                    type='file'
+                                    id='new-file-upload'
+                                    name='files'
+                                    multiple
+                                    accept='.txt'
+                                    className='file-adder-button'
+                                    onChange={onFileChange}
+                                />
+                                <button
+                                    className={canSubmitFiles ? `file-uploader-button` : `file-uploader-button-disabled`}
+                                    type='button'
+                                    onClick={() => {onSubmitFiles(); handleCancelAddNewFiles()}}
+                                    disabled={!canSubmitFiles}
+                                >
+                                    { canSubmitFiles ? `Add files` : `Select files first` }
+                                </button>
+                                <button
+                                    className='cancel-add-new-files'
+                                    type='button'
+                                    onClick={handleCancelAddNewFiles}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                    }
                 </div>
+                <div className='file-display-container'>
+                    {/* Files display area. If a file is clicked, it highlights the file and will call for the text to be displayed. */}
+                    {
+                        subCorpusFiles.corpusFiles.map((corpusFile) => (
+                            // Ensures that the class name is conditionally applied to a selected item
+                            <div
+                                className={ corpusFile.id === selectedFileID ? 'file-selected' : 'file-not-selected' }
+                                key={corpusFile.id}
+                            >
+                                <div className='file-name' onClick={() => selectFile(corpusFile.id)}>
+                                    <div>{corpusFile.file_name}</div>
+                                    {
+                                        corpusFile.id === selectedFileID
+                                        ? <div onClick={() => handleDeleteFile(corpusFile.id)}>Delete File</div>
+                                        : ''
+                                    }
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                
+
             </div>
         
         </>

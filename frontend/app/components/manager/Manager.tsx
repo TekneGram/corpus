@@ -27,7 +27,7 @@ const Manager = () => {
      */
     let corpusMetadata = useCorpusMetaData();
     const [addingGroup, setAddingGroup] = useState<boolean>(false);
-    const [selectedFileID, setSelectedFileID] = useState<number | null>(null); // For keeping track of the file ID selected in the FileDisplay child component.
+    const [selectedFileID, setSelectedFileID] = useState<number | null>(null); // For keeping track of the file ID selected in the SubcorpusdisplayView child component.
     const [selectedFileText, setSelectedFileText] = useState<string>(""); // For displaying the text of the selected corpus file.
     const [showTextDisplay, setShowTextDisplay] = useState<boolean>(false); // For displaying the text of the selected corpus file.
 
@@ -101,7 +101,7 @@ const Manager = () => {
                         {
                             corpusMetadata.files.map((files) => (
                                 <div className='file-upload-area' key={files.subCorpus.id}>
-                                    <SubcorpusDisplay subCorpusFiles={files} showTextWithFileID={showTextWithFileID} />
+                                    <SubcorpusDisplay subCorpusFiles={files} showTextWithFileID={showTextWithFileID} selectedFileID={selectedFileID} />
                                 </div>
                             ))
                         }

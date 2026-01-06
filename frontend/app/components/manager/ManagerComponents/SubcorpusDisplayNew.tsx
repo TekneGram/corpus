@@ -10,10 +10,10 @@ import { useSubcorpusNameEditing } from './createAndEditSubcorpus/useSubcorpusNa
 import { useFileUpload } from './fileHandlers/useFileUpload';
 
  // context
- import { useCorpusDispatch } from '@/context/corpusMetadata/useCorpusMetadata';
+ import { useCorpusDispatch, useCorpusMetaData } from '@/context/corpusMetadata/useCorpusMetadata';
 
 // api
-import { patchGroupName } from '@/api/manageCorpus';
+import { patchGroupName, updateCorpusPreppedStatus } from '@/api/manageCorpus';
 
 // child components
 import { toast } from 'react-toastify';
@@ -21,15 +21,19 @@ import { toast } from 'react-toastify';
 interface SubcorpusDisplayProps {
     subCorpusFiles: CorpusFilesPerSubCorpus;
     showTextWithFileID: (fileId: number) => void; // From the parent component to allow displaying text from a selected file.
+    selectedFileID: number | null;
 }
 
 const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
     subCorpusFiles,
-    showTextWithFileID
+    showTextWithFileID,
+    selectedFileID
 }) =>  {
 
     const { setSubcorpusName, subcorpusName, isValid, cancelEditing, commitEditing } = useSubcorpusNameEditing(subCorpusFiles.subCorpus.group_name);
+    const { files, isUploading, onFileChange, uploadFiles, resetFiles } = useFileUpload();
     const corpusDispatch = useCorpusDispatch();
+    const corpusMetadata = useCorpusMetaData();
 
     const handleNameChangeSubmit = async () => {
         try {
@@ -51,6 +55,34 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
         cancelEditing();
     }
 
+    const handleSubmitFiles = async () => {
+        try {
+            const { successFiles, failedFiles } = await uploadFiles(subCorpusFiles.subCorpus.id);
+            successFiles.forEach(file =>
+                corpusDispatch({
+                    type: 'add-corpus-file',
+                    subCorpusId: subCorpusFiles.subCorpus.id,
+                    corpusFile: file
+                })
+            );
+
+            if (failedFiles.length > 0) {
+                toast.warning(
+                    "Some files failed to upload:\n" +
+                    failedFiles.join("\n")
+                );
+            } else {
+                toast.success("All files were successfully uploaded.");
+                updateCorpusPreppedStatus(corpusMetadata.corpus.id);
+            }
+
+            resetFiles();
+        } catch (err) {
+            console.error("Failed to add files: ", err);
+            toast.error("Failed to add files.");
+        }
+    }
+
     return (
         <SubcorpusDisplayView
             subCorpusFiles={subCorpusFiles}
@@ -59,6 +91,11 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
             canSubmitNameChange={isValid}
             onSubmitNameChange={handleNameChangeSubmit}
             onCancelNameChange={handleNameChangeCancel}
+            onFileChange={onFileChange}
+            canSubmitFiles={files.length > 0 && !isUploading}
+            onSubmitFiles={handleSubmitFiles}
+            selectedFileID={selectedFileID}
+            setSelectedFile={showTextWithFileID}
         />
     )
 };
