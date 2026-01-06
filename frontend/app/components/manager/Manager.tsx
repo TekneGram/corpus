@@ -17,7 +17,7 @@ import { useState, useEffect } from 'react';
 // Child Components
 import CorpusEdit from "./ManagerComponents/CorpusEdit"; // Edits the corpus name
 import CreateSubcorpus from "./ManagerComponents/CreateSubcorpus"; // Uploads files to a subcorpus
-import SubcorpusDisplay from "./ManagerComponents/SubcorpusDisplayNew"; // Displays the file names in a subcorpus
+import SubcorpusDisplay from "./ManagerComponents/SubcorpusDisplay"; // Displays the file names in a subcorpus
 import TextDisplay from './ManagerComponents/TextDisplay'; // Displays the text of a selected corpus file
 import { toast } from 'react-toastify';
 

@@ -33,6 +33,26 @@ Inside `corpus/native/CPP` directory:
 #### To build and package, move binaries:
 `electron/bin/executables/` select folder for OS. To be automated later.
 
+## Example vertical stack
+The following stack highlights end to end processes in the Manage Corpus tab, including creating a corpus, uploading, viewing and deleting individual files, etc.
+
+    electron/bin/executables/mac/corpusManager
+    electron/services/corpusManager.ts
+    electron/typeguards/manageCorpusGuards.ts
+    electron/preload.ts
+    frontend/app/api/manageCorpus.ts
+    frontend/app/components/manager/Manager.tsx
+    frontend/app/components/manager/ManagerComponents/SubcorpusDisplay.tsx
+    frontend/app/components/manager/ManagerComponents/createAndEditSubcorpus/SubcorpusDisplayView.tsx
+    frontend/app/components/manager/ManagerComponents/fileHandlers/useFileUpload.ts
+    native/CPP/CorpusMetadata.h
+    native/CPP/DatabaseHandler.cpp
+    native/CPP/DatabaseHandler.h
+    native/CPP/JSONConvert.cpp
+    native/CPP/corpusManagerMain.cpp
+    native/CPP/executablesNew/corpusManager
+    shared/types/manageCorpusTypes.ts
+
 ## layout.tsx
 When up and running, the general layout of the app looks like this:
 
