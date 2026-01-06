@@ -1,6 +1,6 @@
 
 // types
-import type { CorpusFile, CorpusFilesPerSubCorpus } from '@shared/types/manageCorpusTypes';
+import type { CorpusFile, CorpusFilesPerSubCorpus, FileUploadResult } from '@shared/types/manageCorpusTypes';
 
 // views
 import { SubcorpusDisplayView } from './createAndEditSubcorpus/SubcorpusDisplayView';
@@ -57,7 +57,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
 
     const handleSubmitFiles = async () => {
         try {
-            const { successFiles, failedFiles } = await uploadFiles(subCorpusFiles.subCorpus.id);
+            const { successFiles, failedFiles }: FileUploadResult = await uploadFiles(subCorpusFiles.subCorpus.id);
             successFiles.forEach(file =>
                 corpusDispatch({
                     type: 'add-corpus-file',
@@ -84,7 +84,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
     }
 
     const handleSubmitDeleteFile = async () => {
-        
+
     }
 
     return (
