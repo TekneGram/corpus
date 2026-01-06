@@ -83,6 +83,10 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
         }
     }
 
+    const handleSubmitDeleteFile = async () => {
+        
+    }
+
     return (
         <SubcorpusDisplayView
             subCorpusFiles={subCorpusFiles}
@@ -96,6 +100,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
             onSubmitFiles={handleSubmitFiles}
             selectedFileID={selectedFileID}
             setSelectedFile={showTextWithFileID}
+            onSubmitDeleteFile={handleSubmitDeleteFile}
         />
     )
 };
