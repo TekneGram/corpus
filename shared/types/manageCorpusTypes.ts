@@ -103,6 +103,10 @@ export type FileUploadResult = {
     failedFiles: string[];
 }
 
+export type FileUploadError = 
+    | { type: 'partial'; failedFiles: string[] }
+    | { type: 'unexpected'; message: string};
+
 // Text from the database
 export type FileText = {
     id: number;

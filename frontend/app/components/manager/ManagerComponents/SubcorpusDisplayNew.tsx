@@ -9,6 +9,9 @@ import { SubcorpusDisplayView } from './createAndEditSubcorpus/SubcorpusDisplayV
 import { useSubcorpusNameEditing } from './createAndEditSubcorpus/useSubcorpusNameEditing';
 import { useFileUpload } from './fileHandlers/useFileUpload';
 
+// effects
+import { useEffect } from 'react';
+
  // context
  import { useCorpusDispatch, useCorpusMetaData } from '@/context/corpusMetadata/useCorpusMetadata';
 
@@ -31,9 +34,23 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
 }) =>  {
 
     const { setSubcorpusName, subcorpusName, isValid, cancelEditing, commitEditing } = useSubcorpusNameEditing(subCorpusFiles.subCorpus.group_name);
-    const { files, isUploading, onFileChange, uploadFiles, resetFiles } = useFileUpload();
+    const { files, isUploading, error: fileError, onFileChange, uploadFiles, resetFiles } = useFileUpload();
     const corpusDispatch = useCorpusDispatch();
     const corpusMetadata = useCorpusMetaData();
+
+    // Handles the error from useFileUpload hook.
+    useEffect(() => {
+        if (!fileError) return;
+
+        if(fileError.type === 'partial') {
+            toast.warning(
+                'Some files failed to upload:\n' +
+                fileError.failedFiles.join('\n')
+            );
+        } else {
+            toast.error(fileError.message);
+        }
+    }, [fileError]);
 
     const handleNameChangeSubmit = async () => {
         try {
@@ -56,31 +73,22 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
     }
 
     const handleSubmitFiles = async () => {
-        try {
-            const { successFiles, failedFiles }: FileUploadResult = await uploadFiles(subCorpusFiles.subCorpus.id);
-            successFiles.forEach(file =>
-                corpusDispatch({
-                    type: 'add-corpus-file',
-                    subCorpusId: subCorpusFiles.subCorpus.id,
-                    corpusFile: file
-                })
-            );
+        const { successFiles, failedFiles } = await uploadFiles(subCorpusFiles.subCorpus.id);
+        
+        successFiles.forEach(file =>
+            corpusDispatch({
+                type: 'add-corpus-file',
+                subCorpusId: subCorpusFiles.subCorpus.id,
+                corpusFile: file
+            })
+        );
 
-            if (failedFiles.length > 0) {
-                toast.warning(
-                    "Some files failed to upload:\n" +
-                    failedFiles.join("\n")
-                );
-            } else {
-                toast.success("All files were successfully uploaded.");
-                updateCorpusPreppedStatus(corpusMetadata.corpus.id);
-            }
-
-            resetFiles();
-        } catch (err) {
-            console.error("Failed to add files: ", err);
-            toast.error("Failed to add files.");
+        if (successFiles.length > 0 && failedFiles.length === 0) {
+            toast.success('All files were successfully uploaded.');
+            updateCorpusPreppedStatus(corpusMetadata.corpus.id);
         }
+
+        resetFiles();
     }
 
     const handleSubmitDeleteFile = async () => {
