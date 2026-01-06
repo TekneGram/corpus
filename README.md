@@ -44,6 +44,10 @@ The following stack highlights end to end processes in the Manage Corpus tab, in
     frontend/app/components/manager/Manager.tsx
     frontend/app/components/manager/ManagerComponents/SubcorpusDisplay.tsx
     frontend/app/components/manager/ManagerComponents/createAndEditSubcorpus/SubcorpusDisplayView.tsx
+    frontend/context/corpusMetadata/CorpusContext.tsx
+    frontend/context/corpusMetadata/corpusMetadata.types.ts
+    frontend/context/corpusMetadata/corpusMetadataReducer.ts
+    frontend/context/corpusMetadata/useCorpusMetadata.ts
     frontend/app/components/manager/ManagerComponents/fileHandlers/useFileUpload.ts
     native/CPP/CorpusMetadata.h
     native/CPP/DatabaseHandler.cpp
