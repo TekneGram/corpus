@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+   
+    "esModuleInterop": true,
+    
+    
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["shared/*"]
+    }
+  },
+  "include": [
+    "electron/**/*",
+    "shared/**/*",
+  ]
+}

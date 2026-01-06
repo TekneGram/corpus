@@ -1,20 +1,37 @@
 # TekneGram
 
-## To compile CPP programs into executables
-Inside corpus/CPP directory:
+## dev mode
+from `./corpus/frontend`
+```
+npm run dev
+```
+From `./corpus`
+```
+npm run electron-dev
+```
+
+## to create a package (on apple silicon for now)
+from `./corpus/frontend`
+```
+rm -rf dist
+npm run build
+```
+From `./corpus`
+```
+npm run electron-pack
+```
+
+## Compile CPP binaries
+Inside `corpus/native/CPP` directory:
 
 #### corpusManager
-g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHandler.cpp CorpusAnalyzer.cpp JSONConvert.cpp -lsqlite3
+`g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHandler.cpp CorpusAnalyzer.cpp JSONConvert.cpp -lsqlite3`
 
 #### corpusSummarizer
-g++ -o ./executables/corpusSummarizer -std=c++11 corpusSummarizerMain.cpp ./summarizer/DatabaseSummarizer.cpp ./summarizer/JSONConvert.cpp JSONConvert.cpp ./summarizer/EnumHelpers.cpp -lsqlite3
+`g++ -o ./executables/corpusSummarizer -std=c++11 corpusSummarizerMain.cpp ./summarizer/DatabaseSummarizer.cpp ./summarizer/JSONConvert.cpp JSONConvert.cpp ./summarizer/EnumHelpers.cpp -lsqlite3`
 
-## To run
-Install node modules: npm install
-
-To start the backend: npm run start:backend
-
-To run the desktop app: npm run dev:electron
+#### To build and package, move binaries:
+`electron/bin/executables/` select folder for OS. To be automated later.
 
 ## layout.tsx
 When up and running, the general layout of the app looks like this:

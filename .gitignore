@@ -2,14 +2,19 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.js
+
+/release
+/renderer
+/dist
 
 # testing
 /coverage
 
 # next.js
-/.next/
+**/.next/
 /out/
 
 # production
