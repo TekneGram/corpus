@@ -100,6 +100,14 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
                 subCorpusId: subCorpusFiles.subCorpus.id,
                 fileId: fileId
             });
+
+            if (result.groupDeleted === true) {
+                corpusDispatch({
+                    type: 'delete-subcorpus',
+                    subCorpusId: subCorpusFiles.subCorpus.id
+                });
+            }
+
             updateCorpusPreppedStatus(corpusMetadata.corpus.id);
             showTextWithFileID(null);
         } else {
