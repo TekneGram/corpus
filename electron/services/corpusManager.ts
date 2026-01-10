@@ -1,6 +1,6 @@
 import CPPProcess from './cppSpawn'
-import type { ProjectTitle, ProjectTitleWithCommand, ProjectId, ProjectIdWithCommand, CorpusProjectRelation, CorpusProjectRelationWithCommand, Corpus, CorpusWithCommand, PostGroupNameWithCommand, SubCorpus, SubCorpusWithCommand, CorpusFileContent, CorpusFileContentWithCommand, CorpusFile, CorpusFileWithCommand, CorpusMetaData, FileText, DeleteFileResult } from '@shared/types/manageCorpusTypes';
-import { isProjectTitle, isSubCorpus, isCorpusFile, isCorpusMetaData, isCorpus, isFileText, isDeleteFileResult } from '../typeguards/manageCorpusGuards'
+import type { ProjectTitle, ProjectTitleWithCommand, ProjectId, ProjectIdWithCommand, CorpusProjectRelation, CorpusProjectRelationWithCommand, Corpus, CorpusWithCommand, PostGroupNameWithCommand, SubCorpus, SubCorpusWithCommand, CorpusFileContent, CorpusFileContentWithCommand, CorpusFile, CorpusFileWithCommand, CorpusMetaData, FileText, DeleteFileResult, DeleteSubCorpusResult } from '@shared/types/manageCorpusTypes';
+import { isProjectTitle, isSubCorpus, isCorpusFile, isCorpusMetaData, isCorpus, isFileText, isDeleteFileResult, isDeleteSubCorpusResult } from '../typeguards/manageCorpusGuards'
 
 
 class CorpusManager {
@@ -425,7 +425,7 @@ class CorpusManager {
         });
     }
 
-    deleteSubcorpus(subCorpus: SubCorpus): Promise<string> {
+    deleteSubcorpus(subCorpus: SubCorpus): Promise<DeleteSubCorpusResult> {
 
         const subCorpusWithCommand: SubCorpusWithCommand = {
             ...subCorpus,
@@ -435,7 +435,7 @@ class CorpusManager {
         const subCorpusWithCommandString: string = JSON.stringify(subCorpusWithCommand);
         const cppProcess = new CPPProcess("corpusManager");
 
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<DeleteSubCorpusResult>((resolve, reject) => {
             cppProcess.runProcess(
                 subCorpusWithCommandString,
                 (error: Error | null, output: string | null) => {
@@ -511,21 +511,24 @@ class CorpusManager {
     updateCorpusPreppedStatus(corpusId) {
         const cppProcess = new CPPProcess('corpusManager');
         return new Promise((resolve, reject) => {
-            cppProcess.runProcess("", (error, output) => {
-                if (error) {
-                    console.error("Error", error.message);
-                    reject(new Error("There was an error of course!"));
-                } else {
-                    console.log("Output is: ", output);
-                    resolve(output);
-                }
-            })
+            cppProcess.runProcess(
+                "", 
+                (error: Error | null, output: string | null) => {
+                    if (error) {
+                        console.error("Error", error.message);
+                        reject(new Error("There was an error of course!" + error.message));
+                    } else {
+                        try {
+                            const parsed = JSON.parse(output);
+                            resolve(parsed);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }
+            });
         })
-        .then(output => {
-            return output;
-        })
-        .catch(err => {
-            console.error("Oh dear");
+        .catch((err: Error) => {
+            console.error("Oh dear, something went wrong doing updateCorpusPreppedStatus");
             throw err;
         })
     }

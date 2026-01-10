@@ -212,7 +212,9 @@ int main(int argc, char* argv[])
             
         } else if (command == "deleteSubcorpus") {
             int group_id { inputData["id"] };
-            handler.deleteSubcorpus(group_id);
+            nlohmann::json result = handler.deleteSubcorpus(group_id);
+            std::cout << result.dump() <<std::endl;
+            std::cout.flush();
 
         } else if (command == "getFileText") {
             if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
