@@ -24,6 +24,7 @@ interface SubcorpusDisplayViewProps {
     selectedFileID: number | null;
     setSelectedFile: (fileId: number) => void;
     onSubmitDeleteFile: (fileId: number) => void;
+    onSubmitDeleteSubcorpus: (groupId: number) => void;
 }
 
 export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
@@ -38,7 +39,8 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
     onSubmitFiles,
     selectedFileID,
     setSelectedFile,
-    onSubmitDeleteFile
+    onSubmitDeleteFile,
+    onSubmitDeleteSubcorpus
 }) => {
 
     /**
@@ -90,8 +92,8 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
     /**
      * Handle local state for deleting a whole subcorpus
      */
-    const handleDeleteSubcorpus = () => {
-
+    const handleDeleteSubcorpus = (groupId: number) => {
+        onSubmitDeleteSubcorpus(groupId)
     }
 
     return (
@@ -136,7 +138,7 @@ export const SubcorpusDisplayView: React.FC<SubcorpusDisplayViewProps> = ({
                         {/* Area for adding files and deleting the whole subcorpus */}
                         <div>{subCorpusFiles.corpusFiles.length} {subCorpusFiles.corpusFiles.length === 1 ? 'file' : 'files'}</div>
                         <div onClick={handleAddFiles}>Add files</div>
-                        <div onClick={handleDeleteSubcorpus}>Delete All</div>
+                        <div onClick={() => handleDeleteSubcorpus(subCorpusFiles.subCorpus.id)}>Delete All</div>
                     </div>
                     
                     {

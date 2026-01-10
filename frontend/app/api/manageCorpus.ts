@@ -1,4 +1,4 @@
-import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent, DeleteFileResult } from "@shared/types/manageCorpusTypes"
+import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent, DeleteFileResult, DeleteSubCorpusResult } from "@shared/types/manageCorpusTypes"
 
 type ApiResponse =
     | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
@@ -78,7 +78,7 @@ export const deleteFileFromDatabase = async (file_id: number): Promise<DeleteFil
     return result;
 }
 
-export const deleteSubcorpus = async (group_id: number): Promise<any> => {
+export const deleteSubcorpus = async (group_id: number): Promise<DeleteSubCorpusResult> => {
     // TO DO - get the subcorpus name
     const subCorpus: SubCorpus = {
         id: group_id,

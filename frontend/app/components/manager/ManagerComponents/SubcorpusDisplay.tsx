@@ -16,7 +16,7 @@ import { useEffect } from 'react';
  import { useCorpusDispatch, useCorpusMetaData } from '@/context/corpusMetadata/useCorpusMetadata';
 
 // api
-import { patchGroupName, updateCorpusPreppedStatus } from '@/api/manageCorpus';
+import { deleteSubcorpus, patchGroupName, updateCorpusPreppedStatus } from '@/api/manageCorpus';
 
 // child components
 import { toast } from 'react-toastify';
@@ -115,6 +115,20 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
         }
     }
 
+    const handleSubmitDeleteSubcorpus = async (groupId) => {
+        const result = await deleteSubcorpus(groupId);
+        if (result.success === true) {
+            toast.success(result.message);
+            corpusDispatch({
+                type: 'delete-subcorpus',
+                subCorpusId: subCorpusFiles.subCorpus.id
+            });
+            updateCorpusPreppedStatus(corpusMetadata.corpus.id);
+        } else {
+            toast.error(result.message);
+        }
+    }
+
     return (
         <SubcorpusDisplayView
             subCorpusFiles={subCorpusFiles}
@@ -129,6 +143,7 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
             selectedFileID={selectedFileID}
             setSelectedFile={showTextWithFileID}
             onSubmitDeleteFile={handleSubmitDeleteFile}
+            onSubmitDeleteSubcorpus={handleSubmitDeleteSubcorpus}
         />
     )
 };
