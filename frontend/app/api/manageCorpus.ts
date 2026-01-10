@@ -84,12 +84,8 @@ export const deleteSubcorpus = async (group_id: number): Promise<any> => {
         id: group_id,
         group_name: ""
     };
-    try {
-        const raw = await window.api.deleteSubcorpus(subCorpus);
-        return raw;
-    } catch (error) {
-        throw error;
-    }
+    const result = await window.api.deleteSubcorpus(subCorpus);
+    return result;
 }
 
 // TO DO - MOVE TO SUMMARIZER
