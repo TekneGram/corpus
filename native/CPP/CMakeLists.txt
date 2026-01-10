@@ -23,7 +23,7 @@ set(SOURCES
 
     corpusAnalysis/CorpusAnalyzer.cpp
 
-    DatabaseHandler/Connection.cpp
+    DatabaseHandler/DatabaseHandler.cpp
     DatabaseHandler/ManageCorpusFiles.cpp
     DatabaseHandler/ManageCorpusQueries.cpp
     DatabaseHandler/ManageProjectQueries.cpp

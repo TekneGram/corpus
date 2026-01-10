@@ -46,6 +46,7 @@ async function createWindow() {
 function ensureRuntimeDatabase() : string {
   const runtimeDir = path.join(app.getPath("userData"), "database");
   const runtimeDb = path.join(runtimeDir, "corpus.sqlite")
+  console.log("The runtime db is located at: ", runtimeDb);
 
   const seedDb = app.isPackaged
     ? path.join(process.resourcesPath, "bin", "database", "corpus.sqlite")

@@ -10,8 +10,12 @@
 class DatabaseHandler
 {
     public:
-        explicit DatabaseHandler(sqlite3* db);
+        explicit DatabaseHandler(const std::string& dbPath);
         ~DatabaseHandler();
+
+        sqlite3* getDb() const;
+
+        void ensureSchema();
 
         // ==== Project ====
         CorpusMetadata::ProjectTitle startNewProject(const std::string& project_title);
@@ -36,6 +40,7 @@ class DatabaseHandler
 
     private:
         sqlite3* dbConn;
+        void exec(const std::string& sql);
 
         // ==== Internal helpers ====
         void batchInsert(const int& group_id, const std::vector<std::string>& data, const int& file_id, const std::string& table_name, const std::string& col_name);
