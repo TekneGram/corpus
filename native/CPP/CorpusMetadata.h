@@ -52,6 +52,12 @@ namespace CorpusMetadata {
         std::string message;
     };
 
+    struct DeleteSubCorpusResult {
+        bool success;
+        int groupId;
+        std::string message;
+    };
+
     // JSON conversion function
     void to_json(nlohmann::json& j, const ProjectTitle& projectTitle);
     void to_json(nlohmann::json& j, const Corpus& corpus);
@@ -61,6 +67,7 @@ namespace CorpusMetadata {
     void to_json(nlohmann::json& j, const CorpusMetadata& corpusMetadata);
     void to_json(nlohmann::json& j, const CorpusFileText& corpusFileText);
     void to_json(nlohmann::json& j, const DeleteFileResult& deleteFileResult);
+    void to_json(nlohmann::json& j, const DeleteSubCorpusResult& deleteSubCorpusResult);
 
 } // namespace CorpusMetaData
 

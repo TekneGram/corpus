@@ -27,7 +27,7 @@ class DatabaseHandler
         // ==== Subcorpus / Group ====
         CorpusMetadata::SubCorpus createCorpusGroup(const int& corpus_id, const std::string& group_name);
         CorpusMetadata::SubCorpus updateCorpusGroupName(const int& group_id, const std::string& group_name);
-        void deleteSubcorpus(const int& group_id);
+        CorpusMetadata::DeleteSubCorpusResult deleteSubcorpus(const int& group_id);
 
         // ==== Files ====
         CorpusMetadata::CorpusFile uploadFileContent(const int& group_id, const std::string& file_content, const std::string& file_name);

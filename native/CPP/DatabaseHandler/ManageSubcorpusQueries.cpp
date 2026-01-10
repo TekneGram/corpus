@@ -86,13 +86,18 @@ CorpusMetadata::SubCorpus DatabaseHandler::updateCorpusGroupName(const int& grou
     return sc;
 }
 
-void DatabaseHandler::deleteSubcorpus(const int& group_id)
+CorpusMetadata::DeleteSubCorpusResult DatabaseHandler::deleteSubcorpus(const int& group_id)
 {
     TransactionGuard txn(dbConn);
 
+    CorpusMetadata::DeleteSubCorpusResult result{};
+    result.success = false;
+    result.groupId = -1;
+    result.message = "";
+
     sqlite3_stmt* rawStmt = nullptr;
     const char* sql =
-        "DELETE FROM corpus_group WHERE id = ?;";
+        "DELETE FROM corpus_group WHERE id = ? RETURNING id;";
 
     if (sqlite3_prepare_v2(dbConn, sql, -1, &rawStmt, nullptr) != SQLITE_OK)
         throw std::runtime_error(std::string("Prepare failed: ") + sqlite3_errmsg(dbConn));
@@ -102,8 +107,19 @@ void DatabaseHandler::deleteSubcorpus(const int& group_id)
     if (sqlite3_bind_int(stmt.get(), 1, group_id) != SQLITE_OK)
         throw std::runtime_error(std::string("Bind int failed: ") + sqlite3_errmsg(dbConn));
 
-    if (sqlite3_step(stmt.get()) != SQLITE_DONE)
+    int deletedId = -1;
+    int rc = sqlite3_step(stmt.get());
+    if (rc == SQLITE_ROW) {
+        deletedId = sqlite3_column_int(stmt.get(), 0);
+    } else if (rc != SQLITE_DONE) {
         throw std::runtime_error(std::string("Delete failed: ") + sqlite3_errmsg(dbConn));
+    }
+
+    result.success = (deletedId != -1);
+    result.groupId = deletedId;
+    result.message = (deletedId != -1) ? "Your subcorpus was deleted" : "Failed to delete your subcorpus";
 
     txn.commit();
+
+    return result;
 }
