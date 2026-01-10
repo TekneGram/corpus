@@ -448,8 +448,15 @@ class CorpusManager {
                             )
                         );
                     } else {
-                        console.log("Output from the cpp process deleting a subcorpus: ", output);
-                        resolve(output as string);
+                        try {
+                            const parsed = JSON.parse(output);
+                            if (!isDeleteSubCorpusResult(parsed)) {
+                                throw new Error("Invalid c++ from the deleteSubcorpus function - returned value is not of type DeleteSubCorpusResult.");
+                            }
+                            resolve(parsed);
+                        } catch (err) {
+                            reject(err);
+                        }
                     }
                 }
             );

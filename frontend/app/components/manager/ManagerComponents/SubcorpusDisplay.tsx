@@ -116,7 +116,9 @@ const SubcorpusDisplay:React.FC<SubcorpusDisplayProps> = ({
     }
 
     const handleSubmitDeleteSubcorpus = async (groupId) => {
+        console.log("The group id is:", groupId);
         const result = await deleteSubcorpus(groupId);
+        console.log(result);
         if (result.success === true) {
             toast.success(result.message);
             corpusDispatch({
