@@ -97,6 +97,12 @@ export type DeleteFileResult = {
     message: string;
 }
 
+export type DeleteSubCorpusResult = {
+    success: boolean;
+    groupId: number;
+    message: string;
+}
+
 // For handling empty cppOutput returns
 export type EmptyCPPOutput = {
     id: number;
