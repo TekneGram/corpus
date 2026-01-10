@@ -53,6 +53,7 @@ cmake_install.cmake
 **/build/
 **/executables/
 **/executablesRefactored/
+**/executablesNew/
 **/bin/executables
 
 # Object files

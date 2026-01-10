@@ -25,6 +25,16 @@ npm run electron-pack
 Inside `corpus/native/CPP` directory:
 
 #### corpusManager
+To compile binaries:
+```
+cd native/CPP
+mkdir build
+cd build
+cmake build ..
+cmake --build .
+```
+OLD:
+
 `g++ -o ./executables/corpusManager -std=c++11 corpusManagerMain.cpp DatabaseHandler.cpp CorpusAnalyzer.cpp JSONConvert.cpp -lsqlite3`
 
 #### corpusSummarizer
