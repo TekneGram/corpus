@@ -38,3 +38,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Build artifacts
+build/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Executables
+**/build/
+**/executables/
+**/executablesRefactored/
+**/bin/executables
+
+# Object files
+*.o
+*.obj
