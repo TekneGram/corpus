@@ -210,7 +210,10 @@ int main(int argc, char* argv[])
             result = db.deleteAFile(file_id);
             
         } else if (command == "deleteSubcorpus") {
-            int group_id { inputData["id"] };
+            if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
+                throw std::runtime_error("Missing or invalid id");
+            }
+            int group_id { inputData["id"].get<int>() };
             result = db.deleteSubcorpus(group_id);
 
         } else if (command == "getFileText") {
@@ -226,7 +229,7 @@ int main(int argc, char* argv[])
 
         std::cout << result.dump() << std::endl;
         std::cout.flush();
-        
+
     } catch (const std::exception& e) {
         fatal(e.what());
     }
