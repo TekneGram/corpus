@@ -129,7 +129,7 @@ export type FileText = {
 }
 
 /**
- * Monitoring the status of the corpus in the database
+ * Monitoring the state of the corpus in the database
  */
 // Checking files exist in the corpus
 export type HasFiles = {
@@ -138,20 +138,20 @@ export type HasFiles = {
 }
 
 // Summarizing the corpus
-export type CorpusStatus = {
+export type CorpusState = {
     analysis_type: string | null;
     up_to_date: boolean | null;
 }
 
-export type CorpusPreppedStatus = {
+export type CorpusPreppedState = {
     corpus_id: number;
     analysis_type: string | null;
     up_to_date: boolean | null;
 }
 
-export type CurrentCorpusStatus = {
+export type CurrentCorpusState = {
     hasFiles: HasFiles;
-    corpusStatus: CorpusStatus;
+    corpusStatus: CorpusState;
 }
 
 /**
@@ -204,6 +204,6 @@ export type WordCounts = {
  */
 
 export type SummaryMetaData = {
-    currentCorpusStatus: CurrentCorpusStatus;
+    currentCorpusStatus: CurrentCorpusState;
     wordCounts: WordCounts;
 }

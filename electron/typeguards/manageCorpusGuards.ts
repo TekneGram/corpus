@@ -1,4 +1,4 @@
-import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText, DeleteFileResult, DeleteSubCorpusResult } from "@shared/types/manageCorpusTypes";
+import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText, DeleteFileResult, DeleteSubCorpusResult, HasFiles, CorpusState, CorpusPreppedState } from "@shared/types/manageCorpusTypes";
 
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
@@ -91,4 +91,25 @@ export function isDeleteSubCorpusResult(
         typeof value.groupId === "number" &&
         typeof value.message === "string"
     )
+}
+
+export function isHasFiles(
+    value: unknown
+): value is HasFiles {
+    return (
+        isObject(value) &&
+        typeof value.corpus_id === "number" &&
+        typeof value.has_files === "boolean"
+    )
+}
+
+export function isCorpusPreppedState(
+    value: unknown
+): value is CorpusPreppedState {
+    return (
+        isObject(value) &&
+        typeof value.corpus_id === "number" &&
+        (value.analysis_type === null || typeof value.analysis_type === "string") &&
+        (value.up_to_date === null || typeof value.up_to_date === "boolean")
+    );
 }

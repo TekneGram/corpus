@@ -1,9 +1,4 @@
-import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent, DeleteFileResult, DeleteSubCorpusResult } from "@shared/types/manageCorpusTypes"
-
-type ApiResponse =
-    | { status: "success"; cppOutput: Corpus | SubCorpus | CorpusFile | EmptyCPPOutput }
-    | { status: "success"; cppOutput: FileText }
-    | { status: "fail"; cppOutput: string };
+import type { CorpusMetaData, ProjectTitle, ProjectId, Corpus, CorpusProjectRelation, SubCorpus, CorpusFile, EmptyCPPOutput, FileText, CorpusFileContent, DeleteFileResult, DeleteSubCorpusResult } from "@shared/types/manageCorpusTypes";
 
 export const loadAllProjectTitles = async (): Promise<ProjectTitle[]> => {
     // IPC returns the C++ stdout as a string

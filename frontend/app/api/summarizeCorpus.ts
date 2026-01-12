@@ -1,100 +1,58 @@
-import { HasFiles, CorpusStatus, WordCounts, CorpusPreppedStatus } from "@shared/types/manageCorpusTypes";
+import { HasFiles, Corpus, WordCounts, CorpusPreppedState } from "@shared/types/manageCorpusTypes";
 
-type CorpusFilesExistResponse = 
-    | { status: "success"; cppOutput: HasFiles }
-    | { status: "fail", message: string};
+// type CorpusFilesExistResponse = 
+//     | { status: "success"; cppOutput: HasFiles }
+//     | { status: "fail", message: string};
 
-type CorpusStatusResponse =
-    | { status: "success"; cppOutput: CorpusStatus }
-    | { status: "fail"; message: string };
+// type CorpusStatusResponse =
+//     | { status: "success"; cppOutput: CorpusStatus }
+//     | { status: "fail"; message: string };
 
 type WordCountsResponse = 
     | { status: "success"; cppOutput: WordCounts }
     | { status: "fail"; message: string };
 
 type SummarizeWordsResponse = 
-    | { status: "success"; cppOutput: CorpusPreppedStatus}
+    | { status: "success"; cppOutput: CorpusPreppedState}
     | { status: "fail"; message: string }
 
-
-export const checkCorpusFilesExistInDB = async (corpusId: number): Promise<CorpusFilesExistResponse> => {
-    try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/files`, {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-        const result: CorpusFilesExistResponse = await response.json();
-        if (result.status === "success") {
-            console.log("Results of corpus file checking is: ", result.cppOutput);
-        }
-        // TODO - return only the cppOutput
-        return result;
-    } catch (error) {
-        throw error;
-    }
+export const checkCorpusFilesExistInDB = async(corpusId: number): Promise<HasFiles> => {
+    const corpus: Corpus = {
+        corpus_name: "",
+        id: corpusId
+    };
+    const result = await window.summarizerApi.checkCorpusFilesExistInDB(corpus);
+    return result;
 }
 
-export const checkCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
-    try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}`, {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-        const result: CorpusStatusResponse = await response.json();
-        if (result.status === "success") {
-            console.log("Results of corpus status checking is: ", result.cppOutput);
-        }
-        // TODO - return only the cppOutput
-        return result;
-    } catch (error) {
-        throw error;
+export const checkCorpusPreppedStatus = async(corpusId: number, analysisType: string): Promise<CorpusPreppedState> => {
+    const corpusPreppedState: CorpusPreppedState = {
+        corpus_id: corpusId,
+        analysis_type: analysisType,
+        up_to_date: null
     }
+    const result = await window.summarizerApi.checkCorpusPreppedState(corpusPreppedState);
+    return result;
 }
 
-export const updateCorpusPreppedStatus = async (corpusId: number, analysisType: string, toBeUpdated: boolean): Promise<CorpusStatusResponse> => {
-    try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}/${toBeUpdated}`, {
-            method: "PATCH",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-        const result: CorpusStatusResponse = await response.json();
-        if (result.status === "success") {
-            console.log("Results of corpus status update is: ", result.cppOutput);
-        }
-        // TODO - return only the cppOutput
-        return result;
-    } catch (error) {
-        throw error;
+export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusPreppedState> => {
+    const corpusPreppedState: CorpusPreppedState = {
+        corpus_id: corpusId,
+        analysis_type: analysisType,
+        up_to_date: null
     }
+    const result = await window.summarizerApi.insertCorpusPreppedState(corpusPreppedState);
+    return result;
 }
 
-export const insertCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusStatusResponse> => {
-    try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/status/${analysisType}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-        const result: CorpusStatusResponse = await response.json();
-        if (result.status === "success") {
-            console.log("Results of corpus status insert is: ", result.cppOutput);
-        }
-        // TODO - return only the cppOutput
-        return result;
-    } catch (error) {
-        throw error;
+export const updateCorpusPreppedStatus = async (corpusId: number, analysisType: string): Promise<CorpusPreppedState> => {
+    const corpusPreppedState: CorpusPreppedState = {
+        corpus_id: corpusId,
+        analysis_type: analysisType,
+        up_to_date: null
     }
+    const result = await window.summarizerApi.updateCorpusPreppedState(corpusPreppedState);
+    return result;
 }
 
 export const fetchWordCountData = async (corpusId: number): Promise<WordCountsResponse> => {

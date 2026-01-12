@@ -1,4 +1,5 @@
 import type { ProjectTitle, CorpusMetaData, CorpusProjectRelation, Corpus, SubCorpus, CorpusFileContent, CorpusFile } from "@shared/types/manageCorpusTypes"
+import type { HasFiles, CorpusState, CorpusPreppedState } from "@shared/types/manageCorpusTypes"
 
 export {}
 
@@ -18,6 +19,12 @@ declare global {
             deleteSubcorpus(subcorpus: SubCorpus): Promise<any>,
             getCorpusFileText(corpusFile: CorpusFile): Promise<any>,
             updateCorpusPreppedStatus(corpusId: number): Promise<any>
+        },
+        summarizerApi: {
+            checkCorpusFilesExistInDB(corpus: Corpus): Promise<HasFiles>
+            checkCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
+            insertCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
+            updateCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
         }
     }
 }
