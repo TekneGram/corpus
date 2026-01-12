@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { Corpus, CorpusPreppedState, CorpusState, HasFiles } from "@shared/types/manageCorpusTypes";
+import { Corpus, CorpusPreppedState, CorpusState, HasFiles, WordCounts } from "@shared/types/manageCorpusTypes";
 
 export const summarizerApi = {
     checkCorpusFilesExistInDB: (corpus: Corpus): Promise<HasFiles> =>
@@ -13,4 +13,7 @@ export const summarizerApi = {
 
     updateCorpusPreppedState: (corpus: CorpusPreppedState): Promise<CorpusPreppedState> =>
         ipcRenderer.invoke("summarizer:updateCorpusPreppedState", corpus),
+
+    fetchWordCountData: (corpus: Corpus): Promise<WordCounts> =>
+        ipcRenderer.invoke("summarizer:fetchWordCountData", corpus),
 };

@@ -1,4 +1,4 @@
-import type { ProjectTitle, CorpusMetaData, CorpusProjectRelation, Corpus, SubCorpus, CorpusFileContent, CorpusFile } from "@shared/types/manageCorpusTypes"
+import type { ProjectTitle, CorpusMetaData, CorpusProjectRelation, Corpus, SubCorpus, CorpusFileContent, CorpusFile, WordCounts } from "@shared/types/manageCorpusTypes"
 import type { HasFiles, CorpusState, CorpusPreppedState } from "@shared/types/manageCorpusTypes"
 
 export {}
@@ -22,9 +22,10 @@ declare global {
         },
         summarizerApi: {
             checkCorpusFilesExistInDB(corpus: Corpus): Promise<HasFiles>
-            checkCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
-            insertCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
-            updateCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState>
+            checkCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
+            insertCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
+            updateCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
+            fetchWordCountData(corpus: Corpus): Promise<WordCounts>
         }
     }
 }
