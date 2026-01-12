@@ -14,6 +14,6 @@ class ManageProjectRepo {
         std::vector<CorpusMetadata::ProjectTitle> getProjectTitles();
         CorpusMetadata::CorpusMetadata getProjectMetadata(int project_id);
     
-        private:
+    private:
         Database& dbConn;
 };

@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
     Database db(dbPath);
     db.ensureSchema();
 
+    // Create dependencies
     ManageProjectRepo projects(db);
     ManageCorpusRepo corpora(db);
     ManageSubcorpusRepo subcorpora(db);

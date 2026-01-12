@@ -18,7 +18,7 @@ npm run build
 ```
 From `./corpus`
 ```
-npm run electron-pack
+npm run electron-pack:vite
 ```
 
 ## Compile CPP binaries
