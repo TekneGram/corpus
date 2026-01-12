@@ -51,8 +51,7 @@ export function isCorpusFilesPerSubCorpus(
 ): value is CorpusFilesPerSubCorpus {
     return (
         isObject(value) &&
-        Array.isArray(value.corpusFiles) &&
-        value.corpusFiles.every(isCorpusFile) &&
+        isArrayOf(value.corpusFiles, isCorpusFile) &&
         isSubCorpus(value.subCorpus)
     );
 }
@@ -64,8 +63,7 @@ export function isCorpusMetaData(
         isObject(value) &&
         isProjectTitle(value.projectTitle) &&
         isCorpus(value.corpus) &&
-        Array.isArray(value.files) &&
-        value.files.every(isCorpusFilesPerSubCorpus)
+        isArrayOf(value.files, isCorpusFilesPerSubCorpus)
     );
 }
 
