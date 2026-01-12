@@ -28,4 +28,8 @@ export function registerSummarizerIPC() {
     ipcMain.handle("summarizer:fetchWordListsData", async (_e, corpus: Corpus) => {
         return await summarizerService.fetchWordListsData(corpus);
     })
+
+    ipcMain.handle("summarizer:aggregateWordCountsData", async (_e, corpus: Corpus) => {
+        return await summarizerService.aggregateWordCountsData(corpus);
+    })
 }

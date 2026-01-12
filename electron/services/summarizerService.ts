@@ -129,6 +129,19 @@ class SummarizerService {
             "Error fetching the word lists."
         )
     }
+
+    async aggregateWordCountsData(corpus: Corpus): Promise<CorpusPreppedState> {
+        const corpusWithCommand: CorpusWithCommand = {
+            ...corpus,
+            "command": "aggregateWordCountsData"
+        }
+
+        return this.runCPPProcess<CorpusPreppedState>(
+            corpusWithCommand,
+            isCorpusPreppedState,
+            "Error aggregating the word counts"
+        )
+    }
 }
 
 export default SummarizerService;

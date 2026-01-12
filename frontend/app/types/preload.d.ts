@@ -27,6 +27,7 @@ declare global {
             updateCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
             fetchWordCountData(corpus: Corpus): Promise<WordCounts>
             fetchWordListsData(corpus: Corpus): Promise<WordLists>
+            aggregateWordCountsData(corpus: Corpus): Promise<CorpusPreppedState>
         }
     }
 }
