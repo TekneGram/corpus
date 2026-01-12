@@ -1,11 +1,11 @@
 import { contextBridge } from "electron";
+import "./preload/managerApi"
 import { api } from "./preload/managerApi";
-import { summarizerApi } from "./preload/summarizerApi";
+// import { summarizerApi } from "./preload/summarizerApi";
 
 console.log("[preload] LOADED", new Date().toISOString());
 
 
-
 contextBridge.exposeInMainWorld('api', api);
-contextBridge.exposeInMainWorld('summarizerApi', summarizerApi);
+// contextBridge.exposeInMainWorld('summarizerApi', summarizerApi);
 console.log("[preload] exposed api keys:", Object.keys(api));

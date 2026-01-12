@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // API
-import { fetchWordListData } from '@app-api/summarizeCorpus';
+//import { fetchWordListData } from '@app-api/summarizeCorpus';
 
 // CSS
 import '@styles/summarizer.css';

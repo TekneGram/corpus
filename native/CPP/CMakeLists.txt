@@ -19,17 +19,20 @@ find_package(SQLite3 REQUIRED)
 # ----------------------
 set(SOURCES
     corpusManagerMain.cpp
-    JSONConvert.cpp
+    domain/JSONConvert.cpp
 
     corpusAnalysis/CorpusAnalyzer.cpp
 
-    DatabaseHandler/DatabaseHandler.cpp
-    DatabaseHandler/ManageCorpusFiles.cpp
-    DatabaseHandler/ManageCorpusQueries.cpp
-    DatabaseHandler/ManageProjectQueries.cpp
-    DatabaseHandler/ManageSubCorpusQueries.cpp
-    DatabaseHandler/StmtGuard.cpp
-    DatabaseHandler/TransactionGuard.cpp
+    db/Database.cpp
+    db/StmtGuard.cpp
+    db/TransactionGuard.cpp
+
+    repositories/ManageProjectRepo.cpp
+    repositories/ManageCorpusRepo.cpp
+    repositories/ManageSubcorpusRepo.cpp
+    repositories/ManageFilesRepo.cpp
+
+    services/ManageCorpusService.cpp
 )
 
 # ----------------------
@@ -43,7 +46,10 @@ add_executable(corpusManager ${SOURCES})
 
 target_include_directories(corpusManager PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/DatabaseHandler
+    ${CMAKE_CURRENT_SOURCE_DIR}/domain
+    ${CMAKE_CURRENT_SOURCE_DIR}/db
+    ${CMAKE_CURRENT_SOURCE_DIR}/repositories
+    ${CMAKE_CURRENT_SOURCE_DIR}/services
     ${CMAKE_CURRENT_SOURCE_DIR}/corpusAnalysis
 )
 
@@ -59,5 +65,5 @@ target_link_libraries(corpusManager PRIVATE SQLite::SQLite3)
 
 set_target_properties(corpusManager PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY
-        ${CMAKE_CURRENT_SOURCE_DIR}/executablesRefactored
+        ${CMAKE_CURRENT_SOURCE_DIR}/executables
 )

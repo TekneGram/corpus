@@ -5,6 +5,13 @@ import fs from "fs"
 
 let mainWindow: BrowserWindow | null = null;
 
+console.log("Electron __dirname:", __dirname);
+console.log(
+  "Preload exists:",
+  fs.existsSync(path.join(__dirname, "preload.js")),
+  path.join(__dirname, "preload.js")
+);
+
 async function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1024,

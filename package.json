@@ -8,7 +8,10 @@
     "frontend-build": "cd frontend && npm run build",
     "electron-dev": "npm run electron-build && electron .",
     "electron-build": "tsc -p tsconfig.electron.json",
-    "electron-pack": "npm run electron-build && electron-builder"
+    "electron-pack": "npm run electron-build && electron-builder",
+    "electron-dev:vite": "electron-vite dev",
+    "electron-build:vite": "electron-vite build",
+    "electron-pack:vite": "npm run electron-build:vite && electron-builder"
   },
   "build": {
     "appId": "com.teknegram.corpus",
@@ -26,13 +29,20 @@
       "category": "public.app-category.utilities"
     },
     "extraResources": [
-      { "from": "electron/bin/executables", "to": "bin/executables" },
-      { "from": "electron/bin/database", "to": "bin/database" }
+      {
+        "from": "electron/bin/executables",
+        "to": "bin/executables"
+      },
+      {
+        "from": "electron/bin/database",
+        "to": "bin/database"
+      }
     ]
   },
   "devDependencies": {
     "electron": "^33.2.0",
     "electron-builder": "^24.9.1",
+    "electron-vite": "^3.1.0",
     "typescript": "^5.0.0"
   }
 }

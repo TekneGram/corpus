@@ -1,16 +1,5 @@
 import { HasFiles, Corpus, WordCounts, CorpusPreppedState, WordLists } from "@shared/types/manageCorpusTypes";
 
-// type CorpusFilesExistResponse = 
-//     | { status: "success"; cppOutput: HasFiles }
-//     | { status: "fail", message: string};
-
-// type CorpusStatusResponse =
-//     | { status: "success"; cppOutput: CorpusStatus }
-//     | { status: "fail"; message: string };
-
-type SummarizeWordsResponse = 
-    | { status: "success"; cppOutput: CorpusPreppedState}
-    | { status: "fail"; message: string }
 
 export const checkCorpusFilesExistInDB = async(corpusId: number): Promise<HasFiles> => {
     const corpus: Corpus = {
@@ -86,20 +75,3 @@ export const reAggregateWordCountsData = async (corpusId: number): Promise <Corp
     const result = await window.summarizerApi.reAggregrateWordCountsData(corpus);
     return result;
 }
-
-// export const recountWords = async (corpusId: number): Promise<any> => {
-//     console.log("I'm recounting words");
-//     try {
-//         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/recountWords`, {
-//             method: "POST",
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             credentials: 'include'
-//         });
-//         const result = await response.json();
-//         return result;
-//     } catch (error) {
-//         throw error;
-//     }
-// }

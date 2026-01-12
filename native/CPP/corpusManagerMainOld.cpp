@@ -1,14 +1,9 @@
-#include "./db/Database.h"
+#include "./DatabaseHandler/DatabaseHandler.h"
 #include <iostream>
 #include "./lib/json.hpp"
 #include <string>
 #include <cstdlib>
 #include <sys/stat.h>
-#include "./repositories/ManageCorpusRepo.h"
-#include "./repositories/ManageFilesRepo.h"
-#include "./repositories/ManageProjectRepo.h"
-#include "./repositories/ManageSubcorpusRepo.h"
-#include "./services/ManageCorpusService.h"
 
 #ifdef _WIN32
     #include <io.h>
@@ -51,6 +46,15 @@ static std::string getDbPath(int argc, char* argv[]) {
     std::exit(EXIT_FAILURE);
 }
 
+// void handleError(const std::string& message, sqlite3* db = nullptr)
+// {
+//     std::cerr << "Error: " << message << std::endl;
+//     if (db) {
+//         sqlite3_close(db);
+//     }
+//     exit(EXIT_FAILURE);
+// }
+
 int main(int argc, char* argv[])
 {
     // Read input
@@ -80,15 +84,33 @@ int main(int argc, char* argv[])
     // Resolve the database path
     const std::string dbPath = getDbPath(argc, argv);
 
-    Database db(dbPath);
+    // // Get database and open it
+    // const std::string dbPath = getDbPath(argc, argv);
+    // // Fail fast if missing in order to prevent silently creating a new empty DB somewhere
+    // if (!fileExists(dbPath)) {
+    //     handleError("Database file does not exist at: " + dbPath);
+    // }
+
+    // sqlite3* db = nullptr;
+
+    // int exit_code = sqlite3_open_v2(
+    //     dbPath.c_str(),
+    //     &db,
+    //     SQLITE_OPEN_READWRITE,
+    //     nullptr
+    // );
+
+    // if (exit_code != SQLITE_OK) {
+    //     handleError(std::string("sqlite open failed: ")
+    //         + (db ? sqlite3_errmsg(db): "unknown")
+    //         + " | path: " + dbPath,
+    //         db);
+    // }
+
+    DatabaseHandler db(dbPath);
     db.ensureSchema();
 
-    ManageProjectRepo projects(db);
-    ManageCorpusRepo corpora(db);
-    ManageSubcorpusRepo subcorpora(db);
-    ManageFilesRepo files(db);
-
-    ManageCorpusService service(projects, corpora, subcorpora, files);
+    
 
     try {
 
@@ -98,7 +120,7 @@ int main(int argc, char* argv[])
                 throw std::runtime_error("Missing or invalid project_name");
             }
             std::string project_title = inputData["project_name"].get<std::string>();
-            result = service.startNewProject(project_title);
+            result = db.startNewProject(project_title);
 
         } else if (command == "updateProjectTitle") {
             if (!inputData.contains("project_name") || !inputData["project_name"].is_string()) {
@@ -109,10 +131,10 @@ int main(int argc, char* argv[])
             }
             std::string project_title = inputData["project_name"].get<std::string>();
             int project_id = inputData["id"].get<int>();
-            result = service.updateProjectTitle(project_id, project_title);
+            result = db.updateProjectTitle(project_id, project_title);
 
         } else if (command == "getProjectTitles") {
-            result = service.getProjectTitles();
+            result = db.getProjectTitles();
 
         } else if (command == "patchCorpusName") {
             if (!inputData.contains("corpus_name") || !inputData["corpus_name"].is_string()) {
@@ -123,7 +145,7 @@ int main(int argc, char* argv[])
             }
             std::string corpus_name { inputData["corpus_name"].get<std::string>() };
             int corpus_id { inputData["id"].get<int>() };
-            result = service.updateCorpusName(corpus_id, corpus_name);
+            result = db.updateCorpusName(corpus_id, corpus_name);
 
         } else if (command == "postCorpusName") {
             if (!inputData.contains("corpus_name") || !inputData["corpus_name"].is_string()) {
@@ -134,14 +156,14 @@ int main(int argc, char* argv[])
             }
             std::string corpus_name { inputData["corpus_name"].get<std::string>() };
             int project_id { inputData["project_id"].get<int>() };
-            result = service.createCorpusName(project_id, corpus_name);
+            result = db.createCorpusName(project_id, corpus_name);
 
         } else if (command == "getProjectMetadata") {
             if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
                 throw std::runtime_error("Missing or invalid id");
             }
             int project_id { inputData["id"].get<int>() };
-            result = service.getProjectMetadata(project_id);
+            result = db.getProjectMetadata(project_id);
 
         } else if (command == "createCorpusGroup") {
             if (!inputData.contains("groupName") || !inputData["groupName"].is_string()) {
@@ -152,7 +174,7 @@ int main(int argc, char* argv[])
             }
             std::string group_name { inputData["groupName"].get<std::string>() };
             int corpus_id { inputData["corpus_id"].get<int>() };
-            result = service.createCorpusGroup(corpus_id, group_name);
+            result = db.createCorpusGroup(corpus_id, group_name);
 
         } else if (command == "uploadFileContent") {
             if (!inputData.contains("file_content") || !inputData["file_content"].is_string()) {
@@ -167,7 +189,7 @@ int main(int argc, char* argv[])
             int group_id { inputData["group_id"].get<int>() };
             std::string file_content { inputData["file_content"].get<std::string>() };
             std::string file_name { inputData["file_name"].get<std::string>() };
-            result = service.uploadFileContent(group_id, file_content, file_name);
+            result = db.uploadFileContent(group_id, file_content, file_name);
 
         } else if (command == "patchCorpusGroup") {
             if (!inputData.contains("group_name") || !inputData["group_name"].is_string()) {
@@ -178,28 +200,28 @@ int main(int argc, char* argv[])
             }
             int group_id { inputData["id"].get<int>() };
             std::string group_name { inputData["group_name"].get<std::string>() };
-            result = service.updateCorpusGroupName(group_id, group_name);
+            result = db.updateCorpusGroupName(group_id, group_name);
 
         } else if (command == "deleteAFile") {
             if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
                 throw std::runtime_error("Missing or invalid id");
             }
             int file_id { inputData["id"].get<int>() };
-            result = service.deleteAFile(file_id);
+            result = db.deleteAFile(file_id);
             
         } else if (command == "deleteSubcorpus") {
             if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
                 throw std::runtime_error("Missing or invalid id");
             }
             int group_id { inputData["id"].get<int>() };
-            result = service.deleteSubcorpus(group_id);
+            result = db.deleteSubcorpus(group_id);
 
         } else if (command == "getFileText") {
             if (!inputData.contains("id") || !inputData["id"].is_number_integer()) {
                 throw std::runtime_error("Missing or invalid id");
             }
             int file_id { inputData["id"].get<int>() };
-            result = service.getFileText(file_id);
+            result = db.getFileText(file_id);
 
         } else {
             fatal("Unknown command: " + command);

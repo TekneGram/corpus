@@ -7,7 +7,7 @@ npm run dev
 ```
 From `./corpus`
 ```
-npm run electron-dev
+npm run electron-dev:vite
 ```
 
 ## to create a package (on apple silicon for now)
@@ -30,7 +30,7 @@ To compile binaries:
 cd native/CPP
 mkdir build
 cd build
-cmake build ..
+cmake ..
 cmake --build .
 ```
 OLD:
