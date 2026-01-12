@@ -151,7 +151,7 @@ export type CorpusPreppedState = {
 
 export type CurrentCorpusState = {
     hasFiles: HasFiles;
-    corpusStatus: CorpusState;
+    corpusPreppedState: CorpusPreppedState;
 }
 
 /**
@@ -166,16 +166,16 @@ export type WordCountsPerCorpus = {
 }
 
 // Word counts in the group (subcorpus)
-export type GroupWordCounts = {
+export type SubcorpusWordCounts = {
     groupId: number;
     groupName: string;
     typeCount: number;
     tokenCount: number;
 }
 
-export type WordCountsPerGroup = {
+export type WordCountsPerSubcorpus = {
     corpusId: number;
-    groupWordCounts: GroupWordCounts[];
+    subcorpusWordCounts: SubcorpusWordCounts[];
 }
 
 // Word counts in the individual files
@@ -195,7 +195,7 @@ export type WordCountsPerFile = {
 // All data collated together
 export type WordCounts = {
     wordCountsPerCorpus: WordCountsPerCorpus;
-    wordCountsPerGroup: WordCountsPerGroup;
+    wordCountsPerSubcorpus: WordCountsPerSubcorpus;
     wordCountsPerFile: WordCountsPerFile;
 }
 
@@ -204,6 +204,6 @@ export type WordCounts = {
  */
 
 export type SummaryMetaData = {
-    currentCorpusStatus: CurrentCorpusState;
+    currentCorpusState: CurrentCorpusState;
     wordCounts: WordCounts;
 }
