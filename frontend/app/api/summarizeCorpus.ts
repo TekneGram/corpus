@@ -78,36 +78,28 @@ export const aggregateWordCountsData = async (corpusId: number): Promise <Corpus
     return result;
 }
 
-// export const countWords = async (corpusId: number): Promise<SummarizeWordsResponse> => {
+export const reAggregateWordCountsData = async (corpusId: number): Promise <CorpusPreppedState> => {
+    const corpus: Corpus = {
+        corpus_name: "",
+        id: corpusId
+    };
+    const result = await window.summarizerApi.reAggregrateWordCountsData(corpus);
+    return result;
+}
+
+// export const recountWords = async (corpusId: number): Promise<any> => {
+//     console.log("I'm recounting words");
 //     try {
-//         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/countWords`, {
+//         const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/recountWords`, {
 //             method: "POST",
 //             headers: {
 //                 'Content-Type': 'application/json'
 //             },
 //             credentials: 'include'
 //         });
-//         const result: SummarizeWordsResponse = await response.json();
-//         console.log(result);
+//         const result = await response.json();
 //         return result;
 //     } catch (error) {
 //         throw error;
 //     }
 // }
-
-export const recountWords = async (corpusId: number): Promise<any> => {
-    console.log("I'm recounting words");
-    try {
-        const response = await fetch(`http://localhost:4000/api/summarizer/project/${corpusId}/corpus/summarize/recountWords`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        throw error;
-    }
-}

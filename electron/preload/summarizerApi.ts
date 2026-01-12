@@ -21,5 +21,8 @@ export const summarizerApi = {
         ipcRenderer.invoke("summarizer:fetchWordListsData", corpus),
 
     aggregateWordCountsData: (corpus: Corpus): Promise<CorpusPreppedState> =>
-        ipcRenderer.invoke("summarizer:aggregateWordCountsData", corpus)
+        ipcRenderer.invoke("summarizer:aggregateWordCountsData", corpus),
+
+    reAggregrateWordCountsData: (corpus: Corpus): Promise<CorpusPreppedState> =>
+        ipcRenderer.invoke("summarizer:reAggregrateWordCountsData", corpus),
 };

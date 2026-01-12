@@ -32,4 +32,8 @@ export function registerSummarizerIPC() {
     ipcMain.handle("summarizer:aggregateWordCountsData", async (_e, corpus: Corpus) => {
         return await summarizerService.aggregateWordCountsData(corpus);
     })
+
+    ipcMain.handle("summarizer:reAggregrateWordCountsData", async (_e, corpus: Corpus) => {
+        return await summarizerService.reAggregrateWordCountsData(corpus);
+    })
 }

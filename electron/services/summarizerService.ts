@@ -142,6 +142,19 @@ class SummarizerService {
             "Error aggregating the word counts"
         )
     }
+
+    async reAggregrateWordCountsData(corpus: Corpus): Promise<CorpusPreppedState> {
+        const corpusWithCommand: CorpusWithCommand = {
+            ...corpus,
+            "command": "reAggregrateWordCountsData"
+        }
+
+        return this.runCPPProcess<CorpusPreppedState>(
+            corpusWithCommand,
+            isCorpusPreppedState,
+            "Error re-aggregating the word counts."
+        )
+    }
 }
 
 export default SummarizerService;

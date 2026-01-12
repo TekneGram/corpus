@@ -28,6 +28,7 @@ declare global {
             fetchWordCountData(corpus: Corpus): Promise<WordCounts>
             fetchWordListsData(corpus: Corpus): Promise<WordLists>
             aggregateWordCountsData(corpus: Corpus): Promise<CorpusPreppedState>
+            reAggregrateWordCountsData(corpus: Corpus): promise<CorpusPreppedState>
         }
     }
 }
