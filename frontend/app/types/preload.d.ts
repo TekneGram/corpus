@@ -1,4 +1,4 @@
-import type { ProjectTitle, CorpusMetaData, CorpusProjectRelation, Corpus, SubCorpus, CorpusFileContent, CorpusFile, WordCounts } from "@shared/types/manageCorpusTypes"
+import type { ProjectTitle, CorpusMetaData, CorpusProjectRelation, Corpus, SubCorpus, CorpusFileContent, CorpusFile, WordCounts, WordLists } from "@shared/types/manageCorpusTypes"
 import type { HasFiles, CorpusState, CorpusPreppedState } from "@shared/types/manageCorpusTypes"
 
 export {}
@@ -26,6 +26,7 @@ declare global {
             insertCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
             updateCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
             fetchWordCountData(corpus: Corpus): Promise<WordCounts>
+            fetchWordListsData(corpus: Corpus): Promise<WordLists>
         }
     }
 }

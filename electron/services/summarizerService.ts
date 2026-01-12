@@ -1,7 +1,7 @@
 import { checkCorpusFilesExistInDB } from './../../../old/frontend_old/app/api/summarizeCorpus';
 import CPPProcess from './cppSpawn';
-import type { HasFiles, Corpus, CorpusState, CorpusPreppedState, WordCounts, CorpusPreppedStateWithCommand, CorpusWithCommand } from '@shared/types/manageCorpusTypes';
-import { isCorpusPreppedState, isHasFiles, isWordCounts } from 'electron/typeguards/manageCorpusGuards';
+import { type HasFiles, type Corpus, type CorpusState, type CorpusPreppedState, type WordCounts, type CorpusPreppedStateWithCommand, type CorpusWithCommand, WordLists } from '@shared/types/manageCorpusTypes';
+import { isCorpusPreppedState, isHasFiles, isWordCounts, isWordLists } from 'electron/typeguards/manageCorpusGuards';
 
 class SummarizerService {
     constructor() {
@@ -114,6 +114,19 @@ class SummarizerService {
             corpusWithCommand,
             isWordCounts,
             "Error fetching the word counts!"
+        )
+    }
+
+    async fetchWordListsData(corpus: Corpus): Promise<WordLists> {
+        const corpusWithCommand: CorpusWithCommand = {
+            ...corpus,
+            "command": "fetchWordListsData"
+        }
+
+        return this.runCPPProcess<WordLists>(
+            corpusWithCommand,
+            isWordLists,
+            "Error fetching the word lists."
         )
     }
 }
