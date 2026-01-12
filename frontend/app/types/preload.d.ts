@@ -21,10 +21,10 @@ declare global {
             updateCorpusPreppedStatus(corpusId: number): Promise<any>
         },
         summarizerApi: {
-            checkCorpusFilesExistInDB(corpus: Corpus): Promise<HasFiles>
-            checkCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
-            insertCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
-            updateCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>
+            checkCorpusFilesExistInDB(corpus: Corpus): Promise<HasFiles>,
+            checkCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
+            insertCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
+            updateCorpusPreppedState(corpusPreppedStatus: CorpusPreppedState): Promise<CorpusPreppedState>,
             fetchWordCountData(corpus: Corpus): Promise<WordCounts>
         }
     }

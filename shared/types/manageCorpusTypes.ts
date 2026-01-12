@@ -203,6 +203,51 @@ export type WordCounts = {
     wordCountsPerFile: WordCountsPerFile;
 }
 
+// Word Lists types
+export type WordDataCorpus = {
+    id: number;
+    word: string;
+    count: number
+};
+
+export type WordListPerCorpus = {
+    id: number;
+    group_id: number;
+    word: string;
+    count: number;
+}
+
+export type WordDataSubcorpus = {
+    id: number;
+    group_id: number;
+    word: string;
+    count: number;
+}
+
+export type WordListPerSubcorpus = {
+    corpus_id: number;
+    word: WordDataSubcorpus[];
+}
+
+export type WordDataFile = {
+    id: number;
+    group_id: number;
+    file_id: number;
+    word: string;
+    count: number;
+}
+
+export type WordListPerFile = {
+    corpus_id: number;
+    word: WordDataFile[];
+}
+
+export type WordLists = {
+    word_list_per_corpus: WordListPerCorpus;
+    word_list_per_subcorpus: WordListPerSubcorpus;
+    word_list_per_file: WordListPerFile; 
+};
+
 /**
  * All summary metadata collated
  */

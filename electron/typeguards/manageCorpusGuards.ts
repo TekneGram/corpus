@@ -1,4 +1,4 @@
-import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText, DeleteFileResult, DeleteSubCorpusResult, HasFiles, CorpusState, CorpusPreppedState, WordCountsPerCorpus, SubcorpusWordCounts, WordCountsPerSubcorpus, FileWordCounts, WordCountsPerFile, WordCounts, CurrentCorpusState, SummaryMetaData } from "@shared/types/manageCorpusTypes";
+import type { ProjectTitle, Corpus, SubCorpus, CorpusFile, CorpusFilesPerSubCorpus, CorpusMetaData, FileText, DeleteFileResult, DeleteSubCorpusResult, HasFiles, CorpusState, CorpusPreppedState, WordCountsPerCorpus, SubcorpusWordCounts, WordCountsPerSubcorpus, FileWordCounts, WordCountsPerFile, WordCounts, CurrentCorpusState, SummaryMetaData, WordDataCorpus, WordDataSubcorpus, WordListPerCorpus, WordListPerSubcorpus, WordDataFile, WordListPerFile, WordLists } from "@shared/types/manageCorpusTypes";
 
 // Helper functions
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -203,6 +203,87 @@ export function isWordCounts (
     );
 }
 
+
+// typeguards for wordlists
+export function isWordDataCorpus (
+    value: unknown
+): value is WordDataSubcorpus {
+    return (
+        isObject(value) &&
+        typeof value.id === "number" &&
+        typeof value.word === "string" &&
+        typeof value.count === "number"
+    );
+}
+
+export function isWordListPerCorpus (
+    value: unknown
+): value is WordListPerCorpus {
+    return (
+        isObject(value) &&
+        typeof value.id === "number" &&
+        typeof value.group_id === "number" &&
+        typeof value.word === "string" &&
+        typeof value.count === "number"
+    );
+}
+
+export function isWordDataSubcorpus (
+    value: unknown
+): value is WordDataSubcorpus {
+    return (
+        isObject(value) &&
+        typeof value.id === "number" &&
+        typeof value.group_id === "number" &&
+        typeof value.word === "string" &&
+        typeof value.count === "number"
+    );
+}
+
+export function isWordListPerSubcorpus (
+    value: unknown
+): value is WordListPerSubcorpus {
+    return (
+        isObject(value) &&
+        typeof value.corpus_id === "number" &&
+        isArrayOf(value.word, isWordDataSubcorpus)
+    );
+}
+
+export function isWordDataFile (
+    value: unknown
+): value is WordDataFile {
+    return (
+        isObject(value) &&
+        typeof value.id === "number" &&
+        typeof value.group_id === "number" &&
+        typeof value.file_id === "number" &&
+        typeof value.word === "string" &&
+        typeof value.count === "number"
+    );
+}
+
+export function isWordListPerFile (
+    value: unknown
+): value is WordListPerFile {
+    return (
+        isObject(value) &&
+        isArrayOf(value.word, isWordDataFile)
+    );
+}
+
+export function isWordLists (
+    value: unknown
+): value is WordLists {
+    return (
+        isObject(value) &&
+        isWordListPerCorpus(value.word_list_per_subcorpus) &&
+        isWordListPerSubcorpus(value.word_list_per_subcorpus) &&
+        isWordListPerFile(value.word_list_per_file)
+    );
+}
+
+// Typeguard for summarizer's metadata
 export function isSummaryMetaData (
     value: unknown
 ): value is SummaryMetaData {
