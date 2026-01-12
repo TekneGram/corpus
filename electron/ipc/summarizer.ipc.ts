@@ -20,4 +20,8 @@ export function registerSummarizerIPC() {
     ipcMain.handle("summarizer:updateCorpusPreppedState", async (_e, corpusPreppedState: CorpusPreppedState) => {
         return await summarizerService.updateCorpusPreppedState(corpusPreppedState)
     })
+
+    ipcMain.handle("summarizer:fetchWordCountData", async (_e, corpus: Corpus) => {
+        return await summarizerService.fetchWordCountData(corpus);
+    })
 }

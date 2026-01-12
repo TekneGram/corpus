@@ -1,7 +1,7 @@
 import { checkCorpusFilesExistInDB } from './../../../old/frontend_old/app/api/summarizeCorpus';
 import CPPProcess from './cppSpawn';
-import type { HasFiles, Corpus, CorpusState, CorpusPreppedState } from '@shared/types/manageCorpusTypes';
-import { isCorpusPreppedState, isHasFiles } from 'electron/typeguards/manageCorpusGuards';
+import type { HasFiles, Corpus, CorpusState, CorpusPreppedState, WordCounts, CorpusPreppedStateWithCommand, CorpusWithCommand } from '@shared/types/manageCorpusTypes';
+import { isCorpusPreppedState, isHasFiles, isWordCounts } from 'electron/typeguards/manageCorpusGuards';
 
 class SummarizerService {
     constructor() {
@@ -65,43 +65,56 @@ class SummarizerService {
         );
     }
 
-    async checkCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState> {
-        const corpusWithCommand = {
-            ...corpus,
+    async checkCorpusPreppedState(corpusPreppedState: CorpusPreppedState): Promise<CorpusPreppedState> {
+        const corpusPreppedStateWithCommand: CorpusPreppedStateWithCommand = {
+            ...corpusPreppedState,
             "command": "checkCorpusPreppedState"
         };
 
         return this.runCPPProcess<CorpusPreppedState>(
-            corpusWithCommand,
+            corpusPreppedStateWithCommand,
             isCorpusPreppedState,
             "Error checking whether the corpus is prepped."
         );
     }
 
-    async insertCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState> {
-        const corpusWithCommand = {
-            ...corpus,
+    async insertCorpusPreppedState(corpusPreppedState: CorpusPreppedState): Promise<CorpusPreppedState> {
+        const corpusPreppedStateWithCommand: CorpusPreppedStateWithCommand = {
+            ...corpusPreppedState,
             "command": "insertCorpusPreppedState"
         };
 
         return this.runCPPProcess<CorpusPreppedState>(
-            corpusWithCommand,
+            corpusPreppedStateWithCommand,
             isCorpusPreppedState,
             "Error inserting the corpus prepped state."
         );
     }
 
-    async updateCorpusPreppedState(corpus: CorpusPreppedState): Promise<CorpusPreppedState> {
-        const corpusWithCommand = {
-            ...corpus,
+    async updateCorpusPreppedState(corpusPreppedState: CorpusPreppedState): Promise<CorpusPreppedState> {
+        const corpusPreppedStateWithCommand: CorpusPreppedStateWithCommand = {
+            ...corpusPreppedState,
             "command": "updateCorpusPreppedState"
         };
 
         return this.runCPPProcess<CorpusPreppedState>(
-            corpusWithCommand,
+            corpusPreppedStateWithCommand,
             isCorpusPreppedState,
             "Error updating the corpus prepped state."
         );
+    }
+
+    async fetchWordCountData(corpus: Corpus): Promise<WordCounts> {
+        const corpusWithCommand: CorpusWithCommand = {
+            ...corpus,
+            "command": "fetchWordCountData"
+        };
+
+        return this.runCPPProcess<WordCounts>(
+            corpusWithCommand,
+            isWordCounts,
+            "Error fetching the word counts!"
+        )
     }
 }
 

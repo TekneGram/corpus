@@ -154,6 +154,10 @@ export type CurrentCorpusState = {
     corpusPreppedState: CorpusPreppedState;
 }
 
+export type CorpusPreppedStateWithCommand = CorpusPreppedState & {
+    command: string;
+}
+
 /**
  * Managing word count and word list data
  */
